@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  padding: 32px 20px 56px;
+  padding: 32px 20px 80px;
   background:
     radial-gradient(520px 320px at -10% 10%, rgba(47, 95, 89, 0.18), transparent 60%),
     linear-gradient(145deg, #f7f2ea 0%, #f4ede3 55%, #f8f4ee 100%);
@@ -28,7 +28,6 @@
 }
 
 .card {
-  max-width: 520px;
   background: var(--card);
   border: 1px solid rgba(31, 27, 22, 0.12);
   border-radius: 24px;
@@ -54,6 +53,66 @@
   line-height: 1.6;
 }
 
+.profileGrid {
+  display: grid;
+  gap: 20px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 6px 0 12px;
+}
+
+.metaList {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.metaLabel {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--forest);
+  margin-bottom: 4px;
+}
+
+.metaValue {
+  font-weight: 600;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0 10px;
+}
+
+.statCard {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 248, 239, 0.7);
+  border: 1px solid rgba(31, 27, 22, 0.1);
+  display: grid;
+  gap: 6px;
+}
+
+.statCard strong {
+  font-family: var(--font-display), serif;
+  font-size: 1.3rem;
+}
+
+.statCard span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.note {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -76,4 +135,15 @@
   border: 1px solid rgba(31, 27, 22, 0.2);
   background: rgba(255, 248, 239, 0.8);
   font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .page {
+    padding: 40px 80px 120px;
+  }
+
+  .profileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
 }
