@@ -5,8 +5,27 @@ import { useMemo, useState } from "react";
 import { QUIZZES } from "@/data/quizzes";
 import styles from "./page.module.css";
 
+function resolveQuizKey(slug: string) {
+  const normalized = decodeURIComponent(slug)
+    .replace(/\.mp3$/i, "")
+    .replace(/_/g, "-")
+    .toLowerCase();
+
+  if (QUIZZES[normalized]) {
+    return normalized;
+  }
+
+  const keys = Object.keys(QUIZZES);
+  return (
+    keys.find((key) => key.toLowerCase() === normalized) ??
+    keys.find((key) => key.toLowerCase().endsWith(normalized)) ??
+    keys.find((key) => normalized.endsWith(key.toLowerCase()))
+  );
+}
+
 export default function QuizPage({ params }: { params: { slug: string } }) {
-  const quiz = QUIZZES[params.slug];
+  const key = resolveQuizKey(params.slug);
+  const quiz = key ? QUIZZES[key] : undefined;
   const [answers, setAnswers] = useState<number[]>(
     quiz ? Array(quiz.questions.length).fill(-1) : []
   );
@@ -26,6 +45,7 @@ export default function QuizPage({ params }: { params: { slug: string } }) {
           <p className={styles.tag}>Quiz introuvable</p>
           <h1>Ce quiz n'existe pas</h1>
           <p>Retourne au parcours pour choisir un audio valide.</p>
+          <p className={styles.slug}>Slug recu: {decodeURIComponent(params.slug)}</p>
           <Link className={styles.primary} href="/parcours">
             Retour au parcours
           </Link>

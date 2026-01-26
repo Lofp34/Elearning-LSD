@@ -63,6 +63,12 @@
   margin-bottom: 10px;
 }
 
+.slug {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .questionLabel {
   font-size: 0.75rem;
   text-transform: uppercase;
