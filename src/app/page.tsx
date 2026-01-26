@@ -1,66 +1,178 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import styles from "./page.module.css";
 
 export default function Home() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setPending(true);
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      firstName: String(formData.get("firstName") ?? ""),
+      lastName: String(formData.get("lastName") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      password: String(formData.get("password") ?? ""),
+    };
+
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setError(data?.error ?? "Impossible de creer le compte.");
+        return;
+      }
+
+      router.push("/parcours");
+    } catch (err) {
+      setError("Probleme reseau. Reessaie dans quelques instants.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.brand}>
+          <div className={styles.logo}>AG</div>
+          <div>
+            <p className={styles.wordmark}>Antigravity</p>
+            <p className={styles.wordsub}>E-learning mobile</p>
+          </div>
+        </div>
+        <div className={styles.badge}>Beta privee</div>
+      </header>
+
+      <section className={styles.hero}>
+        <div className={styles.copy}>
+          <p className={styles.kicker}>Bienvenue</p>
+          <h1>
+            Transforme la rigueur commerciale en habitudes simples et
+            mesurables.
+          </h1>
+          <p className={styles.lead}>
+            Parcours audio court, quiz instantanes et suivi clair de la
+            progression. Un seul objectif : ancrer les fondamentaux terrain en
+            10 minutes par jour.
+          </p>
+
+          <div className={styles.highlights}>
+            <div>
+              <span>15 audios</span>
+              <p>3 parties, format court, repetition productive.</p>
+            </div>
+            <div>
+              <span>Quiz immediats</span>
+              <p>Score, seuil de reussite, recommandations.</p>
+            </div>
+            <div>
+              <span>Suivi simple</span>
+              <p>Progression visible, prochaine action evidente.</p>
+            </div>
+          </div>
+
+          <div className={styles.actions}>
+            <a className={styles.primary} href="#inscription">
+              Creer mon compte
+            </a>
+            <Link className={styles.secondary} href="/parcours">
+              Voir un exemple
+            </Link>
+          </div>
+        </div>
+
+        <div className={styles.formCard} id="inscription">
+          <p className={styles.formTag}>Demarrage rapide</p>
+          <h2>Creer un compte</h2>
+          <p className={styles.formIntro}>
+            Quelques informations pour sauvegarder ta progression.
+          </p>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.grid}>
+              <label className={styles.field} htmlFor="firstName">
+                Prenom
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder="Laurent"
+                  autoComplete="given-name"
+                  required
+                />
+              </label>
+              <label className={styles.field} htmlFor="lastName">
+                Nom
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Serre"
+                  autoComplete="family-name"
+                  required
+                />
+              </label>
+            </div>
+            <label className={styles.field} htmlFor="email">
+              Email
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="laurent@email.com"
+                autoComplete="email"
+                required
+              />
+            </label>
+            <label className={styles.field} htmlFor="password">
+              Mot de passe
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="8 caracteres minimum"
+                autoComplete="new-password"
+                required
+              />
+            </label>
+            <button className={styles.submit} type="submit">
+              {pending ? "Creation en cours..." : "Commencer mon parcours"}
+            </button>
+            {error ? <p className={styles.error}>{error}</p> : null}
+          </form>
+          <p className={styles.formNote}>
+            Deja un compte ? <Link href="/connexion">Se connecter</Link>
           </p>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className={styles.stats}>
+        <div>
+          <p className={styles.statValue}>70%</p>
+          <p className={styles.statLabel}>seuil de validation</p>
         </div>
-      </main>
-    </div>
+        <div>
+          <p className={styles.statValue}>90%</p>
+          <p className={styles.statLabel}>ecoute minimale</p>
+        </div>
+        <div>
+          <p className={styles.statValue}>3</p>
+          <p className={styles.statLabel}>piliers de maitrise</p>
+        </div>
+      </section>
+    </main>
   );
 }

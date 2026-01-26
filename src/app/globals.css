@@ -1,13 +1,12 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --paper: #f8f2ea;
+  --ink: #1f1b16;
+  --muted: #756a5c;
+  --accent: #ff6b4a;
+  --accent-deep: #d84f33;
+  --forest: #2f5f59;
+  --card: #fff8ef;
+  --line: rgba(31, 27, 22, 0.12);
 }
 
 html,
@@ -17,9 +16,9 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--font-body), "Atkinson Hyperlegible", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -33,10 +32,4 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }

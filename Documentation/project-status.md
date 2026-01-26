@@ -13,6 +13,9 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - Bootstrap Next.js (App Router + TypeScript) au root du repo.
 - Dossier audios V1 (`Audio_elearning/`).
 - Routes Blob (list/upload) + page de listing audio.
+- Ecran d'accueil (bienvenue/creation de compte) + page Parcours (UI).
+- Routes auth (signup/login/logout) + pages connexion.
+- Schema Prisma (User) et utilitaires auth (hash + session).
 
 ## Decisions prises
 - **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
@@ -36,3 +39,5 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - 2026-01-26: Bootstrap Next.js (App Router + TypeScript) ajoute au repo.
 - 2026-01-26: Passage des audios vers Vercel Blob (MP3 retires du repo).
 - 2026-01-26: Routes Blob (list/upload) et page `/audio` ajoutees.
+- 2026-01-26: UI initiale (Welcome + Parcours) ajoutee.
+- 2026-01-26: Auth email+password (routes + page connexion) ajoutee.

@@ -10,6 +10,8 @@ Audio files are stored in Vercel Blob (not committed to Git).
 Local setup:
 - Copy `.env.example` to `.env.local`
 - Set `BLOB_READ_WRITE_TOKEN`
+- Set `DATABASE_URL` (Neon Postgres)
+- Set `AUTH_SECRET` (random string)
 - Upload local MP3s with:
   - `npm run upload:audio`
 
@@ -17,6 +19,20 @@ App routes:
 - List blobs: `GET /api/blob/list?prefix=audio/`
 - Upload (server): `POST /api/blob/upload` (multipart form field `file`)
 - Simple UI: `/audio`
+
+## Auth (email + password)
+Routes:
+- Sign up: `POST /api/auth/signup`
+- Log in: `POST /api/auth/login`
+- Log out: `POST /api/auth/logout`
+
+Pages:
+- Welcome / sign up: `/`
+- Login: `/connexion`
+
+Database setup (local):
+- Provide `DATABASE_URL` (Neon Postgres or local Postgres)
+- Run `npm run prisma:migrate`
 
 ## Getting Started
 
