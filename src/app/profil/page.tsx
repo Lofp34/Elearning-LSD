@@ -1,7 +1,21 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 export default function ProfilPage() {
+  const router = useRouter();
+
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      router.push("/");
+      router.refresh();
+    }
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -21,7 +35,7 @@ export default function ProfilPage() {
           <Link className={styles.cta} href="/parcours">
             Revenir au parcours
           </Link>
-          <button className={styles.ghost} type="button">
+          <button className={styles.ghost} type="button" onClick={handleLogout}>
             Se deconnecter
           </button>
         </div>
