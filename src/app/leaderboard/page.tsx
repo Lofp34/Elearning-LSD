@@ -309,11 +309,6 @@ export default async function LeaderboardPage() {
         </article>
       </section>
 
-      <section className={styles.callout}>
-        <p>
-          Objectif collectif: monter le % d'ecoute sans perdre la qualite des quiz.
-        </p>
-      </section>
     </main>
   );
 }
