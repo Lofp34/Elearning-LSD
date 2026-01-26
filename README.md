@@ -13,6 +13,11 @@ Local setup:
 - Upload local MP3s with:
   - `npm run upload:audio`
 
+App routes:
+- List blobs: `GET /api/blob/list?prefix=audio/`
+- Upload (server): `POST /api/blob/upload` (multipart form field `file`)
+- Simple UI: `/audio`
+
 ## Getting Started
 
 First, run the development server:
