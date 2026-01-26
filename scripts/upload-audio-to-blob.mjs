@@ -1,6 +1,15 @@
 import { put } from "@vercel/blob";
+import dotenv from "dotenv";
+import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
+
+const envPaths = [".env.local", ".env"];
+for (const envPath of envPaths) {
+  if (existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+  }
+}
 
 const AUDIO_DIR = path.resolve("Audio_elearning");
 const TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
