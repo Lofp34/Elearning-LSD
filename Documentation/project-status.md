@@ -4,7 +4,7 @@
 Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental, Vente, Techniques) avec suivi strict de la progression (Audio + Quiz).
 
 ## Perimetre (scope)
-- In: Auth (Magic Link), Player Audio (avec reprise), Quiz (5Q/10Q), Progression (Neon Postgres), Admin Dashboard (Tableau + Export CSV).
+- In: Auth (email + mot de passe), Player Audio (avec reprise), Quiz (5Q/10Q), Progression (Neon Postgres), Admin Dashboard (Tableau + Export CSV).
 - Out: IA de personnalisation, Mode Offline complet, Génération PDF complexes (V1), Transcriptions.
 
 ## Ce qui est en place
@@ -18,6 +18,7 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - **Auth** : Email + mot de passe (simple et efficace).
 - **Validation** : Déverrouillage quiz après 90% d'écoute. Seuil de réussite 70%.
 - **Stockage Audio** : Vercel Blob (V1).
+- **Git** : Les MP3 ne sont pas versionnes (stockage Blob uniquement).
 
 ## Risques / Blocages
 - **Contenu Audio** : Besoin des fichiers audio pour le remplissage de la base.
@@ -32,3 +33,4 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 ## Journal des evolutions
 - 2026-01-26: Initialisation du projet et de la documentation.
 - 2026-01-26: Bootstrap Next.js (App Router + TypeScript) ajoute au repo.
+- 2026-01-26: Passage des audios vers Vercel Blob (MP3 retires du repo).

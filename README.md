@@ -4,6 +4,15 @@ This is the Antigravity e-learning PWA, built with Next.js (App Router).
 - Project status: `Documentation/project-status.md`
 - Product description: `Documentation/description-projet.md`
 
+## Audio storage (Vercel Blob)
+Audio files are stored in Vercel Blob (not committed to Git).
+
+Local setup:
+- Copy `.env.example` to `.env.local`
+- Set `BLOB_READ_WRITE_TOKEN`
+- Upload local MP3s with:
+  - `npm run upload:audio`
+
 ## Getting Started
 
 First, run the development server:
