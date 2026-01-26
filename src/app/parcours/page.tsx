@@ -191,9 +191,6 @@ export default async function ParcoursPage() {
                 Voir les fichiers
               </Link>
             )}
-            <Link className={styles.ghost} href="/audio">
-              Voir les fichiers
-            </Link>
           </div>
         </div>
       </section>
