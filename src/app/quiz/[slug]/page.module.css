@@ -130,6 +130,11 @@
   font-size: 1rem;
 }
 
+.error {
+  color: #b42318;
+  font-size: 0.85rem;
+}
+
 .primary {
   border: none;
   border-radius: 999px;

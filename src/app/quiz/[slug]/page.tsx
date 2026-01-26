@@ -31,6 +31,7 @@ export default function QuizPage() {
   const quiz = key ? QUIZZES[key] : undefined;
   const [answers, setAnswers] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (quiz) {
@@ -76,7 +77,24 @@ export default function QuizPage() {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (answers.some((value) => value === -1)) {
+      setSubmitError("Merci de repondre a toutes les questions.");
+      return;
+    }
+
+    setSubmitError("");
     setSubmitted(true);
+
+    const submitSlug = key ?? rawSlug ?? "";
+    fetch("/api/quiz/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        slug: submitSlug,
+        score,
+        total,
+      }),
+    }).catch(() => null);
   }
 
   function handleReset() {
@@ -135,9 +153,12 @@ export default function QuizPage() {
 
         <div className={styles.actions}>
           {!submitted ? (
-            <button className={styles.primary} type="submit">
-              Valider le quiz
-            </button>
+            <>
+              <button className={styles.primary} type="submit">
+                Valider le quiz
+              </button>
+              {submitError ? <p className={styles.error}>{submitError}</p> : null}
+            </>
           ) : (
             <>
               <div className={styles.score}>

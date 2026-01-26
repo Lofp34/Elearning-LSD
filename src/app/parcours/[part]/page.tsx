@@ -1,6 +1,7 @@
 import { list } from "@vercel/blob";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AudioCard from "./AudioCard";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -82,23 +83,7 @@ export default async function PartPage({ params }: { params: { part: string } })
           </div>
         ) : (
           items.map((item) => (
-            <article key={item.url} className={styles.card}>
-              <div className={styles.cardHeader}>
-                <span className={styles.index} style={{ color: config.accent }}>
-                  {item.index.toString().padStart(2, "0")}
-                </span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>Audio court + quiz 5 questions</p>
-                </div>
-              </div>
-              <audio controls preload="none" src={item.url} />
-              <div className={styles.cardActions}>
-                <Link className={styles.primary} href={`/quiz/${item.slug}`}>
-                  Lancer le quiz
-                </Link>
-              </div>
-            </article>
+            <AudioCard key={item.url} item={item} accent={config.accent} />
           ))
         )}
       </section>

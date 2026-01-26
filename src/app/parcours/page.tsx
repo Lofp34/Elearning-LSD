@@ -1,5 +1,8 @@
 import { list } from "@vercel/blob";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
+import { verifySessionToken } from "@/lib/auth";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +43,17 @@ function getIndex(filename: string) {
 
 export default async function ParcoursPage() {
   const { blobs } = await list({ prefix: "audio/", limit: 200 });
+  const token = (await cookies()).get("ag_session")?.value;
+  let userId: string | null = null;
+
+  if (token) {
+    try {
+      const payload = await verifySessionToken(token);
+      userId = payload.sub ?? null;
+    } catch {
+      userId = null;
+    }
+  }
 
   const entriesByPart = parts.map((part) => {
     const items = blobs
@@ -50,6 +64,7 @@ export default async function ParcoursPage() {
           url: blob.url,
           title: formatTitle(filename),
           index: getIndex(filename),
+          slug: filename.replace(/\.mp3$/i, ""),
         };
       })
       .sort((a, b) => a.index - b.index);
@@ -60,7 +75,34 @@ export default async function ParcoursPage() {
   const totalAudios = entriesByPart.reduce((acc, entry) => acc + entry.items.length, 0);
   const nextEntry = entriesByPart.find((entry) => entry.items.length > 0);
   const nextAudio = nextEntry?.items[0];
-  const progressPct = 0;
+  let listensCount = 0;
+  let quizValidatedCount = 0;
+  let partsUnlocked = 0;
+  let progressPct = 0;
+
+  if (userId) {
+    const listenEvents = await prisma.listenEvent.findMany({
+      where: { userId },
+      select: { audioSlug: true },
+    });
+    listensCount = listenEvents.length;
+    const listenedSlugs = new Set(listenEvents.map((event) => event.audioSlug));
+
+    const passedQuizzes = await prisma.quizAttempt.findMany({
+      where: { userId, passed: true },
+      distinct: ["audioSlug"],
+      select: { audioSlug: true },
+    });
+    quizValidatedCount = passedQuizzes.length;
+    const passedSlugs = new Set(passedQuizzes.map((item) => item.audioSlug));
+
+    partsUnlocked = entriesByPart.filter((entry) =>
+      entry.items.length > 0 &&
+      entry.items.every((item) => passedSlugs.has(item.slug))
+    ).length;
+
+    progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
+  }
 
   return (
     <main className={styles.page}>
@@ -96,15 +138,15 @@ export default async function ParcoursPage() {
           </div>
           <div className={styles.milestones}>
             <div>
-              <strong>0</strong>
+              <strong>{listensCount}</strong>
               <span>ecoutes</span>
             </div>
             <div>
-              <strong>0</strong>
+              <strong>{quizValidatedCount}</strong>
               <span>quiz valides</span>
             </div>
             <div>
-              <strong>0</strong>
+              <strong>{partsUnlocked}</strong>
               <span>partie debloquee</span>
             </div>
           </div>
