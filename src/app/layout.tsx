@@ -15,7 +15,7 @@ const body = Atkinson_Hyperlegible({
 });
 
 export const metadata: Metadata = {
-  title: "Laurent SERRE, developpement",
+  title: "Laurent Serre Développement",
   description: "Web-app e-learning mobile pour la formation commerciale.",
 };
 
