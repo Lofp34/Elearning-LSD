@@ -1,0 +1,29 @@
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  color: #fff7ed;
+  background: linear-gradient(145deg, #ff6b4a, #d84f33);
+  box-shadow: 0 12px 24px rgba(216, 79, 51, 0.25);
+}
+
+.wordmark {
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.wordsub {
+  font-size: 0.85rem;
+  color: var(--muted);
+}

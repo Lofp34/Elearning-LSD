@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import BrandMark from "@/components/BrandMark";
 
 export const dynamic = "force-dynamic";
 
@@ -108,10 +109,12 @@ export default async function PartPage({ params }: { params: { part: string } })
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div>
-          <p className={styles.kicker}>Parcours</p>
-          <h1>{config.title}</h1>
-          <p className={styles.subtitle}>{config.subtitle}</p>
+        <div className={styles.headerMain}>
+          <BrandMark subtitle="Parcours" />
+          <div>
+            <h1>{config.title}</h1>
+            <p className={styles.subtitle}>{config.subtitle}</p>
+          </div>
         </div>
         <Link className={styles.back} href="/parcours">
           Retour

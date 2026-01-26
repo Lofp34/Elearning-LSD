@@ -15,12 +15,9 @@
   margin-bottom: 28px;
 }
 
-.kicker {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--forest);
-  margin-bottom: 10px;
+.headerMain {
+  display: grid;
+  gap: 14px;
 }
 
 .header h1 {

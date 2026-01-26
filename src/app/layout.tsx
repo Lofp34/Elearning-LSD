@@ -15,7 +15,7 @@ const body = Atkinson_Hyperlegible({
 });
 
 export const metadata: Metadata = {
-  title: "Antigravity Learning",
+  title: "Laurent SERRE, developpement",
   description: "Web-app e-learning mobile pour la formation commerciale.",
 };
 

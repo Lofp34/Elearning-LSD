@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import BrandMark from "@/components/BrandMark";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ export default async function ProgressionPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <h1>Progression</h1>
+        <BrandMark subtitle="Progression" />
         <Link className={styles.back} href="/parcours">
           Retour
         </Link>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
+import BrandMark from "@/components/BrandMark";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -120,13 +121,7 @@ export default async function ParcoursPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.brand}>
-          <div className={styles.logo}>AG</div>
-          <div>
-            <p className={styles.wordmark}>Parcours</p>
-            <p className={styles.wordsub}>Ton entrainement du jour</p>
-          </div>
-        </div>
+        <BrandMark subtitle="Parcours du jour" />
         <div className={styles.avatar}>LS</div>
       </header>
 

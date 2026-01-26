@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import BrandMark from "@/components/BrandMark";
 import styles from "./page.module.css";
 
 export default function ProfilPage() {
@@ -19,7 +20,7 @@ export default function ProfilPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <h1>Profil</h1>
+        <BrandMark subtitle="Profil" />
         <Link className={styles.back} href="/parcours">
           Retour
         </Link>

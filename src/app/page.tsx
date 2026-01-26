@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import BrandMark from "@/components/BrandMark";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -47,13 +48,7 @@ export default function Home() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.brand}>
-          <div className={styles.logo}>AG</div>
-          <div>
-            <p className={styles.wordmark}>Antigravity</p>
-            <p className={styles.wordsub}>E-learning mobile</p>
-          </div>
-        </div>
+        <BrandMark subtitle="E-learning mobile" />
         <div className={styles.badge}>Beta privee</div>
       </header>
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import BrandMark from "@/components/BrandMark";
 import { QUIZZES } from "@/data/quizzes";
 import styles from "./page.module.css";
 
@@ -107,10 +108,12 @@ export default function QuizPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div>
-          <p className={styles.kicker}>Quiz audio</p>
-          <h1>{quizData.title}</h1>
-          <p className={styles.subtitle}>5 questions pour valider l'audio.</p>
+        <div className={styles.headerMain}>
+          <BrandMark subtitle="Quiz audio" />
+          <div className={styles.headerText}>
+            <h1>{quizData.title}</h1>
+            <p className={styles.subtitle}>5 questions pour valider l'audio.</p>
+          </div>
         </div>
         <Link className={styles.back} href="/parcours">
           Retour

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import BrandMark from "@/components/BrandMark";
 import styles from "./page.module.css";
 
 export default function ConnexionPage() {
@@ -45,13 +46,7 @@ export default function ConnexionPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.brand}>
-          <div className={styles.logo}>AG</div>
-          <div>
-            <p className={styles.wordmark}>Connexion</p>
-            <p className={styles.wordsub}>Reprendre le parcours</p>
-          </div>
-        </div>
+        <BrandMark subtitle="Connexion" />
         <Link className={styles.back} href="/">
           Retour
         </Link>
