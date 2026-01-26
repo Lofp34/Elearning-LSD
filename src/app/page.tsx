@@ -20,6 +20,7 @@ export default function Home() {
     const payload = {
       firstName: String(formData.get("firstName") ?? ""),
       lastName: String(formData.get("lastName") ?? ""),
+      company: String(formData.get("company") ?? ""),
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
     };
@@ -133,6 +134,16 @@ export default function Home() {
                 placeholder="laurent@email.com"
                 autoComplete="email"
                 required
+              />
+            </label>
+            <label className={styles.field} htmlFor="company">
+              Entreprise
+              <input
+                id="company"
+                name="company"
+                type="text"
+                placeholder="Nom de l'entreprise"
+                autoComplete="organization"
               />
             </label>
             <label className={styles.field} htmlFor="password">

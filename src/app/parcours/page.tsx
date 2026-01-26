@@ -221,6 +221,9 @@ export default async function ParcoursPage() {
         <Link className={`${styles.navItem} ${styles.active}`} href="/parcours">
           Parcours
         </Link>
+        <Link className={styles.navItem} href="/leaderboard">
+          Classement
+        </Link>
         <Link className={styles.navItem} href="/progression">
           Progression
         </Link>

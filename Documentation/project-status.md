@@ -23,6 +23,7 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - Carte "A faire maintenant" adaptee au prochain audio a ecouter.
 - Page d'accueil plus pedagogique (explication du parcours).
 - Branding "Laurent SERRE, developpement" affiche avec le logo sur toutes les pages.
+- Page leaderboard par entreprise (ecoutes + quiz + sprint audio).
 
 ## Decisions prises
 - **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
@@ -55,3 +56,4 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - 2026-01-26: Carte "A faire maintenant" adaptee au prochain audio.
 - 2026-01-26: Page d'accueil rendue plus pedagogique.
 - 2026-01-26: Branding unifie sur toutes les pages.
+- 2026-01-26: Leaderboard par entreprise ajoute.

@@ -10,6 +10,7 @@ export async function POST(request: Request) {
     lastName?: string;
     email?: string;
     password?: string;
+    company?: string;
   } = {};
 
   if (request.headers.get("content-type")?.includes("application/json")) {
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
       lastName: String(formData.get("lastName") ?? ""),
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
+      company: String(formData.get("company") ?? ""),
     };
   }
 
@@ -28,6 +30,7 @@ export async function POST(request: Request) {
   const lastName = body.lastName?.trim();
   const email = body.email?.trim().toLowerCase();
   const password = body.password ?? "";
+  const company = body.company?.trim();
 
   if (!firstName || !lastName || !email || password.length < 8) {
     return NextResponse.json(
@@ -46,8 +49,9 @@ export async function POST(request: Request) {
     }
 
     const passwordHash = await hashPassword(password);
+    const fallbackCompany = email?.split("@")[1] ?? null;
     const user = await prisma.user.create({
-      data: { firstName, lastName, email, passwordHash },
+      data: { firstName, lastName, email, passwordHash, company: company || fallbackCompany },
     });
 
     const token = await createSessionToken({ userId: user.id, email: user.email });
