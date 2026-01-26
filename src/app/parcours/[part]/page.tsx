@@ -51,13 +51,14 @@ export default async function PartPage({ params }: { params: { part: string } })
   const { blobs } = await list({ prefix: config.prefix, limit: 200 });
   const items = blobs
     .map((blob) => {
-      const filename = blob.pathname.split("/").pop() ?? "";
-      return {
-        url: blob.url,
-        title: formatTitle(filename),
-        index: getIndex(filename),
-      };
-    })
+    const filename = blob.pathname.split("/").pop() ?? "";
+    return {
+      url: blob.url,
+      title: formatTitle(filename),
+      index: getIndex(filename),
+      slug: filename.replace(/\.mp3$/i, ""),
+    };
+  })
     .sort((a, b) => a.index - b.index);
 
   return (
@@ -93,12 +94,9 @@ export default async function PartPage({ params }: { params: { part: string } })
               </div>
               <audio controls preload="none" src={item.url} />
               <div className={styles.cardActions}>
-                <a className={styles.primary} href={item.url} target="_blank" rel="noreferrer">
-                  Ouvrir le fichier
-                </a>
-                <button className={styles.secondary} type="button">
+                <Link className={styles.primary} href={`/quiz/${item.slug}`}>
                   Lancer le quiz
-                </button>
+                </Link>
               </div>
             </article>
           ))
