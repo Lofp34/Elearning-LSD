@@ -73,26 +73,28 @@ export default async function ParcoursPage() {
   });
 
   const totalAudios = entriesByPart.reduce((acc, entry) => acc + entry.items.length, 0);
-  const nextEntry = entriesByPart.find((entry) => entry.items.length > 0);
-  const nextAudio = nextEntry?.items[0];
+  const allSlugs = entriesByPart.flatMap((entry) => entry.items.map((item) => item.slug));
+  let listenedSlugs = new Set<string>();
   let listensCount = 0;
   let quizValidatedCount = 0;
   let partsUnlocked = 0;
   let progressPct = 0;
 
-  if (userId) {
-    const listenEvents = await prisma.listenEvent.findMany({
-      where: { userId },
-      select: { audioSlug: true },
-    });
-    listensCount = listenEvents.length;
-    const listenedSlugs = new Set(listenEvents.map((event) => event.audioSlug));
+  if (userId && allSlugs.length > 0) {
+    const [listenEvents, passedQuizzes] = await Promise.all([
+      prisma.listenEvent.findMany({
+        where: { userId, audioSlug: { in: allSlugs } },
+        select: { audioSlug: true },
+      }),
+      prisma.quizAttempt.findMany({
+        where: { userId, passed: true, audioSlug: { in: allSlugs } },
+        distinct: ["audioSlug"],
+        select: { audioSlug: true },
+      }),
+    ]);
 
-    const passedQuizzes = await prisma.quizAttempt.findMany({
-      where: { userId, passed: true },
-      distinct: ["audioSlug"],
-      select: { audioSlug: true },
-    });
+    listensCount = listenEvents.length;
+    listenedSlugs = new Set(listenEvents.map((event) => event.audioSlug));
     quizValidatedCount = passedQuizzes.length;
     const passedSlugs = new Set(passedQuizzes.map((item) => item.audioSlug));
 
@@ -103,6 +105,17 @@ export default async function ParcoursPage() {
 
     progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
   }
+
+  const entriesWithProgress = entriesByPart.map((entry) => {
+    const listenedCount = entry.items.filter((item) => listenedSlugs.has(item.slug)).length;
+    const progress = entry.items.length > 0 ? Math.round((listenedCount / entry.items.length) * 100) : 0;
+    const nextItem = entry.items.find((item) => !listenedSlugs.has(item.slug));
+    return { ...entry, listenedCount, progress, nextItem };
+  });
+
+  const nextEntry = entriesWithProgress.find((entry) => entry.nextItem);
+  const nextAudio = nextEntry?.nextItem;
+  const hasAudios = totalAudios > 0;
 
   return (
     <main className={styles.page}>
@@ -155,11 +168,21 @@ export default async function ParcoursPage() {
         <div className={styles.nextCard}>
           <p className={styles.cardLabel}>A faire maintenant</p>
           <h3>
-            {nextEntry ? `${nextEntry.part.title} - ${nextAudio?.title}` : "Aucun audio"}
+            {nextAudio
+              ? `${nextEntry.part.title} - ${nextAudio.title}`
+              : hasAudios
+                ? "Parcours termine"
+                : "Aucun audio"}
           </h3>
-          <p>{nextEntry ? "Audio de demarrage" : "Importe tes audios"}</p>
+          <p>
+            {nextAudio
+              ? "Prochain audio a ecouter"
+              : hasAudios
+                ? "Bravo, tout est ecoute."
+                : "Importe tes audios"}
+          </p>
           <div className={styles.nextActions}>
-            {nextEntry ? (
+            {nextAudio ? (
               <Link className={styles.primary} href={`/parcours/${nextEntry.part.slug}`}>
                 Ecouter l'audio
               </Link>
@@ -178,7 +201,7 @@ export default async function ParcoursPage() {
       <section className={styles.tracks}>
         <h2>Mes parties</h2>
         <div className={styles.trackGrid}>
-          {entriesByPart.map(({ part, items }) => (
+          {entriesWithProgress.map(({ part, items, nextItem, progress }) => (
             <article key={part.title} className={styles.trackCard}>
               <div className={styles.trackHeader}>
                 <div className={styles.trackTitle}>
@@ -188,12 +211,12 @@ export default async function ParcoursPage() {
                 <span className={styles.trackDot} style={{ background: part.tone }} />
               </div>
               <p className={styles.trackNext}>
-                Prochain audio : {items[0]?.title ?? "Aucun audio"}
+                Prochain audio : {nextItem?.title ?? (items.length > 0 ? "Termine" : "Aucun audio")}
               </p>
               <div className={styles.progressBar}>
-                <span style={{ width: "0%" }} />
+                <span style={{ width: `${progress}%` }} />
               </div>
-              <p className={styles.trackProgress}>0% termine</p>
+              <p className={styles.trackProgress}>{progress}% termine</p>
               <Link className={styles.secondary} href={`/parcours/${part.slug}`}>
                 Ouvrir la partie
               </Link>
