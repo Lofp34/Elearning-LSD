@@ -260,32 +260,6 @@
   justify-content: center;
 }
 
-.nav {
-  position: fixed;
-  left: 16px;
-  right: 16px;
-  bottom: 16px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 999px;
-  background: rgba(255, 248, 239, 0.92);
-  border: 1px solid rgba(31, 27, 22, 0.12);
-  box-shadow: 0 12px 30px rgba(31, 27, 22, 0.15);
-  backdrop-filter: blur(10px);
-}
-
-.navItem {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.active {
-  color: #1f1b16;
-}
-
 @media (min-width: 900px) {
   .page {
     padding: 40px 80px 120px;
@@ -299,10 +273,4 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .nav {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    max-width: 420px;
-  }
 }

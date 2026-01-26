@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Atkinson_Hyperlegible, Fraunces } from "next/font/google";
+import BottomNav from "@/components/BottomNav";
 import "./globals.css";
 
 const display = Fraunces({
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`${display.variable} ${body.variable}`}>
         {children}
+        <BottomNav />
       </body>
     </html>
   );

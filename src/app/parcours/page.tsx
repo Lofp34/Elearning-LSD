@@ -217,20 +217,6 @@ export default async function ParcoursPage() {
         </div>
       </section>
 
-      <nav className={styles.nav}>
-        <Link className={`${styles.navItem} ${styles.active}`} href="/parcours">
-          Parcours
-        </Link>
-        <Link className={styles.navItem} href="/leaderboard">
-          Classement
-        </Link>
-        <Link className={styles.navItem} href="/progression">
-          Progression
-        </Link>
-        <Link className={styles.navItem} href="/profil">
-          Profil
-        </Link>
-      </nav>
     </main>
   );
 }
