@@ -107,17 +107,39 @@
   margin: 26px 0 30px;
 }
 
+.stepsTitle {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--forest);
+  margin: 20px 0 12px;
+}
+
 .highlights span {
   display: inline-block;
   font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 6px;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
 }
 
 .highlights p {
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.highlights > div {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 248, 239, 0.75);
+  border: 1px solid rgba(31, 27, 22, 0.12);
+  box-shadow: 0 12px 26px rgba(31, 27, 22, 0.08);
+}
+
+.pillars {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 0 0 24px;
 }
 
 .actions {

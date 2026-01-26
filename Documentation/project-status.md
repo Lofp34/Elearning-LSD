@@ -21,6 +21,7 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - Tracking progression (ecoutes completes + quiz valides) + APIs.
 - Affichage statut audio + score quiz sur les cartes de parcours.
 - Carte "A faire maintenant" adaptee au prochain audio a ecouter.
+- Page d'accueil plus pedagogique (explication du parcours).
 
 ## Decisions prises
 - **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
@@ -51,3 +52,4 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - 2026-01-26: Tracking ecoute/quiz et affichage progression ajoute.
 - 2026-01-26: Statuts d'audio et scores de quiz affiches par carte.
 - 2026-01-26: Carte "A faire maintenant" adaptee au prochain audio.
+- 2026-01-26: Page d'accueil rendue plus pedagogique.

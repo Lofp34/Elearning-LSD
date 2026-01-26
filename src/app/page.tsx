@@ -61,29 +61,34 @@ export default function Home() {
         <div className={styles.copy}>
           <p className={styles.kicker}>Bienvenue</p>
           <h1>
-            Transforme la rigueur commerciale en habitudes simples et
-            mesurables.
+            Un parcours clair, etape par etape, pour ancrer les reflexes
+            commerciaux.
           </h1>
           <p className={styles.lead}>
-            Parcours audio court, quiz instantanes et suivi clair de la
-            progression. Un seul objectif : ancrer les fondamentaux terrain en
-            10 minutes par jour.
+            Ici, tu avances en trois gestes simples : ecouter un audio court,
+            repondre a un quiz rapide, puis voir ta progression. Tout est pense
+            pour tenir en 10 minutes par jour, a ton rythme.
           </p>
 
+          <p className={styles.stepsTitle}>Comment ca se passe</p>
           <div className={styles.highlights}>
             <div>
-              <span>15 audios</span>
-              <p>3 parties, format court, repetition productive.</p>
+              <span>1. Ecouter l'audio</span>
+              <p>Un format court (7-10 min) pour rester concentre.</p>
             </div>
             <div>
-              <span>Quiz immediats</span>
-              <p>Score, seuil de reussite, recommandations.</p>
+              <span>2. Repondre au quiz</span>
+              <p>5 questions pour fixer l'essentiel, note immediate.</p>
             </div>
             <div>
-              <span>Suivi simple</span>
-              <p>Progression visible, prochaine action evidente.</p>
+              <span>3. Suivre ta progression</span>
+              <p>Prochaine etape suggeree, avancee visible.</p>
             </div>
           </div>
+          <p className={styles.pillars}>
+            3 piliers : Mental, Pyramide de la vente, Techniques. Tu avances
+            dans l'ordre, sans pression.
+          </p>
 
           <div className={styles.actions}>
             <a className={styles.primary} href="#inscription">
@@ -99,7 +104,8 @@ export default function Home() {
           <p className={styles.formTag}>Demarrage rapide</p>
           <h2>Creer un compte</h2>
           <p className={styles.formIntro}>
-            Quelques informations pour sauvegarder ta progression.
+            Quelques informations pour sauvegarder ta progression. Pas de carte
+            bancaire.
           </p>
           <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.grid}>
