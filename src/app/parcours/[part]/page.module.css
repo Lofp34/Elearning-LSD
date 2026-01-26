@@ -101,6 +101,30 @@
   gap: 10px;
 }
 
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: rgba(31, 27, 22, 0.08);
+  color: var(--muted);
+}
+
+.badgeSuccess {
+  background: rgba(47, 95, 89, 0.12);
+  color: #1f5b52;
+}
+
+.badgeWarning {
+  background: rgba(255, 107, 74, 0.15);
+  color: #9b3b28;
+}
+
 .primary {
   border-radius: 999px;
   padding: 10px 16px;

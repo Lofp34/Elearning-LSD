@@ -11,7 +11,19 @@ type AudioItem = {
   slug: string;
 };
 
-export default function AudioCard({ item, accent }: { item: AudioItem; accent: string }) {
+type QuizResult = { score: number; total: number; passed: boolean };
+
+export default function AudioCard({
+  item,
+  accent,
+  listened,
+  quizResult,
+}: {
+  item: AudioItem;
+  accent: string;
+  listened: boolean;
+  quizResult?: QuizResult;
+}) {
   const sentRef = useRef(false);
 
   async function markComplete() {
@@ -55,6 +67,24 @@ export default function AudioCard({ item, accent }: { item: AudioItem; accent: s
         onTimeUpdate={handleTimeUpdate}
         onEnded={markComplete}
       />
+      <div className={styles.statusRow}>
+        {listened ? (
+          <span className={`${styles.badge} ${styles.badgeSuccess}`}>Ecoutee</span>
+        ) : (
+          <span className={styles.badge}>A ecouter</span>
+        )}
+        {quizResult ? (
+          <span
+            className={`${styles.badge} ${
+              quizResult.passed ? styles.badgeSuccess : styles.badgeWarning
+            }`}
+          >
+            Quiz: {quizResult.score}/{quizResult.total}
+          </span>
+        ) : (
+          <span className={styles.badge}>Quiz non fait</span>
+        )}
+      </div>
       <div className={styles.cardActions}>
         <Link className={styles.primary} href={`/quiz/${item.slug}`}>
           Lancer le quiz

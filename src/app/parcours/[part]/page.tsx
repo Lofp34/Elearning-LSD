@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AudioCard from "./AudioCard";
 import styles from "./page.module.css";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
+import { verifySessionToken } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -49,11 +52,23 @@ export default async function PartPage({ params }: { params: { part: string } })
     notFound();
   }
 
+  const token = (await cookies()).get("ag_session")?.value;
+  let userId: string | null = null;
+
+  if (token) {
+    try {
+      const payload = await verifySessionToken(token);
+      userId = payload.sub ?? null;
+    } catch {
+      userId = null;
+    }
+  }
+
   const { blobs } = await list({ prefix: config.prefix, limit: 200 });
   const items = blobs
     .map((blob) => {
-    const filename = blob.pathname.split("/").pop() ?? "";
-    return {
+      const filename = blob.pathname.split("/").pop() ?? "";
+      return {
       url: blob.url,
       title: formatTitle(filename),
       index: getIndex(filename),
@@ -61,6 +76,34 @@ export default async function PartPage({ params }: { params: { part: string } })
     };
   })
     .sort((a, b) => a.index - b.index);
+
+  let listened = new Set<string>();
+  const quizMap = new Map<string, { score: number; total: number; passed: boolean }>();
+
+  if (userId && items.length > 0) {
+    const slugs = items.map((item) => item.slug);
+    const listenEvents = await prisma.listenEvent.findMany({
+      where: { userId, audioSlug: { in: slugs } },
+      select: { audioSlug: true },
+    });
+    listened = new Set(listenEvents.map((event) => event.audioSlug));
+
+    const quizAttempts = await prisma.quizAttempt.findMany({
+      where: { userId, audioSlug: { in: slugs } },
+      orderBy: { createdAt: "desc" },
+      select: { audioSlug: true, score: true, total: true, passed: true },
+    });
+
+    for (const attempt of quizAttempts) {
+      if (!quizMap.has(attempt.audioSlug)) {
+        quizMap.set(attempt.audioSlug, {
+          score: attempt.score,
+          total: attempt.total,
+          passed: attempt.passed,
+        });
+      }
+    }
+  }
 
   return (
     <main className={styles.page}>
@@ -83,7 +126,13 @@ export default async function PartPage({ params }: { params: { part: string } })
           </div>
         ) : (
           items.map((item) => (
-            <AudioCard key={item.url} item={item} accent={config.accent} />
+            <AudioCard
+              key={item.url}
+              item={item}
+              accent={config.accent}
+              listened={listened.has(item.slug)}
+              quizResult={quizMap.get(item.slug)}
+            />
           ))
         )}
       </section>

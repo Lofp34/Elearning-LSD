@@ -19,6 +19,7 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - Pages Parcours detaillees (liste audios par partie) + placeholders progression/profil.
 - Quizz audio statiques (5 questions) et page quiz par audio.
 - Tracking progression (ecoutes completes + quiz valides) + APIs.
+- Affichage statut audio + score quiz sur les cartes de parcours.
 
 ## Decisions prises
 - **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
@@ -47,3 +48,4 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - 2026-01-26: Pages Parcours detaillees + pages Progression/Profil ajoutees.
 - 2026-01-26: Quizz audio statiques ajoutes (par audio).
 - 2026-01-26: Tracking ecoute/quiz et affichage progression ajoute.
+- 2026-01-26: Statuts d'audio et scores de quiz affiches par carte.
