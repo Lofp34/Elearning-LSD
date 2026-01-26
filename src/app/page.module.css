@@ -222,7 +222,20 @@
   font-size: 0.95rem;
 }
 
+.field select {
+  border-radius: 12px;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  padding: 12px 14px;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
 .field input:focus-visible {
+  outline: 2px solid rgba(255, 107, 74, 0.35);
+  border-color: rgba(255, 107, 74, 0.6);
+}
+
+.field select:focus-visible {
   outline: 2px solid rgba(255, 107, 74, 0.35);
   border-color: rgba(255, 107, 74, 0.6);
 }

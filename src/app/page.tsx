@@ -138,13 +138,9 @@ export default function Home() {
             </label>
             <label className={styles.field} htmlFor="company">
               Entreprise
-              <input
-                id="company"
-                name="company"
-                type="text"
-                placeholder="Nom de l'entreprise"
-                autoComplete="organization"
-              />
+              <select id="company" name="company" autoComplete="organization" required>
+                <option value="Audition Conseil 66">Audition Conseil 66</option>
+              </select>
             </label>
             <label className={styles.field} htmlFor="password">
               Mot de passe
