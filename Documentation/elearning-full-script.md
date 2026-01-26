@@ -1,653 +1,575 @@
 # E-learning 1 - Video 1: Posture de service
 
 Objectif
-- Passer d'une logique de persuasion a une logique d'aide.
+- Passer d'une logique de persuasion à une logique d'aide.
 - Installer une posture qui rassure et engage le client.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-L'etat d'esprit de vente commence par une idee simple: vous n'etes pas la pour convaincre, mais pour aider a decider.
+Bonjour. Vous savez, l'état d'esprit dans la vente, ça commence souvent par un déclic tout simple : se dire qu'on n'est pas là pour "placer" un appareil à tout prix, mais vraiment pour aider son client à prendre la meilleure décision possible.
 
-[Point 1 - Vente = accompagnement - 2min]
-Votre role est de clarifier, pas de forcer.
-Quand le client sent que vous l'aidez a choisir, il baisse sa defense.
+[Vente = accompagnement - 2min]
+Imaginez-vous plutôt comme un expert qui accompagne. Votre rôle, c'est de clarifier les options, pas de mettre la pression pour un modèle spécifique. Et c'est là que la confiance s'installe : dès que votre patient sent que vous êtes vraiment focalisé sur sa gêne auditive et son quotidien, ses réticences face à l'appareillage tombent tout naturellement.
 
-[Point 2 - L'intention visible - 2min]
-Une intention claire se voit dans vos mots:
-- "Je veux comprendre avant de proposer."
-- "Si ce n'est pas adapte, je vous le dirai."
-Cela cree une confiance immediate.
+[L'intention visible - 2min]
+Et pour que ça marche, il faut que votre intention soit limpide dès les premières minutes. Ça doit transparaître dans vos mots. Par exemple, n'hésitez pas à poser les choses clairement : « Écoutez, mon but aujourd'hui c'est d'abord de comprendre dans quelles situations vous êtes gêné avant de vous proposer une solution. Et si je vois que ce n'est pas adapté, je vous le dirai franchement. » Cette franchise, elle crée une alliance thérapeutique immédiate.
 
-[Point 3 - La neutralite active - 2min]
-Vous guidez l'echange, mais vous acceptez le non.
-Cette neutralite donne de la credibilite a vos recommandations.
+[La neutralité active - 2min]
+C'est ce que j'appelle la neutralité active. Vous menez l'échange, vous guidez le patient grâce à votre expertise, mais attention : vous devez être prêt à accepter qu'il ne soit pas encore prêt. Pourquoi ? Parce que c'est justement cette capacité à respecter son rythme qui donne tout son poids et toute sa crédibilité à vos futures recommandations.
 
 [Mini exemple - 1min]
-Immobilier: "Mon but n'est pas de vous faire signer, mais de voir si ce bien correspond vraiment a votre projet."
+Prenons un exemple concret en cabine. Au lieu de parler technique tout de suite, vous pourriez dire : « Mon but aujourd'hui, ce n'est pas de vous faire signer un devis, c'est de vérifier ensemble, grâce aux tests et à notre échange, si une aide auditive peut réellement améliorer votre confort au quotidien. » Vous voyez la différence ? On n'est plus dans la transaction, on est dans le soin et le conseil pur.
 
-[Cloture - 20s]
-Prochaine video: la confiance en soi sans arrogance.
+[Clôture - 20s]
+Voilà pour cette première étape sur la posture. Dans la prochaine vidéo, on va voir comment cultiver une vraie confiance en soi en tant qu'expert, tout en restant serein face au patient. À tout de suite !
 
 Fin.
+
+
+---
+
+
 # E-learning 1 - Video 2: Confiance calme
 
 Objectif
 - Afficher de la confiance sans surjouer.
-- Eviter le stress qui se transmet au client.
+- Éviter le stress qui se transmet au client.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-La confiance n'est pas du bruit. C'est du calme. Et le client le ressent tout de suite.
+Bonjour. Vous savez, la confiance, ce n'est pas forcément faire beaucoup de bruit. En fait, c'est tout le contraire : c'est une question de calme. Et ce calme, votre client le ressent immédiatement.
 
-[Point 1 - Les 3 signaux de confiance - 2min]
-1) Un rythme de parole stable.
-2) Des phrases courtes et claires.
-3) La capacite a dire "je ne sais pas, je verifie".
-Cela rend votre discours credible.
+[Les 3 signaux de confiance - 2min]
+Il y a trois signaux qui ne trompent pas. D'abord, gardez un rythme de parole stable, sans vous presser. Ensuite, privilégiez des phrases courtes et limpides. Et enfin, n'ayez pas peur de dire : « Écoutez, je ne sais pas, mais je vérifie et je reviens vers vous. » C'est justement ça qui rend votre discours crédible.
 
-[Point 2 - Gagner sa propre confiance - 2min]
-Avant l'entretien:
-- Se rappeler 2 cas clients reussis.
-- Fixer un objectif simple: comprendre et aider.
-Pendant l'entretien:
-- Respirer et ralentir les transitions.
+[Gagner sa propre confiance - 2min]
+Mais alors, comment on gagne cette confiance avant même de commencer ? Mon conseil, c'est de vous remémorer deux cas clients où vous avez vraiment réussi. Fixez-vous un objectif tout simple : comprendre et aider. Et pendant l'échange, pensez à respirer et à ralentir vos transitions.
 
-[Point 3 - La confiance qui se partage - 2min]
-Quand vous etes calme, le client se detend et se livre.
-C'est une condition essentielle pour une bonne decouverte.
+[La confiance qui se partage - 2min]
+Vous verrez, quand vous êtes serein, votre client se détend, il s'ouvre et il se livre beaucoup plus facilement. Et c'est cette atmosphère de confiance qui est la condition essentielle pour mener une bonne phase de découverte.
 
 [Mini exemple - 1min]
-Audioprothese: "Je ne peux pas garantir un resultat identique a tous, mais je peux vous expliquer exactement le protocole et le suivi."
+Prenons un exemple dans l'audioprothèse. Vous pourriez dire : « Je ne peux pas vous garantir un résultat identique pour tout le monde, mais je peux vous expliquer précisément notre protocole et comment nous allons vous suivre. »
 
-[Cloture - 20s]
-Prochaine video: gestion du rejet et resilience.
+[Clôture - 20s]
+On avance bien ! Dans la prochaine vidéo, on abordera un sujet parfois difficile : la gestion du rejet et la résilience. À tout de suite.
 
 Fin.
-# E-learning 1 - Video 3: Resilience et rejet
+
+
+---
+
+
+# E-learning 1 - Video 3: Résilience et rejet
 
 Objectif
-- Mieux vivre les non sans perdre l'energie commerciale.
+- Mieux vivre les « non » sans perdre l'énergie commerciale.
 - Transformer un refus en apprentissage rapide.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-En vente, le non n'est pas un echec. C'est un signal. L'etat d'esprit consiste a l'utiliser sans se laisser atteindre.
+Bonjour. Vous savez, en centre, un « non », ce n'est jamais un échec personnel. C'est simplement un signal. Tout l'enjeu, c'est d'apprendre à utiliser ce signal sans se laisser atteindre émotionnellement.
 
-[Point 1 - Le non n'est pas contre vous - 2min]
-Le client refuse une option, pas votre valeur.
-Cette separation protege votre motivation et votre professionnalisme.
+[Le non n'est pas contre vous - 2min]
+Quand un patient refuse un appareillage ou une option que vous proposez, il ne rejette pas votre compétence ou votre valeur. Il exprime souvent une peur, un manque de préparation ou une priorité différente à l'instant T. Arriver à faire cette distinction, c'est ce qui va protéger votre motivation et vous permettre de rester un professionnel bienveillant tout au long de la journée.
 
-[Point 2 - La boucle courte - 2min]
-Apres un non, posez une question courte:
-- "Qu'est-ce qui a pesé dans votre decision?"
-Cela vous donne un apprentissage concret.
+[La boucle courte - 2min]
+L'astuce, après un refus, c'est de garder ce que j'appelle une "boucle courte". N'hésitez pas à poser une question simple pour comprendre : « Qu'est-ce qui pèse le plus dans votre décision aujourd'hui ? » Cette petite phrase, elle change tout. Elle transforme un rejet frustrant en un apprentissage concret sur les freins de votre patient.
 
-[Point 3 - Repartir vite - 2min]
-Notez une lecon, passez au suivant.
-La resilience, c'est la vitesse de retour a l'action.
+[Repartir vite - 2min]
+La résilience, c'est la vitesse à laquelle vous revenez à l'action. Notez mentalement la leçon apprise, et passez au patient suivant avec l'esprit frais. Chaque échange est une nouvelle chance d'aider quelqu'un.
 
 [Mini exemple - 1min]
-Immobilier: "Je comprends. Est-ce que c'est le prix, le delai, ou le type de bien qui ne convient pas?"
+Imaginez, un patient hésite après le test. Vous pourriez lui dire : « Je comprends tout à fait vos doutes. Est-ce que c'est plutôt l'aspect esthétique, le budget ou l'idée même de porter quelque chose qui vous fait hésiter ? » En posant cette question, vous restez son allié, même s'il ne signe pas tout de suite.
 
-[Cloture - 20s]
-Prochaine video: l'ethique et la durabilite de la relation.
+[Clôture - 20s]
+On apprend de chaque situation. Dans la prochaine vidéo, on va parler d'un pilier essentiel pour durer : l'éthique et comment elle construit une relation de confiance sur le long terme. À tout de suite.
 
 Fin.
-# E-learning 1 - Video 4: Ethique et confiance long terme
+
+
+---
+
+
+# E-learning 1 - Video 4: Éthique et confiance long terme
 
 Objectif
 - Vendre sans forcer, pour construire une relation durable.
-- Proteger la reputation et la recommandation.
+- Protéger la réputation et la recommandation.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-L'ethique n'est pas un bonus. C'est un accelerateur de confiance et de recommandation.
+Bonjour. Vous le savez sans doute, dans votre métier, l'éthique n'est pas une contrainte, c'est un véritable accélérateur. C'est elle qui va transformer un patient d'un jour en un ambassadeur de votre centre pour les années à venir.
 
-[Point 1 - Dire non quand il le faut - 2min]
-Dire non a un client mal cible protege votre credibilite.
-Un refus bien explique est souvent mieux percu qu'une vente forcee.
+[Dire non quand il le faut - 2min]
+Être éthique, c'est parfois avoir le courage de dire « non ». Si vous estimez qu'un patient n'est pas encore prêt ou que le bénéfice d'un appareillage serait trop faible par rapport à ses attentes, le lui dire franchement va booster votre crédibilité. Un refus bien expliqué et honnête est toujours mieux perçu qu'une vente forcée qui finira par une déception et un tiroir qui reste fermé.
 
-[Point 2 - Clarifier les limites - 2min]
-Expliquez ce que vous pouvez faire et ce que vous ne pouvez pas faire.
-Le client se sent respecte et en securite.
+[Clarifier les limites - 2min]
+L'idée, c'est d'être transparent sur ce que la technologie peut faire, mais aussi sur ce qu'elle ne peut pas faire. Quand vous clarifiez les limites, votre patient se sent respecté et en sécurité. Il sait qu'il peut vous faire confiance parce que vous ne lui promettez pas la lune, mais un résultat concret et réaliste.
 
-[Point 3 - L'effet long terme - 2min]
-Une vente propre cree des retours positifs:
-- Recommandations
-- Re-achat
-- Confiance dans la marque
+[L'effet long terme - 2min]
+C'est ce cercle vertueux qui crée de la valeur sur le long terme. Une vente propre, faite dans les règles de l'art, amène naturellement des recommandations spontanées de la part des proches, des ré-achats fidèles et, surtout, une confiance inébranlable dans votre expertise et votre enseigne.
 
 [Mini exemple - 1min]
-Audioprothese: "Si votre attente est d'entendre parfaitement dans un concert, ce n'est pas realiste. En revanche, on peut vraiment ameliorer vos reunions et votre quotidien."
+En cabine, ça peut donner ceci : « Écoutez, si votre attente est de retrouver une audition parfaite en plein milieu d'un concert rock, je préfère être honnête, ce n'est pas réaliste. En revanche, ce que je peux vous garantir, c'est qu'on peut considérablement améliorer votre confort lors de vos réunions de famille et dans votre quotidien. »
 
-[Cloture - 20s]
-Prochaine video: discipline et regularite mentale.
+[Clôture - 20s]
+L'éthique, c'est votre meilleure alliée. Dans la prochaine vidéo, on terminera ce premier module en parlant de discipline et de la gestion de votre énergie au quotidien. À tout de suite.
 
 Fin.
-# E-learning 1 - Video 5: Discipline et energie
+
+
+---
+
+
+# E-learning 1 - Video 5: Discipline et énergie
 
 Objectif
-- Maintenir un niveau d'energie stable sur la duree.
-- Eviter les montagnes russes emotionnelles.
+- Maintenir un niveau d'énergie stable sur la durée.
+- Éviter les montagnes russes émotionnelles.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-L'etat d'esprit, c'est aussi de l'hygiene mentale. Une bonne discipline protege votre energie commerciale.
+Bonjour. Pour clore ce module sur l'état d'esprit, on va parler d'un sujet souvent négligé mais crucial : votre hygiène mentale. Une bonne discipline, c'est ce qui va protéger votre énergie tout au long de vos rendez-vous.
 
-[Point 1 - Les routines simples - 2min]
-Avant la journee:
-- 5 minutes de preparation mentale.
-- 1 objectif clair pour la journee.
-Apres la journee:
-- 2 points d'apprentissage.
-- 1 action d'amelioration.
+[Les routines simples - 2min]
+Tout commence par des routines très simples. Avant d'attaquer votre première consultation de la journée, prenez 5 minutes de préparation mentale. Fixez-vous un objectif clair pour la journée, par exemple : « Aujourd'hui, je reste focalisé sur la qualité de mon écoute active ». Et le soir, avant de quitter le centre, notez deux choses que vous avez apprises et une action que vous pourriez améliorer demain. C'est comme ça qu'on progresse, petit à petit.
 
-[Point 2 - Les micro-pauses - 2min]
-Des pauses courtes entre deux entretiens evitent la saturation.
-Elles aident a repartir avec le meme niveau d'attention.
+[Les micro-pauses - 2min]
+On le sait, les journées en centre peuvent être denses. L'idée, c'est de s'accorder des micro-pauses régulières, même très courtes, entre deux patients. Ça vous permet d'éviter la saturation et de repartir avec le même niveau d'attention et de bienveillance pour le patient suivant. Ne sous-estimez jamais le pouvoir d'une respiration profonde entre deux cabines.
 
-[Point 3 - Le focus sur le processus - 2min]
-Se concentrer sur les actions controllables:
-- nombre d'entretiens
-- qualite de la decouverte
-- suivi des engagements
-Le resultat suit le processus.
+[Le focus sur le processus - 2min]
+Enfin, l'astuce pour garder le moral, c'est de vous concentrer sur ce que vous maîtrisez : votre processus. Ne jugez pas votre journée uniquement sur le nombre de devis signés. Regardez plutôt la qualité de vos accueils, la précision de votre phase de découverte et le suivi de vos engagements. Si vous soignez le processus, les résultats viendront naturellement, sans stress inutile.
 
 [Mini exemple - 1min]
-Immobilier: "Je me fixe 2 entretiens qualitatifs par jour, peu importe le resultat."
+Concrètement, au lieu de vous mettre la pression, vous pourriez vous dire : « Aujourd'hui, je m'assure de mener deux anamnèses vraiment complètes et qualitatives, quel que soit le résultat final. » C'est ce focus sur l'excellence du geste qui fait de vous un grand professionnel.
 
-[Cloture - 20s]
-Vous avez les bases de l'etat d'esprit. Prochaine etape: la structure de l'entretien de vente.
+[Clôture - 20s]
+Voilà, vous avez maintenant les bases d'un état d'esprit solide pour réussir. On se retrouve très vite pour le deuxième module, où l'on va s'attaquer à la structure même de votre entretien de vente. À tout de suite.
 
 Fin.
+
+
+---
+
+
 # E-learning 2 - Video 1: La pyramide de vente et la structuration
 
 Objectif
-- Expliquer pourquoi une vente structuree augmente la confiance, la clarte et le taux de conversion.
-- Donner la carte globale: prise de contact -> decouverte -> argumentation -> objections -> closing.
+- Expliquer pourquoi une vente structurée augmente la confiance, la clarté et le taux de conversion.
+- Donner la carte globale : prise de contact -> découverte -> argumentation -> objections -> closing.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-Bonjour et bienvenue. Dans ce module, on va parler de structure. Pas de process rigide, mais d'une structure simple qui rassure vos clients et vous rend plus efficace.
+Bonjour. Dans ce deuxième module, on va parler de structure. L'idée ici, ce n'est pas de suivre un processus rigide ou mécanique, mais de s'appuyer sur une structure simple qui va rassurer vos patients et vous rendre beaucoup plus efficace en cabine.
 
-[Point 1 - Pourquoi structurer - 2min]
-Quand un client percoit de la structure, il percoit plusieurs choses:
-1) L'echange est plus clair, plus fluide et plus comprehensible.
-2) Vous etes organise, donc professionnel.
-3) L'echange parait plus naturel et plus simple a suivre.
-Sans structure, la discussion part dans tous les sens, et la confiance baisse.
-La structure sert donc a creer un cadre clair et a proteger la qualite de la relation.
+[Pourquoi structurer - 2min]
+Vous savez, quand un patient perçoit que l'échange est structuré, il se sent tout de suite entre les mains d'un professionnel. La structure apporte de la clarté, l'échange devient plus fluide et surtout, il paraît beaucoup plus naturel. Sans ce cadre, la discussion peut vite partir dans tous les sens, ce qui fait chuter la confiance. En fait, la structure sert à créer un environnement sécurisant pour protéger la qualité de votre relation avec le patient.
 
-[Point 2 - La pyramide de vente - 2min]
-Voici la pyramide simple:
-- Prise de contact: creer la confiance et cadrer l'echange.
-- Decouverte: comprendre la situation et mesurer la motivation.
-- Argumentation: relier les besoins a la valeur.
-- Objections: traiter les freins sans casser la relation.
-- Closing: conclure naturellement.
-Chaque etape prepare la suivante. Si on saute une etape, le client le sent.
+[La pyramide de vente - 2min]
+Pour cela, on utilise une pyramide simple. D'abord, la prise de contact pour créer la confiance et cadrer l'échange. Ensuite, la découverte, c'est le moment du diagnostic pour comprendre la situation et mesurer la motivation. Vient après l'argumentation, où l'on relie les besoins du patient à la valeur de votre solution. Puis, le traitement des objections pour lever les derniers freins. Et enfin, le closing pour conclure naturellement. Chaque étape prépare la suivante. Si vous en sautez une, le patient le sentira.
 
-[Point 3 - La logique d'escalier - 2min]
-Pensez a un escalier. On ne saute pas trois marches.
-Si la prise de contact est faible, la decouverte sera defensive.
-Si la decouverte est floue, l'argumentation sera generique.
-Si l'argumentation est generique, les objections explosent.
-Si les objections ne sont pas traitees, le closing est force.
+[La logique d'escalier - 2min]
+Pensez-y comme à un escalier : on ne peut pas sauter trois marches d'un coup. Si votre prise de contact est faible, le patient restera sur la défensive pendant la découverte. Si votre découverte est floue, votre argumentation sera trop générique. Et si l'argumentation est générique, les objections vont exploser. C'est pour ça que bien traiter chaque étape est la clé d'un closing réussi et sans effort.
 
 [Mini exemple - 1min]
-Exemple immobilier: un client arrive avec une demande de visite. Si vous cadrez bien l'entretien, vous montrez que vous connaissez le marche et que vous allez le guider. La suite devient plus simple.
-Exemple audioprothese: si vous clarifiez l'objectif et le parcours, le client se sent en securite et accepte de se livrer.
+Prenons un exemple concret : si vous clarifiez dès le départ l'objectif de la séance et le parcours que vous allez suivre ensemble, votre patient se sent immédiatement en sécurité. Il acceptera de se livrer beaucoup plus facilement sur ses difficultés quotidiennes parce qu'il sait exactement où vous l'emmenez.
 
-[Cloture - 20s]
-Dans la prochaine video, on plonge dans la prise de contact. C'est la fondation de toute la vente.
+[Clôture - 20s]
+On a maintenant notre carte globale. Dans la prochaine vidéo, on va plonger dans la première étape : la prise de contact. C'est la fondation de tout votre entretien. À tout de suite.
 
 Fin.
-# E-learning 2 - Video 2: Prise de contact et creation de confiance
+
+
+---
+
+
+# E-learning 2 - Video 2: Prise de contact et création de confiance
 
 Objectif
-- Poser un cadre qui genere confiance humaine, organisation, structuration et valeur metier.
-- Installer la transition vers la decouverte.
+- Poser un cadre qui génère confiance humaine, organisation, structuration et valeur métier.
+- Installer la transition vers la découverte.
 
-Duree cible
-- 7 a 9 minutes
+Durée cible
+- 7 à 9 minutes
 
 Script
 
 [Ouverture - 20s]
-La prise de contact n'est pas une formalite. C'est le moment ou le client decide si vous etes digne de confiance.
+Bonjour. Vous le savez, en centre, la prise de contact n'est pas une simple formalité. C'est le moment décisif où votre patient va choisir, inconsciemment, s'il peut vous confier son audition et sa qualité de vie.
 
-[Point 1 - Les 6 etapes de la prise de contact - 3min]
-Voici la structure simple:
-1) Bris de glace
-2) Cadre
-3) Plan
-4) Timing
-5) Validation
-6) Pitch en 3 etapes
-Cette structure montre que vous etes humain, organise et maitre du sujet.
+[Les 6 étapes de la prise de contact - 3min]
+Pour réussir ce moment, je vous propose une structure simple en six étapes : le bris de glace pour l'humain, le cadre pour l'objectif, le plan pour la clarté, le timing pour le respect de son temps, la validation pour l'accord mutuel et enfin votre pitch d'expert. Suivre cet enchaînement montre que vous êtes à la fois empathique, parfaitement organisé et maître de votre sujet.
 
-[Point 2 - Bris de glace - 2min]
-Bris de glace: quelques mots sincères qui etablissent la proximite.
-Si vous n'avez rien de sophistique a dire, respectez au moins la convention sociale, cela envoie un signal positif.
-Exemple: "Bonjour, merci d'avoir pris le temps. J'espere que tout va bien de votre cote."
+[Bris de glace - 2min]
+Le bris de glace, ce sont ces quelques mots sincères qui établissent la proximité. Pas besoin de faire compliqué : si vous n'avez rien de particulier à dire, respectez simplement les conventions sociales avec un vrai sourire. Dites par exemple : « Bonjour ! Merci d'être venu aujourd'hui. J'espère que vous avez trouvé facilement notre centre ? ». C'est un signal positif envoyé au patient.
 
-[Point 3 - Cadre, plan, timing, validation - 2min]
-Cadre: pourquoi on est la et a quoi sert l'entretien.
-Plan: vous annoncez les grandes etapes.
-Timing: vous indiquez la duree et demandez l'accord.
-Validation: vous obtenez un oui clair.
-Exemple: "L'objectif est de comprendre votre situation pour voir si nous pouvons vous aider. Je vous propose 30 minutes, d'abord je comprends votre contexte, ensuite je vous partage une solution possible. Ca vous va?"
+[Cadre, plan, timing, validation - 2min]
+Ensuite, on pose le cadre. Expliquez pourquoi on est là : l'objectif est de comprendre sa gêne pour voir comment l'aider. Annoncez le plan : d'abord on discute de son contexte, puis on fait les tests, et enfin on voit les solutions. Donnez le timing : « On va passer environ 45 minutes ensemble ». Et surtout, demandez sa validation : « Est-ce que ce programme vous convient ? ». Obtenir ce premier « oui » est fondamental.
 
-[Point 4 - Pitch en 3 etapes (moins d'une minute) - 2min]
-Etape 1: enjeux clients habituels.
-Etape 2: solution que vous apportez.
-Etape 3: forces mises a disposition et benefices clients.
-C'est un pitch court qui vous positionne comme specialiste metier, pas comme vendeur insistant.
+[Pitch en 3 étapes - 2min]
+Pour finir, votre pitch d'expert doit être court. Évoquez les enjeux habituels de vos patients, la solution globale que vous apportez et vos forces en tant qu'audioprothésiste. Ce n'est pas un discours de vendeur, c'est une présentation qui vous positionne comme un spécialiste à son écoute.
 
-[Transition vers la decouverte - 40s]
-La prise de contact se termine par la premiere question de decouverte.
-L'objectif est d'eviter la decouverte inversee ou le client vous interroge.
-Exemple: "Avant de parler des options, qu'est-ce qui vous a pousse a nous contacter aujourd'hui?"
+[Transition vers la découverte - 40s]
+Une bonne prise de contact se termine toujours par la première question de découverte. L'idée est de prendre la main pour éviter que ce soit le patient qui vous interroge dès le début. Vous pouvez dire : « Avant de regarder vos examens ou de parler technique, qu'est-ce qui vous a poussé à prendre rendez-vous aujourd'hui ? ».
 
-[Cloture - 20s]
-Dans la prochaine video, on voit la decouverte: comprendre et mesurer la motivation.
+[Clôture - 20s]
+Voilà, le cadre est posé. Dans la prochaine vidéo, on va entrer dans le vif du sujet avec la phase de découverte : comment poser les bonnes questions pour comprendre et mesurer la motivation de votre patient. À tout de suite.
 
 Fin.
-# E-learning 2 - Video 3: Decouverte (comprendre, mesurer, developper)
+
+
+---
+
+
+# E-learning 2 - Video 3: Découverte (comprendre, mesurer, développer)
 
 Objectif
-- Conduire une decouverte utile: contexte, enjeux, priorite.
+- Conduire une découverte utile : contexte, enjeux, priorité.
 - Mesurer la motivation et la faire progresser.
 
-Duree cible
-- 7 a 9 minutes
+Durée cible
+- 7 à 9 minutes
 
 Script
 
 [Ouverture - 20s]
-La decouverte n'est pas un questionnaire. C'est un diagnostic guide qui permet de comprendre et de mesurer la motivation.
+Bonjour. Il est temps de passer à la phase de découverte. Mais attention, ce n'est pas un simple questionnaire ou un interrogatoire technique. Voyez cela plutôt comme un diagnostic guidé qui va vous permettre de comprendre en profondeur la situation de votre patient et, surtout, de mesurer sa motivation réelle à changer.
 
-[Point 1 - Comprendre la situation - 2min]
-Questions ouvertes pour cadrer:
-- Quelle est votre situation actuelle?
-- Qu'est-ce qui fonctionne bien?
-- Qu'est-ce qui bloque?
-Ici, on collecte des faits et des mots du client.
+[Comprendre la situation - 2min]
+Pour bien commencer, utilisez des questions ouvertes. L'idée est de collecter des faits, mais aussi les propres mots de votre patient. Demandez-lui par exemple : « Quelle est votre situation auditive actuelle ? », « Dans quels moments sentez-vous que tout va bien ? » ou à l'inverse, « Quelles sont les situations qui vous bloquent aujourd'hui ? ». Écoutez-le attentivement, car c'est ici que vous allez trouver les clés de votre future argumentation.
 
-[Point 2 - Mesurer l'enjeu et l'urgence - 2min]
-On cherche a quantifier:
-- Impact financier ou temps perdu
-- Consequences si rien ne change
-- Priorite par rapport aux autres sujets
-Exemple: "Si on ne change rien dans 6 mois, que se passe-t-il?"
+[Mesurer l'enjeu et l'urgence - 2min]
+Une fois le contexte posé, on va chercher à quantifier l'impact de cette gêne dans sa vie. On veut savoir ce que ça lui coûte, pas forcément en argent, mais en qualité de vie. Vous pourriez poser cette question : « Si on ne fait rien aujourd'hui, comment imaginez-vous votre quotidien dans six mois ? ». Ça permet de mettre en lumière les conséquences du statu quo et de vérifier si l'appareillage est une priorité pour lui par rapport à ses autres préoccupations.
 
-[Point 3 - Developper la motivation - 2min]
-On aide le client a formuler ses raisons d'agir.
-Le but est qu'il dise lui-meme pourquoi c'est important.
-Exemple: "Qu'est-ce qui vous ferait dire que la situation est reglee?"
+[Développer la motivation - 2min]
+Votre rôle est d'aider le patient à formuler lui-même ses propres raisons d'agir. Plutôt que de lui dire pourquoi il doit s'équiper, amenez-le à le dire avec ses mots. Une question comme : « Qu'est-ce qui vous ferait dire, après notre rendez-vous, que votre problème est enfin réglé ? » est très puissante. Elle projette le patient dans une solution positive et renforce sa motivation.
 
-[Point 4 - Regles d'or de la decouverte (Neil Rackham) - 2min]
-- Ecoute active: laisser le client developper, relancer sans couper.
-- Au moins 10 questions: maintenir le diagnostic vivant, pas un mini interrogatoire.
-- Creuser les impacts: passer du fait a la consequence.
-- Valider les priorites: verifier ce qui compte vraiment pour lui.
+[Règles d'or de la découverte - 2min]
+Pour réussir cette étape, gardez en tête quelques règles d'or. Pratiquez l'écoute active : laissez votre patient développer ses idées et relancez-le sans jamais lui couper la parole. Essayez de poser au moins une dizaine de questions pour maintenir ce diagnostic vivant. Et surtout, ne restez pas à la surface : passez toujours du fait brut à la conséquence concrète dans sa vie sociale ou familiale.
 
-[Point 5 - Reformulation et validation - 2min]
-Reformuler en 2 phrases:
-- Ce que j'ai compris
-- Ce que vous voulez atteindre
-Puis valider: "Est-ce que je resume correctement?"
-Cela solidifie la confiance et prepare l'argumentation.
+[Reformulation et validation - 2min]
+Avant de passer à la suite, terminez toujours par une reformulation claire. Résumez ce que vous avez compris de sa situation et ce qu'il souhaite atteindre. Puis, demandez-lui simplement : « Est-ce que je résume correctement notre échange ? ». Cette validation solidifie la confiance, montre que vous l'avez vraiment écouté et prépare parfaitement le terrain pour votre argumentation.
 
 [Mini exemple - 1min]
-Immobilier: "Vous vendez pour acheter plus grand, et vous etes inquiet du delai. Si on tarde, vous perdez une opportunite."
-Audioprothese: "Vous voulez mieux entendre en reunion, sinon vous evitez les situations sociales."
+Concrètement, votre reformulation pourrait ressembler à ceci : « Si je vous ai bien suivi, vous voulez surtout retrouver le plaisir de participer aux réunions de famille sans avoir à demander sans arrêt de répéter, car vous sentez que vous commencez à vous isoler. C'est bien cela ? ».
 
-[Cloture - 20s]
-Prochaine etape: l'argumentation, transformer ces besoins en valeur.
+[Clôture - 20s]
+La découverte est la phase la plus importante de votre entretien. Dans la prochaine vidéo, on verra comment transformer tout ce que vous avez appris ici en une argumentation percutante et personnalisée. À tout de suite.
 
 Fin.
+
+
+---
+
+
 # E-learning 2 - Video 4: Argumentation (besoin -> valeur)
 
 Objectif
-- Construire une argumentation personnalisee a partir de la decouverte.
-- Eviter le catalogue de features.
+- Construire une argumentation personnalisée à partir de la découverte.
+- Éviter le catalogue de caractéristiques techniques.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-Une bonne argumentation n'est pas un discours. C'est un pont entre ce que le client a dit et la valeur que vous apportez.
+Bonjour. Une bonne argumentation, ce n'est pas un long discours technique. Voyez cela plutôt comme un pont que vous construisez entre ce que le patient vous a dit en découverte et la solution concrète que vous lui apportez.
 
-[Point 1 - La structure BAC - 3min]
-BAC = Benefices, Avantages, Caracteristiques.
-- Benefices: enjeux exprimes par le client, la ou il est motive. C'est colle a la decouverte.
-- Avantages: avantages generiques de votre solution qui repondent aux benefices.
-- Caracteristiques: elements concrets qui rendent l'avantage credible.
-Cette structure capte le client parce qu'elle commence par ce qui le concerne.
-Les commerciaux parlent souvent trop des caracteristiques, car ils s'y projettent. Le client, lui, ne se projette pas encore.
-BAC remet la conversation du cote du client, puis rend la solution progressive et concrete.
+[La structure BAC - 3min]
+Pour être percutant, je vous conseille d'utiliser la structure BAC : Bénéfices, Avantages, et enfin Caractéristiques. On commence toujours par le bénéfice, c'est-à-dire l'enjeu direct pour le patient, car c'est ce qui le touche. Ensuite, on présente l'avantage global de votre solution. Et on termine par la caractéristique technique, simplement pour rendre l'avantage crédible. Trop souvent, on a tendance à parler tout de suite de technique parce qu'on la maîtrise, mais le patient, lui, a besoin de se projeter d'abord dans son bénéfice quotidien.
 
-[Point 2 - Construire 2 ou 3 chaines BAC - 2min]
-Choisir 2 ou 3 benefices prioritaires issus de la decouverte.
-Pour chaque benefice, donner 1 ou 2 avantages, puis 1 ou 2 caracteristiques concretes.
-Trop d'arguments dilue la valeur. Mieux vaut peu, mais precis.
+[Construire 2 ou 3 chaînes BAC - 2min]
+L'idée n'est pas de donner une liste infinie d'arguments, cela diluerait la valeur de votre conseil. Choisissez plutôt deux ou trois bénéfices prioritaires que vous avez relevés pendant votre anamnèse. Pour chacun d'entre eux, construisez votre chaîne BAC de manière précise et personnalisée. Mieux vaut peu d'arguments, mais qu'ils tapent juste.
 
-[Point 3 - Credibiliser chaque chaine - 2min]
-Ajouter une preuve courte pour ancrer la credibilite:
-- Exemple client
-- Chiffre simple
-- Demonstration rapide
-Exemple: "Sur 10 mandats similaires, 7 se sont vendus en moins de 45 jours."
-
-[Point 4 - Faire emerger les objections - 1min]
-Terminer chaque argumentation BAC par la question:
-"Qu'en pensez-vous ?"
-Cela laisse le client s'exprimer librement et fait remonter les objections utiles.
+[Crédibiliser chaque chaîne - 2min]
+Pour ancrer votre discours, n'hésitez pas à ajouter une preuve courte à la fin de chaque argument. Ça peut être un exemple de résultat avec un autre patient, un chiffre simple ou même une démonstration rapide en cabine. Cela rend votre promesse beaucoup plus solide et rassurante aux yeux du patient.
 
 [Mini exemple - 1min]
-Audioprothese:
-- Benefice: "Vous voulez comprendre en reunion sans effort."
-- Avantage: "Nos reglages sont adaptes a votre environnement sonore."
-- Caracteristique: "On fait un test en condition reelle + un suivi mensuel."
-"Qu'en pensez-vous ?"
+Concrètement, ça pourrait donner ceci : « Puisque votre priorité est de comprendre vos petits-enfants lors des repas de famille (Bénéfice), nos réglages vont se focaliser sur l'isolation de la parole dans le bruit (Avantage). Pour cela, nous utilisons un processeur haute définition qui analyse l'environnement 500 fois par seconde (Caractéristique). Qu'en pensez-vous ? ».
 
-[Cloture - 20s]
-Ensuite, on traite les objections sans casser la confiance.
+[Faire émerger les objections - 1min]
+Vous l'avez entendu dans l'exemple, terminez toujours par cette question ouverte : « Qu'en pensez-vous ? ». Elle est essentielle car elle laisse le patient s'exprimer librement. C'est le meilleur moyen de faire remonter les dernières hésitations ou objections avant de conclure.
+
+[Clôture - 20s]
+Voilà, vous savez maintenant comment construire une argumentation qui a du sens. Dans la prochaine vidéo, on verra justement comment traiter ces fameuses objections sans jamais casser la confiance. À tout de suite.
 
 Fin.
+
+
+---
+
+
 # E-learning 2 - Video 5: Objections (freins et confiance)
 
 Objectif
 - Traiter les objections comme des informations, pas des attaques.
-- Preserver la relation tout en avancant.
+- Préserver la relation tout en avançant.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-Une objection signifie souvent: "J'ai besoin d'etre rassure." Votre role est d'ecouter et de clarifier.
+Bonjour. Dans cette vidéo, on va parler d'un sujet qui stresse parfois : les objections. Pourtant, une objection en cabine, c'est presque toujours un patient qui vous dit : « J'ai besoin d'être rassuré ». Votre rôle est donc simplement d'écouter et de clarifier les choses.
 
-[Point 1 - Les 3 types d'objections - 2min]
-1) Manque d'information (je ne comprends pas)
-2) Manque de confiance (je ne suis pas sur)
-3) Manque de priorite (ce n'est pas maintenant)
-Identifier le type avant de repondre.
+[Les 3 types d'objections - 2min]
+Pour bien y répondre, il faut d'abord identifier le type d'objection. Est-ce un manque d'information ? Le patient n'a pas compris le fonctionnement ou le prix. Est-ce un manque de confiance ? Il doute que l'appareil change vraiment sa vie. Ou est-ce un manque de priorité ? Il remet l'action à plus tard. Prendre quelques secondes pour identifier la source de l'objection permet d'ajuster votre réponse avec justesse.
 
-[Point 2 - La methode simple: accueillir, isoler, creuser, repondre, valider - 2min]
-- Accueillir: "Je comprends."
-- Isoler: "A part ca, y a-t-il d'autres objections rationnelles?"
-  L'objectif est de verifier s'il reste des freins rationnels avant de closer.
-- Creuser: "Qu'est-ce qui vous inquiete le plus?"
-- Repondre: apporter une preuve ou un exemple.
-- Valider: "Est-ce que cela repond a votre point?"
+[La méthode simple - 2min]
+Pour traiter une objection avec sérénité, je vous propose cette méthode en cinq étapes : d'abord accueillez (« Je comprends tout à fait »). Puis isolez pour être sûr qu'il n'y a pas d'autre frein (« À part cet aspect, y a-t-il autre chose qui vous inquiète ? »). Ensuite creusez (« Qu'est-ce qui vous préoccupe le plus précisément ? »). Répondez en apportant une preuve ou un exemple concret. Et enfin validez (« Est-ce que cela répond bien à votre point ? »).
 
-[Point 3 - Ne pas se justifier - 1min]
-Evitez de vous defendre. Restez calme et factuel. L'objection est une demande d'explication.
+[Ne pas se justifier - 1min]
+L'équilibre est subtil : ne tombez jamais dans la justification ou la défense. Si vous commencez à vous justifier, vous perdez votre posture d'expert. Restez calme et factuel. N'oubliez pas que l'objection du patient n'est pas une attaque, c'est une demande d'explication supplémentaire pour l'aider à avancer.
 
-[Point 4 - Revenir a la valeur - 1min]
-Une fois l'objection traitee, revenir au besoin initial.
-"Au regard de votre objectif X, est-ce que cela vous convient?"
+[Revenir à la valeur - 1min]
+Une fois que vous avez levé l'objection, revenez immédiatement au bénéfice que le patient a exprimé pendant la découverte. Posez-lui par exemple cette question : « Au regard de votre objectif de mieux entendre vos proches, est-ce que cette solution vous semble désormais la plus adaptée ? ». Cela permet de relancer la dynamique positive.
 
 [Mini exemple - 1min]
-Immobilier: "C'est trop cher." -> "Par rapport a quoi?" -> "Sur ce type de bien, notre taux de vente est de 70% en 45 jours, ce qui reduit votre risque."
+Prenons l'objection la plus courante : « C'est trop cher ». Au lieu de défendre le prix, creusez : « Par rapport à quoi le trouvez-vous cher ? ». Si c'est par rapport à son budget, rappelez-lui l'enjeu : « Je comprends. Mais si l'on regarde le bénéfice quotidien que vous allez retrouver, comme on l'a vu ensemble lors des tests, est-ce qu'on peut dire que l'investissement en vaut le coup pour votre confort ? ».
 
-[Cloture - 20s]
-La derniere etape est le closing: conclure naturellement.
+[Clôture - 20s]
+Voilà comment transformer un frein en une opportunité de renforcer la confiance. Notre dernière étape est le closing : comment conclure l'entretien de manière fluide et naturelle. À tout de suite.
 
 Fin.
+
+
+---
+
+
 # E-learning 2 - Video 6: Closing (conclure naturellement)
 
 Objectif
-- Conclure sans pression en s'appuyant sur la structure precedente.
+- Conclure sans pression en s'appuyant sur la structure précédente.
 - Obtenir un accord clair sur la suite.
 
-Duree cible
-- 5 a 7 minutes
+Durée cible
+- 5 à 7 minutes
 
 Script
 
 [Ouverture - 20s]
-Le closing est une suite logique. Si les etapes precedentes sont solides, la conclusion est simple.
+Bonjour. Nous y sommes ! Le closing est la touche finale de votre entretien. Mais si vous avez bien suivi les étapes précédentes, vous allez voir que la conclusion n'est pas un moment de stress, c'est simplement la suite logique et naturelle de tout ce que vous avez construit avec votre patient.
 
-[Point 1 - Passer a l'action apres la derniere objection - 2min]
-Le closing est la suite naturelle de la structure.
-Quand la derniere objection isolee est traitee, on passe directement a l'action.
-Exemple: "Puisque tout est clair sur notre collaboration, je vous propose de caler le premier rendez-vous de mise en oeuvre. Nous avons de la disponibilite le jeudi 27 ou le mardi 2, qu'est-ce qui vous arrange le mieux?"
+[Passer à l'action après la dernière objection - 2min]
+Le closing, c'est le passage à l'action. Une fois que vous avez levé la dernière objection isolée, ne tournez pas autour du pot. Proposez directement la suite concrète. Par exemple : « Puisque tout est clair pour vous et que nous avons choisi ensemble la solution la plus adaptée, je vous propose de fixer dès maintenant votre premier rendez-vous de mise en œuvre pour vos essais. Nous avons des disponibilités mardi à 10h ou jeudi à 15h, qu'est-ce qui vous convient le mieux ? ».
 
-[Point 2 - L'objection irrationnelle - 2min]
-Souvent, cette mise en action declenche une objection irrationnelle.
-Elle est irrationnelle car elle ne faisait pas partie des objections isolees.
-On ne la traite pas de maniere rationnelle, on ne la traite pas non plus de maniere irrationnelle.
-On passe par-dessus en s'appuyant sur un enjeu decouvert en decouverte, puis on revient au choix.
-Exemple: "Je comprends que vous ayez envie de reflechir, mais au regard de votre enjeu X, je pense vraiment que ca vaut le coup qu'on passe a l'action. Mardi 27 ou vendredi 2, dites-moi ce que vous preferez."
+[L'objection irrationnelle - 2min]
+Attention toutefois, c'est souvent au moment de passer à l'action qu'une petite hésitation de dernière minute peut surgir. C'est ce qu'on appelle l'objection irrationnelle. Pas besoin de repartir dans de longs débats techniques. Dans ce cas, appuyez-vous simplement sur l'enjeu majeur que le patient a exprimé pendant sa découverte. Rappelez-lui pourquoi il est là : « Je comprends que vous ayez besoin d'un petit temps de réflexion, mais rappelez-vous que votre objectif est de pouvoir enfin profiter pleinement du mariage de votre fille le mois prochain. Est-ce que ce ne serait pas le moment idéal pour commencer vos essais ? ».
 
-[Point 3 - Next step concret - 1min]
-Toujours fixer une suite precise: date, document, prochaine action.
-C'est la preuve finale de votre organisation.
+[Next step concret - 1min]
+Enfin, terminez toujours votre échange par une étape concrète et précise : une date de rendez-vous, la remise d'un document ou une action à faire. C'est la preuve ultime de votre professionnalisme et de votre organisation. Votre patient doit repartir du centre en sachant exactement ce qui va se passer ensuite.
 
 [Mini exemple - 40s]
-Immobilier: "Puisque tout est clair, on cale la mise en vente. Jeudi 27 ou mardi 2, qu'est-ce qui vous arrange le mieux?"
+Pour résumer, un bon closing en audioprothèse, c'est ceci : « Puisque les tests confirment ce que vous ressentiez et que le devis vous convient, on valide la mise en essai. Je vous donne rendez-vous mardi prochain à 14h pour la pose et les premiers réglages. On fait comme ça ? ».
 
-[Cloture - 20s]
-Vous avez la structure complete. Dans le prochain module, on approfondira les techniques de vente.
+[Clôture - 20s]
+Félicitations, vous avez maintenant la structure complète d'un entretien de vente réussi en audioprothèse ! Dans le prochain module, on ira encore plus loin avec des techniques avancées pour affiner votre pratique. À tout de suite.
 
 Fin.
-# E-learning 3 - Video 1: Ecoute active (technique de base)
+
+
+---
+
+
+# E-learning 3 - Video 1: Écoute active (technique de base)
 
 Objectif
-- Installer une ecoute qui fait parler le client et augmente la qualite des informations.
-- Utiliser silence, relance et reformulation courte.
+- Installer une écoute qui fait parler le patient et augmente la qualité des informations reçues.
+- Utiliser le silence, la relance et la reformulation courte.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-La meilleure technique de vente, c'est l'ecoute active. Elle fait parler, rassure et vous donne les vraies informations.
+Bonjour. Dans ce troisième module, on va passer aux techniques avancées. Et la toute première, la plus puissante de toutes, c'est l'écoute active. Elle libère la parole de votre patient, le rassure et vous donne les informations dont vous avez vraiment besoin.
 
-[Point 1 - Les 3 leviers de l'ecoute active - 2min]
-1) Le silence: laisser un espace pour que le client complete.
-2) La relance courte: "D'accord", "Je vois", "Continuez".
-3) La reformulation courte: "Si je comprends bien..."
-Ces trois leviers montrent que vous suivez vraiment.
+[Les 3 leviers de l'écoute active - 2min]
+Pour pratiquer une écoute active efficace en cabine, je vous propose de vous appuyer sur trois leviers simples. D'abord, le silence : laissez un espace, un vide, pour que votre patient puisse compléter sa pensée sans se sentir pressé. Ensuite, la relance courte : des petits mots comme « D'accord », « Je vois » ou « Continuez » pour lui montrer que vous le suivez. Et enfin, la reformulation courte : « Si je comprends bien... ». Ces trois outils prouvent à votre patient que vous êtes pleinement présent avec lui.
 
-[Point 2 - Les erreurs a eviter - 2min]
-- Couper trop vite pour proposer une solution.
-- Poser une nouvelle question sans avoir valide la precedente.
-- Remplir les silences par peur du vide.
+[Les erreurs à éviter - 2min]
+Attention aux pièges classiques ! L'erreur la plus courante est de vouloir proposer une solution technique trop vite, avant même que le patient ait fini d'expliquer sa gêne. Évitez aussi de poser une nouvelle question sans avoir pris le temps de valider la réponse précédente. Et surtout, n'ayez pas peur des silences : ne cherchez pas à les remplir systématiquement par peur du vide, c'est souvent là que le patient livre ses informations les plus précieuses.
 
-[Point 3 - La posture - 2min]
-L'ecoute active n'est pas passive. Vous guidez sans imposer.
-Le client se sent compris, donc il donne plus d'informations utiles.
+[La posture - 2min]
+L'écoute active ne signifie pas rester passif. Bien au contraire, c'est une manière de guider l'entretien sans rien imposer. Quand votre patient se sent véritablement écouté et compris, son niveau de confiance augmente. Il va alors vous donner des détails beaucoup plus précis sur son quotidien, ce qui vous facilitera énormément la tâche pour la suite de l'appareillage.
 
 [Mini exemple - 1min]
-Immobilier: "Vous hesitez a vendre maintenant?" (silence) -> "C'est surtout le delai qui vous inquiète?" -> "Si je comprends bien, votre enjeu c'est d'enchainer avec l'achat."
+Imaginez cet échange : le patient vous dit : « J'hésite à m'équiper maintenant... ». Au lieu de le convaincre, laissez un silence. Puis relancez doucement : « C'est surtout l'idée même de porter un appareil qui vous inquiète ? ». Et concluez par une reformulation : « Si je comprends bien, votre enjeu aujourd'hui, c'est de garder votre discrétion tout en retrouvant du confort, c'est bien cela ? ».
 
-[Cloture - 20s]
-Prochaine video: poser les bonnes questions avec une structure simple.
+[Clôture - 20s]
+L'écoute active est votre fondation. Dans la prochaine vidéo, on va voir comment poser les bonnes questions en utilisant une structure d'entonnoir très efficace. À tout de suite.
 
 Fin.
-# E-learning 3 - Video 2: Questionnement structure (entonnoir + SPIN)
+
+
+---
+
+
+# E-learning 3 - Video 2: Questionnement structuré (entonnoir + SPIN)
 
 Objectif
-- Poser des questions qui font emerger enjeux, impacts et priorites.
-- Utiliser l'entonnoir et la logique SPIN sans rigidite.
+- Poser des questions qui font émerger enjeux, impacts et priorités.
+- Utiliser l'entonnoir et la logique SPIN sans rigidité.
 
-Duree cible
-- 7 a 9 minutes
+Durée cible
+- 7 à 9 minutes
 
 Script
 
 [Ouverture - 20s]
-De bonnes questions font 80% du diagnostic. L'idee est simple: on part large, on cible, on mesure.
+Bonjour. On dit souvent qu'un bon diagnostic fait 80 % du chemin. Et pour réussir ce diagnostic, tout est une question de méthode. L'idée est simple : on part d'un questionnement large, on cible précisément le besoin, puis on mesure l'enjeu.
 
-[Point 1 - L'entonnoir - 2min]
-Questions ouvertes -> questions precisees -> questions de validation.
-Exemple:
-- "Parlez-moi de votre situation."
-- "Qu'est-ce qui bloque le plus?"
-- "Si je resume, votre priorite est X, c'est bien ca?"
+[L'entonnoir - 2min]
+La première technique, c'est l'entonnoir. Vous commencez par des questions très ouvertes pour laisser le patient s'exprimer librement. Ensuite, vous posez des questions de plus en plus précises pour cibler un point particulier. Et vous terminez toujours par une question de validation. Par exemple : « Parlez-moi de votre quotidien avec vos proches », puis « Dans quelles situations précises la discussion devient-elle difficile ? » et enfin « Si je résume, votre priorité aujourd'hui, c'est de retrouver du confort lors de vos repas de famille, c'est bien ça ? ».
 
-[Point 2 - SPIN en version simple - 3min]
-S (Situation): comprendre le contexte.
-P (Probleme): identifier ce qui coince.
-I (Impact): mesurer les consequences.
-N (Need-payoff): faire exprimer la valeur de la solution.
-Ce n'est pas une grille rigide, c'est un fil conducteur.
+[SPIN en version simple - 3min]
+Pour aller plus loin, je vous propose d'utiliser la logique SPIN, mais adaptée à votre métier. S pour Situation : comprenez le contexte global du patient. P pour Problème : identifiez ce qui le gêne réellement. I pour Impact : mesurez les conséquences concrètes de ce problème dans sa vie. Et enfin N pour Need-payoff : aidez-le à exprimer tout ce qu'une solution lui apporterait. Ne voyez pas cela comme une grille rigide, mais comme un fil conducteur pour ne rien oublier.
 
-[Point 3 - Le dosage - 2min]
-Alterner questions et reformulations pour garder un rythme naturel.
-Eviter l'interrogatoire: 2 a 3 questions puis une synthese courte.
+[Le dosage - 2min]
+Attention toutefois à ne pas transformer votre cabine en salle d'interrogatoire ! Le secret d'un questionnement réussi, c'est le dosage. Alternez toujours deux ou trois questions avec une courte reformulation ou une synthèse. Cela maintient un rythme naturel et montre au patient que vous complétez votre diagnostic au fur et à mesure qu'il vous parle.
 
 [Mini exemple - 1min]
-Audioprothese:
-- Situation: "Dans quels moments l'audition est la plus difficile?"
-- Probleme: "Qu'est-ce qui vous gene le plus?"
-- Impact: "Qu'est-ce que cela vous coute au quotidien?"
-- Need-payoff: "Si on regle ca, qu'est-ce que ca change pour vous?"
+Voyons comment appliquer SPIN en audioprothèse. Pour la Situation : « Dans quels moments l'audition est-elle la plus difficile ? ». Pour le Problème : « Qu'est-ce qui vous gêne le plus précisément ? ». Pour l'Impact : « Qu'est-ce que cela vous coûte au quotidien, concrètement ? ». Et pour le Need-payoff : « Si l'on règle ce problème aujourd'hui, qu'est-ce que cela va changer pour vous ? ».
 
-[Cloture - 20s]
-Prochaine video: reformuler et aligner pour passer a l'etape suivante.
+[Clôture - 20s]
+De bonnes questions amènent des réponses précieuses. Dans la prochaine vidéo, on verra comment synthétiser tout cela pour aligner vos objectifs avec ceux de votre patient. À tout de suite.
 
 Fin.
-# E-learning 3 - Video 3: Reformulation et synthese
+
+
+---
+
+
+# E-learning 3 - Video 3: Reformulation et synthèse
 
 Objectif
-- Aligner le client et le commercial sur une meme lecture des enjeux.
-- Securiser la suite de l'entretien.
+- Aligner le patient et l'audioprothésiste sur une même lecture des enjeux.
+- Sécuriser la suite de l'entretien.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-Une bonne reformulation vaut mieux qu'une longue argumentation. Elle cree l'alignement.
+Bonjour. Aujourd'hui, on va voir un outil qui vaut souvent mieux qu'une longue argumentation : la reformulation. C'est elle qui va vous permettre de créer un véritable alignement entre ce que le patient ressent et ce que vous proposez.
 
-[Point 1 - Les 2 niveaux de reformulation - 2min]
-1) Reformulation factuelle: "Vous m'avez dit que..."
-2) Reformulation des priorites: "Ce qui compte le plus pour vous, c'est..."
-Les deux ensemble donnent de la clarté et de la confiance.
+[Les 2 niveaux de reformulation - 2min]
+Pour être efficace, je vous suggère de travailler sur deux niveaux. D'abord, la reformulation factuelle : vous reprenez simplement les éléments concrets, « Vous m'avez dit que vos appareils actuels grésillent... ». Puis, la reformulation des priorités : « Ce qui compte le plus pour vous aujourd'hui, c'est de retrouver une clarté dans les environnements bruyants ». En combinant ces deux niveaux, vous apportez à la fois de la clarté technique et une immense confiance humaine.
 
-[Point 2 - La synthese courte - 2min]
-Toutes les 2-3 questions, faire une synthese en 2 phrases:
-- Situation
-- Priorite
-Puis valider: "Est-ce que je resume correctement?"
+[La synthèse courte - 2min]
+La règle d'or est la suivante : toutes les deux ou trois questions, faites une petite synthèse en deux phrases. La première sur la situation actuelle, la seconde sur sa priorité numéro un. Puis, validez immédiatement en demandant : « Est-ce que je résume correctement votre situation ? ». Cela montre non seulement que vous avez vraiment écouté le patient, mais cela sécurise aussi chaque étape de votre entretien.
 
-[Point 3 - L'effet business - 2min]
-Une synthese bien faite reduit les objections futures.
-Elle donne aussi au client le sentiment d'etre compris, donc il s'engage plus.
+[L'effet business - 2min]
+Ne sous-estimez jamais le pouvoir d'une bonne synthèse. En plus de réduire les objections futures, elle donne au patient le sentiment profond d'être compris par un expert. Résultat ? Il s'engage beaucoup plus naturellement et avec plus de sérénité dans le processus d'appareillage que vous allez lui proposer.
 
 [Mini exemple - 1min]
-Immobilier: "Si je resume, votre appartement est trop petit, et votre priorite c'est d'acheter avant l'ete. C'est bien ca?"
+Voyons ce que cela donne en cabine. Après votre anamnèse, vous pourriez dire : « Si je résume, vous sentez que votre audition baisse surtout le soir quand vous êtes fatigué, et votre priorité aujourd'hui, c'est d'acheter une solution qui soit avant tout simple à manipuler et très discrète. C'est bien cela ? ».
 
-[Cloture - 20s]
-Prochaine video: utiliser la preuve pour rendre votre argumentation credible.
+[Clôture - 20s]
+Utiliser la reformulation, c'est s'assurer de ne jamais rater sa cible. Dans la prochaine vidéo, on verra comment utiliser les preuves pour rendre votre argumentation encore plus crédible. À tout de suite.
 
 Fin.
+
+
+---
+
+
 # E-learning 3 - Video 4: Preuves et storytelling
 
 Objectif
-- Rendre une promesse credible avec des preuves simples.
-- Utiliser un mini recit client pour projeter sans sur-vendre.
+- Rendre une promesse crédible avec des preuves simples.
+- Utiliser un mini récit patient pour projeter sans sur-vendre.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-Une promesse sans preuve ressemble a un argument commercial. Une preuve bien choisie devient un fait.
+Bonjour. Une promesse sans preuve, ça ressemble souvent à un simple argument commercial. En revanche, une preuve bien choisie et bien racontée, cela devient un fait indiscutable qui rassure votre patient.
 
-[Point 1 - Les 3 types de preuves - 2min]
-1) Chiffre simple: un resultat concret.
-2) Cas client: un exemple similaire.
-3) Demonstration: une action ou un extrait.
-Choisir une seule preuve par argument.
+[Les 3 types de preuves - 2min]
+En audioprothèse, vous pouvez vous appuyer sur trois types de preuves. D'abord, le chiffre simple : un résultat concret issu d'un test. Ensuite, le cas patient : un exemple de réussite avec une personne qui avait les mêmes difficultés. Et enfin, la démonstration : un court extrait sonore ou une manipulation en direct. Mon conseil est de choisir une seule preuve, la plus pertinente, pour appuyer chacun de vos arguments majeurs.
 
-[Point 2 - Le mini storytelling - 2min]
-Structure en 3 phrases:
-- Situation du client
-- Ce qui a ete mis en place
-- Resultat obtenu
-Court, concret, sans exageration.
+[Le mini storytelling - 2min]
+Pour que l'exemple marque l'esprit du patient, utilisez ce que j'appelle le mini storytelling. C'est un récit très court en trois temps : la situation initiale difficile du patient, ce que vous avez mis en place concrètement, et enfin le résultat positif obtenu. Restez sobre et factuel, sans aucune exagération, car c'est la sincérité du récit qui crée la projection.
 
-[Point 3 - La projection sans pression - 2min]
-Le but n'est pas de convaincre de force, mais de rendre la solution imaginable.
-Une preuve claire reduit les objections.
+[La projection sans pression - 2min]
+L'objectif ici n'est pas de convaincre de force, mais de rendre la solution imaginable et concrète dans la tête de votre interlocuteur. Une preuve claire et bien amenée réduit naturellement les objections avant même qu'elles n'apparaissent. Le patient se dit simplement : « Si ça a marché pour ce monsieur, pourquoi pas pour moi ? ».
 
 [Mini exemple - 1min]
-Audioprothese: "Un client en reunion avait du mal a suivre. On a ajuste deux frequences et mis un suivi mensuel. En 3 semaines, il etait a l'aise dans ses reunions."
+Imaginez, vous pourriez dire : « J'ai accompagné un patient qui, comme vous, avait beaucoup de mal à suivre ses réunions professionnelles. Nous avons ajusté deux fréquences spécifiques et mis en place un suivi mensuel serré. En seulement trois semaines, il a retrouvé tout son confort et ne se sent plus du tout à l'écart lors de ses échanges au bureau. »
 
-[Cloture - 20s]
-Prochaine video: micro-techniques pour garder le rythme et l'engagement.
+[Clôture - 20s]
+Utiliser la preuve, c'est passer du "dire" au "faire". Dans la prochaine vidéo, on terminera ce module avec des micro-techniques pour garder le bon rythme et l'engagement tout au long de votre entretien. À tout de suite.
 
 Fin.
+
+
+---
+
+
 # E-learning 3 - Video 5: Rythme et engagement
 
 Objectif
 - Garder un entretien fluide et engageant.
-- Eviter que le client decroche ou se mette en defensif.
+- Éviter que le patient décroche ou se mette en position défensive.
 
-Duree cible
-- 6 a 8 minutes
+Durée cible
+- 6 à 8 minutes
 
 Script
 
 [Ouverture - 20s]
-Une bonne technique, c'est aussi une question de rythme. Trop lent, le client s'ennuie. Trop rapide, il se ferme.
+Bonjour. Pour terminer ce module sur les techniques avancées, on va s'intéresser à un élément invisible mais capital : le rythme. Trop lent, votre patient décroche. Trop rapide, il se ferme parce qu'il se sent bousculé. Trouver le bon tempo dans l'échange, c'est l'assurance d'un patient toujours engagé à vos côtés.
 
-[Point 1 - Le rythme par cycles courts - 2min]
-Alterner: question -> ecoute -> synthese -> confirmation.
-Chaque cycle dure 2 a 3 minutes.
-Cela donne une dynamique naturelle et rassurante.
+[Le rythme par cycles longs - 2min]
+La clé d'un bon rythme, c'est de travailler par cycles courts. Un cycle, c'est une question, une phase d'écoute attentive, une courte synthèse et enfin une confirmation du patient. Chaque cycle doit durer environ deux à trois minutes. En procédant ainsi, vous donnez une dynamique naturelle à l'entretien, tout en restant extrêmement rassurant pour votre interlocuteur.
 
-[Point 2 - Les confirmations regulieres - 2min]
-De petites validations maintiennent l'engagement:
-- "Est-ce que ca vous parle?"
-- "On est d'accord sur ce point?"
-Cela evite les surprises a la fin.
+[Les confirmations régulières - 2min]
+Durant ces cycles, n'hésitez pas à solliciter des petites validations régulières. Posez des questions simples comme : « Est-ce que cela vous parle ? » ou « On est bien d'accord sur ce point ? ». Ces micro-confirmations maintiennent le patient actif dans l'échange et, surtout, elles vous évitent de mauvaises surprises ou des malentendus à la toute fin de votre consultation.
 
-[Point 3 - Les transitions propres - 2min]
-Annoncez chaque passage d'etape:
-"Si vous etes d'accord, je passe a..."
-Le client se sent guide sans subir.
+[Les transitions propres - 2min]
+Enfin, soyez toujours clair sur le passage d'une étape à l'autre. Annoncez vos transitions : « Si vous êtes d'accord, je vous propose maintenant de passer aux tests en cabine ». Votre patient doit se sentir guidé, pas poussé. Quand il sait exactement ce qui se passe et pourquoi, il suit le mouvement avec beaucoup plus de confiance.
 
 [Mini exemple - 1min]
-Immobilier: "On a clarifie votre priorite. Si vous etes d'accord, je vous explique notre methode de vente."
+Voyons comment faire une transition fluide : « On a bien clarifié vos priorités pour retrouver du confort en famille. Si vous le voulez bien, je vous explique maintenant comment nous allons procéder pour les premiers réglages de vos solutions. Est-ce que c'est bon pour vous ? ».
 
-[Cloture - 20s]
-Vous avez les techniques clefs. Prochaine etape: la prospection.
+[Clôture - 20s]
+Félicitations ! Vous avez maintenant toutes les clés techniques pour mener des entretiens de haute volée en audioprothèse. Soyez régulier, pratiquez et vous verrez vos résultats progresser naturellement. À très bientôt pour la suite de votre parcours !
 
 Fin.
+
+
+---
+
+
