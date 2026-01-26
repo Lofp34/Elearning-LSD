@@ -99,7 +99,10 @@
   width: 84px;
   height: 84px;
   border-radius: 50%;
-  background: conic-gradient(#ff6b4a 0% 12%, rgba(31, 27, 22, 0.12) 12% 100%);
+  background: conic-gradient(
+    #ff6b4a 0% var(--progress, 0%),
+    rgba(31, 27, 22, 0.12) var(--progress, 0%) 100%
+  );
   display: grid;
   place-items: center;
   position: relative;
@@ -160,6 +163,9 @@
   font-weight: 700;
   background: linear-gradient(135deg, #ff6b4a, #f1a95f);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ghost {
@@ -168,6 +174,9 @@
   border: 1px solid rgba(31, 27, 22, 0.2);
   background: rgba(255, 248, 239, 0.8);
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tracks {
@@ -246,6 +255,9 @@
   background: #1f1b16;
   color: #fef6ec;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav {

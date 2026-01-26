@@ -1,0 +1,65 @@
+.page {
+  min-height: 100vh;
+  padding: 32px 20px 56px;
+  background:
+    radial-gradient(500px 320px at 90% -10%, rgba(255, 107, 74, 0.2), transparent 60%),
+    linear-gradient(145deg, #f7f2ea 0%, #f4ede3 55%, #f8f4ee 100%);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.header h1 {
+  font-family: var(--font-display), serif;
+  font-size: 2rem;
+}
+
+.back {
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 8px 16px;
+  border: 1px solid rgba(31, 27, 22, 0.2);
+  background: rgba(255, 248, 239, 0.8);
+}
+
+.card {
+  max-width: 520px;
+  background: var(--card);
+  border: 1px solid rgba(31, 27, 22, 0.12);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 18px 36px rgba(31, 27, 22, 0.1);
+}
+
+.label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--forest);
+  margin-bottom: 10px;
+}
+
+.card h2 {
+  font-family: var(--font-display), serif;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.cta {
+  display: inline-flex;
+  margin-top: 16px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #1f1b16;
+  color: #fef6ec;
+  font-weight: 600;
+}

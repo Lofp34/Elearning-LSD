@@ -1,31 +1,67 @@
+import { list } from "@vercel/blob";
 import Link from "next/link";
 import styles from "./page.module.css";
 
-const tracks = [
+export const dynamic = "force-dynamic";
+
+const parts = [
   {
+    slug: "mental",
     title: "Mental",
-    count: "5 audios",
-    next: "Posture & service",
-    progress: 20,
+    prefix: "audio/elearning1-",
     tone: "#ff6b4a",
   },
   {
+    slug: "pyramide",
     title: "Pyramide de la vente",
-    count: "6 audios",
-    next: "Prise de contact",
-    progress: 0,
+    prefix: "audio/elearning2-",
     tone: "#2f5f59",
   },
   {
+    slug: "techniques",
     title: "Techniques",
-    count: "5 audios",
-    next: "Ecoute active",
-    progress: 0,
+    prefix: "audio/elearning3-",
     tone: "#f1a95f",
   },
 ];
 
-export default function ParcoursPage() {
+function formatTitle(filename: string) {
+  const base = filename.replace(/\.mp3$/i, "").replace(/^elearning\\d+-\\d+-/, "");
+  return base
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function getIndex(filename: string) {
+  const match = filename.match(/elearning\\d+-(\\d+)-/i);
+  return match ? Number.parseInt(match[1], 10) : 0;
+}
+
+export default async function ParcoursPage() {
+  const { blobs } = await list({ prefix: "audio/", limit: 200 });
+
+  const entriesByPart = parts.map((part) => {
+    const items = blobs
+      .filter((blob) => blob.pathname.startsWith(part.prefix))
+      .map((blob) => {
+        const filename = blob.pathname.split("/").pop() ?? "";
+        return {
+          url: blob.url,
+          title: formatTitle(filename),
+          index: getIndex(filename),
+        };
+      })
+      .sort((a, b) => a.index - b.index);
+
+    return { part, items };
+  });
+
+  const totalAudios = entriesByPart.reduce((acc, entry) => acc + entry.items.length, 0);
+  const nextEntry = entriesByPart.find((entry) => entry.items.length > 0);
+  const nextAudio = nextEntry?.items[0];
+  const progressPct = 0;
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -43,28 +79,32 @@ export default function ParcoursPage() {
         <div className={styles.progressCard}>
           <p className={styles.cardLabel}>Progression globale</p>
           <div className={styles.progressRow}>
-            <div className={styles.progressRing}>
-              <span>12%</span>
+            <div
+              className={styles.progressRing}
+              style={{ ["--progress" as string]: `${progressPct}%` }}
+            >
+              <span>{progressPct}%</span>
             </div>
             <div>
-              <h2>Continue ton rythme</h2>
+              <h2>Commence ton parcours</h2>
               <p>
-                2 audios termines cette semaine. Un pas par jour pour fixer les
-                reflexes.
+                {totalAudios > 0
+                  ? `Tu as ${totalAudios} audios a parcourir.`
+                  : "Les audios arrivent. Importe-les dans Vercel Blob."}
               </p>
             </div>
           </div>
           <div className={styles.milestones}>
             <div>
-              <strong>7</strong>
+              <strong>0</strong>
               <span>ecoutes</span>
             </div>
             <div>
-              <strong>3</strong>
+              <strong>0</strong>
               <span>quiz valides</span>
             </div>
             <div>
-              <strong>1</strong>
+              <strong>0</strong>
               <span>partie debloquee</span>
             </div>
           </div>
@@ -72,10 +112,20 @@ export default function ParcoursPage() {
 
         <div className={styles.nextCard}>
           <p className={styles.cardLabel}>A faire maintenant</p>
-          <h3>Mental - Posture & service</h3>
-          <p>7 min | Quiz 5 questions</p>
+          <h3>
+            {nextEntry ? `${nextEntry.part.title} - ${nextAudio?.title}` : "Aucun audio"}
+          </h3>
+          <p>{nextEntry ? "Audio de demarrage" : "Importe tes audios"}</p>
           <div className={styles.nextActions}>
-            <button className={styles.primary}>Ecouter l'audio</button>
+            {nextEntry ? (
+              <Link className={styles.primary} href={`/parcours/${nextEntry.part.slug}`}>
+                Ecouter l'audio
+              </Link>
+            ) : (
+              <Link className={styles.primary} href="/audio">
+                Voir les fichiers
+              </Link>
+            )}
             <Link className={styles.ghost} href="/audio">
               Voir les fichiers
             </Link>
@@ -86,21 +136,25 @@ export default function ParcoursPage() {
       <section className={styles.tracks}>
         <h2>Mes parties</h2>
         <div className={styles.trackGrid}>
-          {tracks.map((track) => (
-            <article key={track.title} className={styles.trackCard}>
+          {entriesByPart.map(({ part, items }) => (
+            <article key={part.title} className={styles.trackCard}>
               <div className={styles.trackHeader}>
                 <div className={styles.trackTitle}>
-                  <h3>{track.title}</h3>
-                  <p>{track.count}</p>
+                  <h3>{part.title}</h3>
+                  <p>{items.length} audios</p>
                 </div>
-                <span className={styles.trackDot} style={{ background: track.tone }} />
+                <span className={styles.trackDot} style={{ background: part.tone }} />
               </div>
-              <p className={styles.trackNext}>Prochain audio : {track.next}</p>
+              <p className={styles.trackNext}>
+                Prochain audio : {items[0]?.title ?? "Aucun audio"}
+              </p>
               <div className={styles.progressBar}>
-                <span style={{ width: `${track.progress}%` }} />
+                <span style={{ width: "0%" }} />
               </div>
-              <p className={styles.trackProgress}>{track.progress}% termine</p>
-              <button className={styles.secondary}>Ouvrir la partie</button>
+              <p className={styles.trackProgress}>0% termine</p>
+              <Link className={styles.secondary} href={`/parcours/${part.slug}`}>
+                Ouvrir la partie
+              </Link>
             </article>
           ))}
         </div>
