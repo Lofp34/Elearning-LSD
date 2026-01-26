@@ -92,11 +92,8 @@ export default function Home() {
 
           <div className={styles.actions}>
             <a className={styles.primary} href="#inscription">
-              Creer mon compte
+              Commencer maintenant
             </a>
-            <Link className={styles.secondary} href="/parcours">
-              Voir un exemple
-            </Link>
           </div>
         </div>
 
