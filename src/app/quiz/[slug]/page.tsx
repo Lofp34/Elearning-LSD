@@ -54,6 +54,8 @@ export default function QuizPage({ params }: { params: { slug: string } }) {
     );
   }
 
+  const quizData = quiz;
+
   function handleSelect(questionIndex: number, optionIndex: number) {
     setAnswers((prev) => {
       const next = [...prev];
@@ -68,18 +70,18 @@ export default function QuizPage({ params }: { params: { slug: string } }) {
   }
 
   function handleReset() {
-    setAnswers(Array(quiz.questions.length).fill(-1));
+    setAnswers(Array(quizData.questions.length).fill(-1));
     setSubmitted(false);
   }
 
-  const total = quiz.questions.length;
+  const total = quizData.questions.length;
 
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
           <p className={styles.kicker}>Quiz audio</p>
-          <h1>{quiz.title}</h1>
+          <h1>{quizData.title}</h1>
           <p className={styles.subtitle}>5 questions pour valider l'audio.</p>
         </div>
         <Link className={styles.back} href="/parcours">
@@ -88,7 +90,7 @@ export default function QuizPage({ params }: { params: { slug: string } }) {
       </header>
 
       <form className={styles.quiz} onSubmit={handleSubmit}>
-        {quiz.questions.map((question, qIndex) => (
+        {quizData.questions.map((question, qIndex) => (
           <section key={question.question} className={styles.card}>
             <p className={styles.questionLabel}>Question {qIndex + 1}</p>
             <h2>{question.question}</h2>
