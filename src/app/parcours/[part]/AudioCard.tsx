@@ -71,7 +71,7 @@ export default function AudioCard({
         {listened ? (
           <span className={`${styles.badge} ${styles.badgeSuccess}`}>Ecoutee</span>
         ) : (
-          <span className={styles.badge}>A ecouter</span>
+          <span className={`${styles.badge} ${styles.badgeDanger}`}>A ecouter</span>
         )}
         {quizResult ? (
           <span
