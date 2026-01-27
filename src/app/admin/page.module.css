@@ -103,6 +103,72 @@
   color: var(--forest);
 }
 
+.companyGrid,
+.userGrid {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.miniCard {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(31, 27, 22, 0.1);
+  background: rgba(255, 248, 239, 0.7);
+  display: grid;
+  gap: 12px;
+}
+
+.miniHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.miniHeader strong {
+  font-size: 1rem;
+}
+
+.miniHeader small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.metric {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(31, 27, 22, 0.08);
+}
+
+.metric strong {
+  font-family: var(--font-display), serif;
+  font-size: 1.2rem;
+}
+
+.metric span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .table {
   display: grid;
   gap: 10px;
@@ -171,5 +237,13 @@
 
   .stats {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .companyGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .userGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

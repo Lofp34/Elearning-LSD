@@ -27,6 +27,7 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - Menu bas fixe affiche sur toutes les pages.
 - Page profil personnalisee avec statistiques et infos membre.
 - Page admin (logs, stats) avec roles SUPER_ADMIN/ADMIN.
+- Tableau admin enrichi (cartes entreprises + utilisateurs, vue 7j).
 
 ## Decisions prises
 - **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
@@ -63,3 +64,4 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - 2026-01-26: Navigation bas de page unifiee.
 - 2026-01-26: Page profil personnalisee.
 - 2026-01-27: Roles admin + journal d'activite + page /admin.
+- 2026-01-27: Tableau admin avec cartes entreprises/utilisateurs.
