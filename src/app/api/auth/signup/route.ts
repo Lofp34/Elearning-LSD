@@ -4,6 +4,15 @@ import { createSessionToken, hashPassword, sessionCookieOptions } from "@/lib/au
 
 export const runtime = "nodejs";
 
+const SUPER_ADMIN_EMAILS = new Set(["ls@laurentserre.com"]);
+const ADMIN_EMAILS = new Set(["f.bricaud@auditionconseil66.fr"]);
+
+function resolveRole(email: string) {
+  if (SUPER_ADMIN_EMAILS.has(email)) return "SUPER_ADMIN";
+  if (ADMIN_EMAILS.has(email)) return "ADMIN";
+  return "USER";
+}
+
 export async function POST(request: Request) {
   let body: {
     firstName?: string;
@@ -51,7 +60,14 @@ export async function POST(request: Request) {
     const passwordHash = await hashPassword(password);
     const fallbackCompany = email?.split("@")[1] ?? null;
     const user = await prisma.user.create({
-      data: { firstName, lastName, email, passwordHash, company: company || fallbackCompany },
+      data: {
+        firstName,
+        lastName,
+        email,
+        passwordHash,
+        company: company || fallbackCompany,
+        role: resolveRole(email),
+      },
     });
 
     const token = await createSessionToken({ userId: user.id, email: user.email });

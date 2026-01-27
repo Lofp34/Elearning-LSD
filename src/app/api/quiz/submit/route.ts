@@ -40,6 +40,17 @@ export async function POST(request: Request) {
       },
     });
 
+    await prisma.activityLog.create({
+      data: {
+        userId,
+        type: "QUIZ_SUBMIT",
+        audioSlug: slug,
+        score,
+        total,
+        passed,
+      },
+    });
+
     return NextResponse.json({ ok: true, passed });
   } catch (error) {
     console.error(error);

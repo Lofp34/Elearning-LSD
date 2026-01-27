@@ -7,6 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ActivityType {
+  LOGIN
+  LOGOUT
+  LISTEN_COMPLETE
+  QUIZ_SUBMIT
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -14,10 +27,12 @@ model User {
   firstName    String
   lastName     String
   company      String?
+  role         UserRole @default(USER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   quizAttempts QuizAttempt[]
   listenEvents ListenEvent[]
+  activityLogs ActivityLog[]
 }
 
 model QuizAttempt {
@@ -43,4 +58,20 @@ model ListenEvent {
 
   @@unique([userId, audioSlug])
   @@index([audioSlug])
+}
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  userId    String
+  type      ActivityType
+  audioSlug String?
+  score     Int?
+  total     Int?
+  passed    Boolean?
+  createdAt DateTime     @default(now())
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
 }

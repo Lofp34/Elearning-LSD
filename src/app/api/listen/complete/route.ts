@@ -25,11 +25,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Slug manquant." }, { status: 400 });
     }
 
-    await prisma.listenEvent.upsert({
+    const existing = await prisma.listenEvent.findUnique({
       where: { userId_audioSlug: { userId, audioSlug: slug } },
-      update: {},
-      create: { userId, audioSlug: slug },
     });
+
+    if (!existing) {
+      await prisma.listenEvent.create({ data: { userId, audioSlug: slug } });
+      await prisma.activityLog.create({
+        data: {
+          userId,
+          type: "LISTEN_COMPLETE",
+          audioSlug: slug,
+        },
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

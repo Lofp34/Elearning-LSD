@@ -35,6 +35,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Identifiants invalides." }, { status: 401 });
     }
 
+    await prisma.activityLog.create({
+      data: {
+        userId: user.id,
+        type: "LOGIN",
+      },
+    });
+
     const token = await createSessionToken({ userId: user.id, email: user.email });
     const response = NextResponse.json({ ok: true });
     response.cookies.set({ value: token, ...sessionCookieOptions() });
