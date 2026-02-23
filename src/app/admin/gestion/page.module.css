@@ -1,0 +1,150 @@
+.page {
+  min-height: 100vh;
+  padding: 1.5rem 1rem 2rem;
+  background: #f4f7fa;
+  color: #0f172a;
+  display: grid;
+  gap: 1rem;
+}
+
+.header,
+.intro,
+.grid {
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back {
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #d9e2ec;
+  background: #fff;
+  color: #334155;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.intro {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.intro h1,
+.intro p {
+  margin: 0;
+}
+
+.primary {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.7rem;
+  text-decoration: none;
+  font-weight: 700;
+  background: #0f172a;
+  color: #fff;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.empty {
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 1rem;
+  padding: 1rem;
+  color: #475569;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.badge {
+  font-size: 0.74rem;
+  background: #e2e8f0;
+  color: #334155;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-weight: 700;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.release {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.release strong {
+  font-size: 0.95rem;
+}
+
+.release span {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.releaseActions {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.secondary {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.error {
+  color: #b91c1c;
+}

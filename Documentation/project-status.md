@@ -5,7 +5,7 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 
 ## Perimetre (scope)
 - In: Auth (email + mot de passe), Player Audio (avec reprise), Quiz (5Q/10Q), Progression (Neon Postgres), Admin Dashboard (Tableau + Export CSV).
-- Out: IA de personnalisation, Mode Offline complet, Génération PDF complexes (V1), Transcriptions.
+- Out: Mode Offline complet, Génération PDF complexes (V1).
 
 ## Ce qui est en place
 - Documentation initiale (`description-projet.md`).
@@ -28,6 +28,15 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - Page profil personnalisee avec statistiques et infos membre.
 - Page admin (logs, stats) avec roles SUPER_ADMIN/ADMIN.
 - Tableau admin enrichi (cartes entreprises + utilisateurs, vue 7j).
+- Plan d'execution V2 agent-ready avec checklist (`Documentation/plan-technique-v2-agent.md`).
+- Fondations V2 Prisma ajoutees (Company, Release, Module, QuizQuestion, Job, Enrollment, AudioAsset, AdminActionLog).
+- Migration SQL V2 ajoutee (`prisma/migrations/20260223190000_v2_content_engine_foundations`).
+- Script de backfill utilisateurs -> societes ajoute (`scripts/backfill-company-relations.mjs`).
+- Admin refactor: `/admin` devient hub, ancien tableau de suivi deplace vers `/admin/suivi`, nouvelle section `/admin/gestion` + creation de societe.
+- Helpers V2 ajoutes: feature flag, env strict, authz, base-structure pedagogique, clients OpenAI/ElevenLabs, pipeline draft.
+- Ingestion interviews: APIs upload/extract PDF par societe + extraction texte + logs d'audit.
+- Versioning releases: API creation draft release, publication controlee, assignation manuelle des enrollments.
+- Orchestration async: runner jobs interne (`/api/internal/jobs/runner`) avec claim, retry et securisation par `CRON_SECRET`.
 
 ## Decisions prises
 - **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
@@ -35,16 +44,20 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - **Validation** : Déverrouillage quiz après 90% d'écoute. Seuil de réussite 70%.
 - **Stockage Audio** : Vercel Blob (V1).
 - **Git** : Les MP3 ne sont pas versionnes (stockage Blob uniquement).
+- **Strategie V2** : Migration incrementale sur base existante (pas de rewrite complet).
+- **Admin IA** : Separation claire `Suivi apprenants` vs `Gestion`.
 
 ## Risques / Blocages
 - **Contenu Audio** : Besoin des fichiers audio pour le remplissage de la base.
 - **Lecture Audio Mobile** : Assurer que la lecture continue écran éteint (si possible en PWA/Web) ou gère bien les interruptions.
+- **Migration DB** : La migration V2 doit etre executee avant activation de `NEW_CONTENT_ENGINE`.
+- **Lint global** : Le repo contient des erreurs ESLint historiques hors perimetre des changements V2.
 
 ## Prochaine etape (proposee)
-1. Mettre en place la base de données (Schema Prisma) selon la description.
-2. Construire l'auth email+password (hash + sessions).
-3. Creer les ecrans UI mobile-first (parcours, audio, quiz, progression, admin).
-4. Integrer le stockage audio (Vercel Blob) et le tracking d'ecoute.
+1. Executer migration Prisma V2 + backfill des societes sur environnement de dev/staging.
+2. Construire le wizard de generation complet (upload PDF -> analyse -> scripts -> quiz -> validation -> audio).
+3. Connecter les pages apprenant a la release assignee (au lieu des quiz statiques/Blob prefixes).
+4. Ajouter orchestration jobs asynchrones + tests e2e du flux admin.
 
 ## Journal des evolutions
 - 2026-01-26: Initialisation du projet et de la documentation.
@@ -65,3 +78,5 @@ Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental
 - 2026-01-26: Page profil personnalisee.
 - 2026-01-27: Roles admin + journal d'activite + page /admin.
 - 2026-01-27: Tableau admin avec cartes entreprises/utilisateurs.
+- 2026-02-23: Demarrage execution V2 (schema Prisma/migration/backfill, hub admin suivi+gestion, bases IA/pipeline, plan agent detaille).
+- 2026-02-23: Ajout APIs V2 ingestion PDF, releases/versioning, enrollments et runner jobs asynchrone.
