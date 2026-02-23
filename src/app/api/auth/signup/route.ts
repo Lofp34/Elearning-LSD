@@ -7,6 +7,28 @@ export const runtime = "nodejs";
 const SUPER_ADMIN_EMAILS = new Set(["ls@laurentserre.com"]);
 const ADMIN_EMAILS = new Set(["f.bricaud@auditionconseil66.fr"]);
 
+function slugify(input: string) {
+  return input
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
+async function ensureUniqueSlug(baseSlug: string) {
+  let slug = baseSlug || "societe";
+  let suffix = 2;
+
+  while (true) {
+    const existing = await prisma.company.findUnique({ where: { slug }, select: { id: true } });
+    if (!existing) return slug;
+    slug = `${baseSlug}-${suffix}`;
+    suffix += 1;
+  }
+}
+
 function resolveRole(email: string) {
   if (SUPER_ADMIN_EMAILS.has(email)) return "SUPER_ADMIN";
   if (ADMIN_EMAILS.has(email)) return "ADMIN";
@@ -39,7 +61,7 @@ export async function POST(request: Request) {
   const lastName = body.lastName?.trim();
   const email = body.email?.trim().toLowerCase();
   const password = body.password ?? "";
-  const company = body.company?.trim();
+  const providedCompany = body.company?.trim();
 
   if (!firstName || !lastName || !email || password.length < 8) {
     return NextResponse.json(
@@ -59,13 +81,37 @@ export async function POST(request: Request) {
 
     const passwordHash = await hashPassword(password);
     const fallbackCompany = email?.split("@")[1] ?? null;
+    let companyId: string | null = null;
+
+    if (providedCompany) {
+      const existingCompany = await prisma.company.findFirst({
+        where: { name: { equals: providedCompany, mode: "insensitive" } },
+        select: { id: true },
+      });
+
+      if (existingCompany) {
+        companyId = existingCompany.id;
+      } else {
+        const slug = await ensureUniqueSlug(slugify(providedCompany));
+        const createdCompany = await prisma.company.create({
+          data: {
+            name: providedCompany,
+            slug,
+          },
+          select: { id: true },
+        });
+        companyId = createdCompany.id;
+      }
+    }
+
     const user = await prisma.user.create({
       data: {
         firstName,
         lastName,
         email,
         passwordHash,
-        company: company || fallbackCompany,
+        company: providedCompany || fallbackCompany,
+        companyId,
         role: resolveRole(email),
       },
     });

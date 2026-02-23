@@ -20,19 +20,68 @@ enum ActivityType {
   QUIZ_SUBMIT
 }
 
+enum LearningReleaseStatus {
+  DRAFT
+  REVIEW_READY
+  PUBLISHED
+  ARCHIVED
+}
+
+enum VoiceSlot {
+  FEMALE
+  MALE
+}
+
+enum InterviewStatus {
+  UPLOADED
+  EXTRACTED
+  FAILED
+}
+
+enum GenerationJobType {
+  FULL_PIPELINE
+  ANALYZE_INTERVIEWS
+  GENERATE_SCRIPTS
+  GENERATE_QUIZZES
+  GENERATE_AUDIO
+}
+
+enum GenerationJobStatus {
+  PENDING
+  RUNNING
+  RETRYING
+  FAILED
+  COMPLETED
+  CANCELED
+}
+
+enum AudioAssetStatus {
+  PENDING
+  GENERATED
+  FAILED
+}
+
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  firstName    String
-  lastName     String
-  company      String?
-  role         UserRole @default(USER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  quizAttempts QuizAttempt[]
-  listenEvents ListenEvent[]
-  activityLogs ActivityLog[]
+  id                    String              @id @default(cuid())
+  email                 String              @unique
+  passwordHash          String
+  firstName             String
+  lastName              String
+  company               String?
+  companyId             String?
+  role                  UserRole            @default(USER)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  companyRef            Company?            @relation("CompanyUsers", fields: [companyId], references: [id], onDelete: SetNull)
+  quizAttempts          QuizAttempt[]
+  listenEvents          ListenEvent[]
+  activityLogs          ActivityLog[]
+  createdReleases       LearningRelease[]   @relation("ReleaseCreatedBy")
+  uploadedInterviewDocs InterviewDocument[] @relation("InterviewUploadedBy")
+  adminActionsPerformed AdminActionLog[]    @relation("AdminActionActor")
+  learnerEnrollments    LearnerEnrollment[]
+
+  @@index([companyId])
 }
 
 model QuizAttempt {
@@ -47,6 +96,160 @@ model QuizAttempt {
 
   @@index([userId])
   @@index([audioSlug])
+}
+
+model Company {
+  id                 String              @id @default(cuid())
+  name               String
+  slug               String              @unique
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  users              User[]              @relation("CompanyUsers")
+  releases           LearningRelease[]
+  interviewDocuments InterviewDocument[]
+  generationJobs     GenerationJob[]
+  adminActions       AdminActionLog[]
+
+  @@index([isActive])
+}
+
+model LearningRelease {
+  id                 String                @id @default(cuid())
+  companyId          String
+  version            Int
+  status             LearningReleaseStatus @default(DRAFT)
+  createdById        String?
+  publishedAt        DateTime?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  company            Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy          User?                 @relation("ReleaseCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  modules            LearningModule[]
+  generationJobs     GenerationJob[]
+  learnerEnrollments LearnerEnrollment[]
+
+  @@unique([companyId, version])
+  @@index([companyId, status])
+}
+
+model LearningModule {
+  id            String                 @id @default(cuid())
+  releaseId     String
+  partKey       String
+  chapterKey    String
+  title         String
+  orderIndex    Int
+  scriptText    String
+  voiceSlot     VoiceSlot
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  release       LearningRelease        @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  quizQuestions LearningQuizQuestion[]
+  audioAsset    AudioAsset?
+
+  @@unique([releaseId, partKey, chapterKey])
+  @@index([releaseId, orderIndex])
+}
+
+model LearningQuizQuestion {
+  id          String         @id @default(cuid())
+  moduleId    String
+  orderIndex  Int
+  question    String
+  options     Json
+  answerIndex Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  module      LearningModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleId, orderIndex])
+  @@index([moduleId])
+}
+
+model InterviewDocument {
+  id            String          @id @default(cuid())
+  companyId     String
+  filename      String
+  blobPath      String
+  extractedText String?
+  uploadedById  String?
+  status        InterviewStatus @default(UPLOADED)
+  errorMessage  String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  company       Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  uploadedBy    User?           @relation("InterviewUploadedBy", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, createdAt])
+}
+
+model GenerationJob {
+  id        String              @id @default(cuid())
+  companyId String
+  releaseId String?
+  jobType   GenerationJobType
+  status    GenerationJobStatus @default(PENDING)
+  step      String?
+  attempts  Int                 @default(0)
+  payload   Json?
+  lastError String?
+  lockedAt  DateTime?
+  lockedBy  String?
+  nextRunAt DateTime?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  company   Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  release   LearningRelease?    @relation(fields: [releaseId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, status, createdAt])
+  @@index([status, nextRunAt])
+  @@index([releaseId])
+}
+
+model AudioAsset {
+  id              String           @id @default(cuid())
+  moduleId        String           @unique
+  blobPath        String
+  durationSec     Int?
+  provider        String
+  providerVoiceId String
+  status          AudioAssetStatus @default(PENDING)
+  errorMessage    String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  module          LearningModule   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+}
+
+model LearnerEnrollment {
+  id         String          @id @default(cuid())
+  userId     String
+  releaseId  String
+  assignedAt DateTime        @default(now())
+  isActive   Boolean         @default(true)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  release    LearningRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, releaseId])
+  @@index([userId, isActive])
+  @@index([releaseId, isActive])
+}
+
+model AdminActionLog {
+  id          String   @id @default(cuid())
+  actorUserId String
+  companyId   String?
+  actionType  String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  actor       User     @relation("AdminActionActor", fields: [actorUserId], references: [id], onDelete: Cascade)
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId, createdAt])
+  @@index([companyId, createdAt])
+  @@index([actionType])
 }
 
 model ListenEvent {

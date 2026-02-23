@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "upload:audio": "node scripts/upload-audio-to-blob.mjs",
+    "backfill:companies": "node scripts/backfill-company-relations.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
