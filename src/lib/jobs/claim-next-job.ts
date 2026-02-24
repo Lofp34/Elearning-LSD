@@ -37,6 +37,8 @@ export async function claimNextGenerationJob(workerId: string, companyId?: strin
         lockedAt: now,
         lockedBy: workerId,
         attempts: { increment: 1 },
+        lastError: null,
+        nextRunAt: null,
       },
     });
   });
