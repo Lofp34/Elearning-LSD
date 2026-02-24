@@ -1,11 +1,18 @@
-"use client";
-
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
 import BrandMark from "@/components/BrandMark";
 import { QUIZZES } from "@/data/quizzes";
+import { prisma } from "@/lib/prisma";
+import { isNewContentEngineEnabled } from "@/lib/feature-flags";
+import { getSessionUserId } from "@/lib/session-user";
+import {
+  RELEASE_MODULE_SEPARATOR,
+  buildTrackingAudioSlug,
+  parseReleaseModuleSlug,
+} from "@/lib/learning/slug";
+import QuizClient, { type QuizData } from "./QuizClient";
 import styles from "./page.module.css";
+
+export const dynamic = "force-dynamic";
 
 function resolveQuizKey(slug: string) {
   const normalized = decodeURIComponent(slug)
@@ -13,9 +20,7 @@ function resolveQuizKey(slug: string) {
     .replace(/_/g, "-")
     .toLowerCase();
 
-  if (QUIZZES[normalized]) {
-    return normalized;
-  }
+  if (QUIZZES[normalized]) return normalized;
 
   const keys = Object.keys(QUIZZES);
   return (
@@ -25,39 +30,118 @@ function resolveQuizKey(slug: string) {
   );
 }
 
-export default function QuizPage() {
-  const params = useParams<{ slug?: string | string[] }>();
-  const rawSlug = Array.isArray(params?.slug) ? params?.slug[0] : params?.slug;
+export default async function QuizPage({
+  params,
+}: {
+  params: { slug: string } | Promise<{ slug: string }>;
+}) {
+  const resolvedParams = await Promise.resolve(params);
+  const rawSlug = resolvedParams.slug;
+  const decodedSlug = rawSlug ? decodeURIComponent(rawSlug) : "";
+
   const key = rawSlug ? resolveQuizKey(rawSlug) : undefined;
-  const quiz = key ? QUIZZES[key] : undefined;
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const legacyQuiz = key ? QUIZZES[key] : undefined;
 
-  useEffect(() => {
-    if (quiz) {
-      setAnswers(Array(quiz.questions.length).fill(-1));
-      setSubmitted(false);
+  let quizData: QuizData | null = null;
+  let errorMessage = "";
+
+  if (legacyQuiz) {
+    quizData = {
+      title: legacyQuiz.title,
+      questions: legacyQuiz.questions,
+      releaseId: null,
+      moduleId: null,
+      trackingSlug: key ?? decodedSlug,
+    };
+  } else if (decodedSlug.includes(RELEASE_MODULE_SEPARATOR)) {
+    const parsed = parseReleaseModuleSlug(decodedSlug);
+    if (!parsed) {
+      errorMessage = "Slug module invalide.";
+    } else {
+      const userId = await getSessionUserId();
+      if (!userId) {
+        errorMessage = "Connecte-toi pour acceder a ce quiz.";
+      } else {
+        const learningModule = await prisma.learningModule.findFirst({
+          where: {
+            releaseId: parsed.releaseId,
+            contentKey: parsed.contentKey,
+          },
+          include: {
+            release: {
+              select: {
+                id: true,
+                version: true,
+                status: true,
+              },
+            },
+            quizQuestions: {
+              orderBy: { orderIndex: "asc" },
+              select: {
+                question: true,
+                options: true,
+                answerIndex: true,
+              },
+            },
+          },
+        });
+
+        if (!learningModule) {
+          errorMessage = "Module introuvable.";
+        } else if (learningModule.release.status !== "PUBLISHED") {
+          errorMessage = "Release non publiee.";
+        } else if (learningModule.quizQuestions.length !== 5) {
+          errorMessage = "Quiz incomplet pour ce module.";
+        } else {
+          if (isNewContentEngineEnabled()) {
+            const enrollment = await prisma.learnerEnrollment.findFirst({
+              where: {
+                userId,
+                releaseId: learningModule.release.id,
+                isActive: true,
+              },
+              select: { id: true },
+            });
+
+            if (!enrollment) {
+              errorMessage = "Aucune assignation active pour ce module.";
+            }
+          }
+
+          if (!errorMessage) {
+            quizData = {
+              title: learningModule.title,
+              releaseId: learningModule.release.id,
+              moduleId: learningModule.id,
+              trackingSlug: buildTrackingAudioSlug(
+                learningModule.release.version,
+                learningModule.contentKey
+              ),
+              questions: learningModule.quizQuestions.map((question) => ({
+                question: question.question,
+                options: Array.isArray(question.options)
+                  ? question.options.map((item) => String(item))
+                  : ["", "", "", ""],
+                answerIndex: question.answerIndex,
+              })),
+            };
+          }
+        }
+      }
     }
-  }, [quiz]);
+  } else {
+    errorMessage = "Ce quiz n'existe pas.";
+  }
 
-  const score = useMemo(() => {
-    if (!quiz) return 0;
-    return quiz.questions.reduce((acc, question, index) => {
-      return acc + (answers[index] === question.answerIndex ? 1 : 0);
-    }, 0);
-  }, [answers, quiz]);
-
-  if (!quiz) {
+  if (!quizData) {
     return (
       <main className={styles.page}>
         <div className={styles.card}>
           <p className={styles.tag}>Quiz introuvable</p>
-          <h1>Ce quiz n'existe pas</h1>
+          <h1>Ce quiz n&apos;existe pas</h1>
           <p>Retourne au parcours pour choisir un audio valide.</p>
-          <p className={styles.slug}>
-            Slug recu: {rawSlug ? decodeURIComponent(rawSlug) : "undefined"}
-          </p>
+          <p className={styles.slug}>Slug recu: {decodedSlug}</p>
+          {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
           <Link className={styles.primary} href="/parcours">
             Retour au parcours
           </Link>
@@ -66,45 +150,6 @@ export default function QuizPage() {
     );
   }
 
-  const quizData = quiz;
-
-  function handleSelect(questionIndex: number, optionIndex: number) {
-    setAnswers((prev) => {
-      const next = [...prev];
-      next[questionIndex] = optionIndex;
-      return next;
-    });
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (answers.some((value) => value === -1)) {
-      setSubmitError("Merci de repondre a toutes les questions.");
-      return;
-    }
-
-    setSubmitError("");
-    setSubmitted(true);
-
-    const submitSlug = key ?? rawSlug ?? "";
-    fetch("/api/quiz/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        slug: submitSlug,
-        score,
-        total,
-      }),
-    }).catch(() => null);
-  }
-
-  function handleReset() {
-    setAnswers(Array(quizData.questions.length).fill(-1));
-    setSubmitted(false);
-  }
-
-  const total = quizData.questions.length;
-
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -112,7 +157,7 @@ export default function QuizPage() {
           <BrandMark subtitle="Quiz audio" />
           <div className={styles.headerText}>
             <h1>{quizData.title}</h1>
-            <p className={styles.subtitle}>5 questions pour valider l'audio.</p>
+            <p className={styles.subtitle}>5 questions pour valider l&apos;audio.</p>
           </div>
         </div>
         <Link className={styles.back} href="/parcours">
@@ -120,63 +165,7 @@ export default function QuizPage() {
         </Link>
       </header>
 
-      <form className={styles.quiz} onSubmit={handleSubmit}>
-        {quizData.questions.map((question, qIndex) => (
-          <section key={question.question} className={styles.card}>
-            <p className={styles.questionLabel}>Question {qIndex + 1}</p>
-            <h2>{question.question}</h2>
-            <div className={styles.options}>
-              {question.options.map((option, oIndex) => {
-                const selected = answers[qIndex] === oIndex;
-                const isCorrect = submitted && question.answerIndex === oIndex;
-                const isWrong = submitted && selected && question.answerIndex !== oIndex;
-
-                return (
-                  <label
-                    key={option}
-                    className={`${styles.option} ${selected ? styles.selected : ""} ${
-                      isCorrect ? styles.correct : ""
-                    } ${isWrong ? styles.wrong : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name={`question-${qIndex}`}
-                      value={oIndex}
-                      checked={selected}
-                      onChange={() => handleSelect(qIndex, oIndex)}
-                      disabled={submitted}
-                    />
-                    <span>{option}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </section>
-        ))}
-
-        <div className={styles.actions}>
-          {!submitted ? (
-            <>
-              <button className={styles.primary} type="submit">
-                Valider le quiz
-              </button>
-              {submitError ? <p className={styles.error}>{submitError}</p> : null}
-            </>
-          ) : (
-            <>
-              <div className={styles.score}>
-                Score: {score} / {total}
-              </div>
-              <button className={styles.secondary} type="button" onClick={handleReset}>
-                Refaire le quiz
-              </button>
-              <Link className={styles.primary} href="/parcours">
-                Retour au parcours
-              </Link>
-            </>
-          )}
-        </div>
-      </form>
+      <QuizClient key={`${decodedSlug}-${quizData.releaseId ?? "legacy"}`} quizData={quizData} />
     </main>
   );
 }

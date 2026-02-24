@@ -6,6 +6,7 @@ import { canAccessCompany, getAuthUserScope, isAdminRole } from "@/lib/authz";
 export const runtime = "nodejs";
 
 const MAX_PDF_SIZE = 20 * 1024 * 1024;
+const ALLOWED_PDF_MIME_TYPES = new Set(["application/pdf", "application/x-pdf"]);
 
 export async function POST(
   request: Request,
@@ -30,6 +31,10 @@ export async function POST(
 
   if (!file.name.toLowerCase().endsWith(".pdf")) {
     return NextResponse.json({ error: "Le fichier doit etre un PDF." }, { status: 400 });
+  }
+
+  if (file.type && !ALLOWED_PDF_MIME_TYPES.has(file.type.toLowerCase())) {
+    return NextResponse.json({ error: "Type MIME invalide. PDF requis." }, { status: 400 });
   }
 
   if (file.size > MAX_PDF_SIZE) {

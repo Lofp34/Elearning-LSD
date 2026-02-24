@@ -61,6 +61,12 @@ enum AudioAssetStatus {
   FAILED
 }
 
+enum ModuleReviewStatus {
+  DRAFT
+  APPROVED
+  NEEDS_CHANGES
+}
+
 model User {
   id                    String              @id @default(cuid())
   email                 String              @unique
@@ -80,28 +86,38 @@ model User {
   uploadedInterviewDocs InterviewDocument[] @relation("InterviewUploadedBy")
   adminActionsPerformed AdminActionLog[]    @relation("AdminActionActor")
   learnerEnrollments    LearnerEnrollment[]
+  reviewedModules       LearningModule[]    @relation("ModuleReviewedBy")
 
   @@index([companyId])
 }
 
 model QuizAttempt {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   userId    String
   audioSlug String
+  releaseId String?
+  moduleId  String?
   score     Int
   total     Int
   passed    Boolean
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  release   LearningRelease? @relation(fields: [releaseId], references: [id], onDelete: SetNull)
+  module    LearningModule?  @relation(fields: [moduleId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([audioSlug])
+  @@index([userId, releaseId])
 }
 
 model Company {
   id                 String              @id @default(cuid())
   name               String
   slug               String              @unique
+  femaleVoiceId      String?
+  femaleVoiceName    String?
+  maleVoiceId        String?
+  maleVoiceName      String?
   isActive           Boolean             @default(true)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
@@ -120,6 +136,7 @@ model LearningRelease {
   version            Int
   status             LearningReleaseStatus @default(DRAFT)
   createdById        String?
+  analysisSummary    Json?
   publishedAt        DateTime?
   createdAt          DateTime              @default(now())
   updatedAt          DateTime              @updatedAt
@@ -128,6 +145,8 @@ model LearningRelease {
   modules            LearningModule[]
   generationJobs     GenerationJob[]
   learnerEnrollments LearnerEnrollment[]
+  listenEvents       ListenEvent[]
+  quizAttempts       QuizAttempt[]
 
   @@unique([companyId, version])
   @@index([companyId, status])
@@ -138,17 +157,25 @@ model LearningModule {
   releaseId     String
   partKey       String
   chapterKey    String
+  contentKey    String
   title         String
   orderIndex    Int
   scriptText    String
   voiceSlot     VoiceSlot
+  reviewStatus  ModuleReviewStatus     @default(DRAFT)
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewComment String?
   createdAt     DateTime               @default(now())
   updatedAt     DateTime               @updatedAt
   release       LearningRelease        @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  reviewedBy    User?                  @relation("ModuleReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
   quizQuestions LearningQuizQuestion[]
   audioAsset    AudioAsset?
+  listenEvents  ListenEvent[]
+  quizAttempts  QuizAttempt[]
 
-  @@unique([releaseId, partKey, chapterKey])
+  @@unique([releaseId, contentKey])
   @@index([releaseId, orderIndex])
 }
 
@@ -253,14 +280,19 @@ model AdminActionLog {
 }
 
 model ListenEvent {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   userId      String
   audioSlug   String
-  completedAt DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  releaseId   String?
+  moduleId    String?
+  completedAt DateTime         @default(now())
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  release     LearningRelease? @relation(fields: [releaseId], references: [id], onDelete: SetNull)
+  module      LearningModule?  @relation(fields: [moduleId], references: [id], onDelete: SetNull)
 
   @@unique([userId, audioSlug])
   @@index([audioSlug])
+  @@index([userId, releaseId])
 }
 
 model ActivityLog {

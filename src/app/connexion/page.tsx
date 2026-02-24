@@ -36,7 +36,7 @@ export default function ConnexionPage() {
       }
 
       router.push("/parcours");
-    } catch (err) {
+    } catch {
       setError("Probleme reseau. Reessaie dans quelques instants.");
     } finally {
       setPending(false);

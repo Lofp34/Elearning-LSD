@@ -1,0 +1,165 @@
+.page {
+  min-height: 100vh;
+  padding: 1.5rem 1rem 2rem;
+  background: #f4f7fa;
+  color: #0f172a;
+  display: grid;
+  gap: 1rem;
+}
+
+.header,
+.introCard,
+.reviewPanel {
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.back {
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #d9e2ec;
+  background: #fff;
+  color: #334155;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.introCard,
+.reviewPanel {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.introCard h1,
+.introCard p {
+  margin: 0;
+}
+
+.summary {
+  color: #0f172a;
+}
+
+.modulesList {
+  display: grid;
+  gap: 1rem;
+}
+
+.moduleCard {
+  border: 1px solid #dbe5ef;
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.moduleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.moduleHeader h3,
+.moduleHeader p {
+  margin: 0;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.field textarea,
+.field input,
+.field select,
+.fieldInline select {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+}
+
+.fieldInline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.quizBlock {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.quizBlock h4 {
+  margin: 0;
+}
+
+.quizQuestionCard {
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.75rem;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.optionsGrid {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.primary {
+  border: 1px solid #0f172a;
+  background: #0f172a;
+  color: #fff;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary:disabled {
+  opacity: 0.7;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0;
+}
+
+.success {
+  color: #166534;
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: 1rem 0.75rem 1.5rem;
+  }
+}

@@ -1,7 +1,44 @@
 # Plan Technique V2 - Application E-learning Multi-Entreprises
 
-Date: 2026-02-23  
-Statut global: [ ] Non demarre / [ ] En cours / [ ] Termine
+Date: 2026-02-24  
+Statut global: [ ] Non demarre / [x] En cours / [ ] Termine
+
+## 0) Mise a jour execution (2026-02-24, lot 1 -> lot 8)
+
+Etat synthese par lot:
+
+- [x] Lot 1 - UI upload/extraction PDF en wizard societe.
+- [x] Lot 2 - Pipeline IA asynchrone `FULL_PIPELINE` (analyse + scripts + quiz + `REVIEW_READY`).
+- [x] Lot 3 - Review humaine (edition script/quiz + statuts review + journalisation).
+- [x] Lot 4 - Voix ElevenLabs par societe + generation audio avec retry/idempotence.
+- [x] Lot 5 - Publication manuelle renforcee + enrollment manuel + signup auto-enrollment.
+- [x] Lot 6 - Parcours apprenant versionne avec fallback legacy.
+- [x] Lot 7 - Runner jobs + execution manuelle admin + retry job admin + garde-fous securite.
+- [ ] Lot 8 - Validation finale complete (tests reels staging providers + e2e non-skip) a terminer.
+
+Livrables techniques integres:
+
+- [x] Migration Prisma V2 supplementaire: `20260223223000_v2_review_voice_enrollment_tracking`.
+- [x] APIs admin nouvelles/etendues: interviews list, wizard state, pipeline start, review GET/PATCH, voices GET/PATCH, audio generate, job retry.
+- [x] APIs apprenant etendues: `listen/complete` et `quiz/submit` avec `releaseId/moduleId`.
+- [x] UI admin: wizard societe, panel upload PDF auto-extract, panel voix, actions release, review release, enrollments release.
+- [x] UI apprenant: parcours/parties/quiz/progression/classement/profil compatibles V2 + fallback legacy.
+- [x] Jobs & pipeline: orchestration reelle OpenAI/ElevenLabs, step tracking, retries, idempotence.
+- [x] Execution jobs manuelle: endpoint admin par societe + bouton `Executer prochain job` dans le wizard.
+- [x] Cron Vercel retire (compatibilite plan Hobby).
+
+Verification locale (branche `feature/v2-content-engine-foundations`):
+
+- [x] `npm run lint`
+- [x] `npm run test`
+- [x] `npm run build`
+- [x] `npm run test:e2e` (spec e2e presente mais `skip` par defaut en CI locale)
+
+Reste a cloturer pour passage "Termine":
+
+- [ ] Jouer un smoke test staging avec providers reels (OpenAI + ElevenLabs) sur 1 societe test complete.
+- [ ] Retirer le `skip` e2e et brancher un scenario exploitable sur environnement de test stable.
+- [ ] Cutover metier (`NEW_CONTENT_ENGINE=true`) apres validation fonctionnelle finale.
 
 ## 1) Objectif du document
 
@@ -34,17 +71,17 @@ Regles de suivi obligatoires pour l'agent:
 
 - [ ] Garder la base Next.js existante et refactorer en V2 (pas de rewrite from scratch).
 - [ ] Passer d'un contenu statique (Blob + `src/data/quizzes.ts`) a un contenu versionne en base.
-- [ ] Introduire un moteur de generation asynchrone par jobs (DB + cron + webhooks).
+- [ ] Introduire un moteur de generation asynchrone par jobs (DB + execution manuelle admin).
 - [ ] Utiliser OpenAI pour analyse + generation scripts + generation quiz.
 - [ ] Utiliser ElevenLabs pour generation audio a partir des scripts valides.
 - [ ] Conserver Vercel Blob pour stocker les MP3 produits.
 
 ## 4) Cible fonctionnelle V2
 
-- [ ] Espace admin avec 2 entrees: `Suivi apprenants` et `Gestion`.
-- [ ] `Gestion` -> liste des societes + creation d'une nouvelle societe.
+- [x] Espace admin avec 2 entrees: `Suivi apprenants` et `Gestion`.
+- [x] `Gestion` -> liste des societes + creation d'une nouvelle societe.
 - [ ] Wizard creation societe:
-- [ ] Etape 1: infos societe.
+- [x] Etape 1: infos societe.
 - [ ] Etape 2: upload PDF interviews.
 - [ ] Etape 3: analyse IA des interviews.
 - [ ] Etape 4: generation scripts + quiz (draft).
@@ -154,7 +191,7 @@ Taches:
 - [x] Ajouter les index critiques (companyId, releaseId, status, createdAt, unique release/version).
 - [x] Ecrire la migration SQL.
 - [x] Ecrire un script de backfill minimal pour mapper les users existants a une company legacy.
-- [ ] Valider `prisma generate` + `prisma migrate dev` (generate valide, migrate dev a executer sur DB cible).
+- [x] Valider `prisma generate` + migration DB cible (`prisma migrate deploy`) + backfill societes.
 
 ## Phase C - Variables d'environnement et configuration runtime
 
@@ -343,8 +380,8 @@ Taches:
 - [x] Traiter les jobs par etapes courtes (compatibles serverless).
 - [x] Ajouter retries limites et etat `FAILED` propre.
 - [ ] Ajouter endpoint webhook OpenAI si mode background est active.
-- [ ] Ajouter cron Vercel pour appeler le runner regulierement.
-- [ ] Ajouter un bouton admin "Relancer job".
+- [x] Ajouter un endpoint admin "Executer prochain job" scope societe.
+- [x] Ajouter un bouton admin "Executer prochain job".
 
 ## Phase N - Securite, RBAC, audit
 
@@ -418,7 +455,8 @@ Entrees:
 
 - [x] 2026-02-23 19:05 | Codex | A/B/C/D/E/K | Schema Prisma V2 + migration SQL + backfill script + env/feature-flag + admin hub suivi/gestion + creation societe + clients IA/pipeline prompt scaffold | N/A (working tree) | Fondations V2 operationnelles | Implementer ingestion PDF + orchestration jobs
 - [x] 2026-02-23 19:35 | Codex | F/J/M/N | Ingestion interviews PDF (upload/extract) + APIs releases/publish/enrollments + runner jobs interne | N/A (working tree) | Chaine admin backend V2 initiale operationnelle | Brancher UI review/generation audio et parcours versionne
-- [ ] 2026-__-__ __:__ |  |  |  |  |  | 
+- [x] 2026-02-23 22:12 | Laurent + Codex | B/K/P | Validation en deploiement Vercel: migration `prisma migrate deploy`, backfill societes, creation societe `Gedeas`, creation release draft `v1` via `/admin/gestion` | N/A (ops Vercel/DB) | Flux admin V2 de base valide en ligne | Construire UI upload interviews + revue scripts/quiz + generation audio
+- [x] 2026-02-24 00:00 | Codex | M/P | Suppression cron Vercel (Hobby) + endpoint admin manuel `POST /api/admin/companies/[companyId]/jobs/run-next` + bouton wizard `Executer prochain job` | 34bd0a0+ | Traitement jobs en mode 100% manuel depuis admin | Lancer smoke test reel sur societe test
 - [ ] 2026-__-__ __:__ |  |  |  |  |  | 
 - [ ] 2026-__-__ __:__ |  |  |  |  |  | 
 
@@ -426,7 +464,8 @@ Entrees:
 
 - [x] Installer deps: `npm install`
 - [x] Prisma generate: `npm run prisma:generate`
-- [ ] Prisma migration: `npm run prisma:migrate`
+- [x] Prisma migration (DB cible): `npx prisma migrate deploy`
+- [x] Backfill societes: `npm run backfill:companies`
 - [ ] Lancer app: `npm run dev`
 - [ ] Lint: `npm run lint`
 

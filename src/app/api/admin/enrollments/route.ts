@@ -21,11 +21,18 @@ export async function POST(request: Request) {
 
   const release = await prisma.learningRelease.findUnique({
     where: { id: releaseId },
-    select: { id: true, companyId: true, version: true },
+    select: { id: true, companyId: true, version: true, status: true },
   });
 
   if (!release) {
     return NextResponse.json({ error: "Release introuvable." }, { status: 404 });
+  }
+
+  if (release.status !== "PUBLISHED") {
+    return NextResponse.json(
+      { error: "Seules les releases publiees peuvent etre assignees." },
+      { status: 400 }
+    );
   }
 
   const user = await prisma.user.findUnique({

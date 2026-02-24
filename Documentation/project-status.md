@@ -1,82 +1,77 @@
-# Project Status (MVP)
+# Project Status (V2 Content Engine)
+
+Date de mise a jour: 2026-02-24
 
 ## Objectif
-Créer une Web-App E-learning Mobile (PWA) pour la formation commerciale (Mental, Vente, Techniques) avec suivi strict de la progression (Audio + Quiz).
+Industrialiser la generation de parcours e-learning par societe (PDF interviews -> scripts -> quiz -> audio -> publication), sans regression UX pour les apprenants existants.
 
-## Perimetre (scope)
-- In: Auth (email + mot de passe), Player Audio (avec reprise), Quiz (5Q/10Q), Progression (Neon Postgres), Admin Dashboard (Tableau + Export CSV).
-- Out: Mode Offline complet, Génération PDF complexes (V1).
+## Statut global
+- Etat: En cours avance.
+- Avancement: Lots 1 a 7 implementes et verifies localement.
+- Bloc final: validation staging avec providers reels + scenario e2e non-skip.
 
-## Ce qui est en place
-- Documentation initiale (`description-projet.md`).
-- Guide des skills (`GUIDE_SKILLS.md`).
-- Bootstrap Next.js (App Router + TypeScript) au root du repo.
-- Dossier audios V1 (`Audio_elearning/`).
-- Routes Blob (list/upload) + page de listing audio.
-- Ecran d'accueil (bienvenue/creation de compte) + page Parcours (UI).
-- Routes auth (signup/login/logout) + pages connexion.
-- Schema Prisma (User) et utilitaires auth (hash + session).
-- Pages Parcours detaillees (liste audios par partie) + placeholders progression/profil.
-- Quizz audio statiques (5 questions) et page quiz par audio.
-- Tracking progression (ecoutes completes + quiz valides) + APIs.
-- Affichage statut audio + score quiz sur les cartes de parcours.
-- Carte "A faire maintenant" adaptee au prochain audio a ecouter.
-- Page d'accueil plus pedagogique (explication du parcours).
-- Branding "Laurent Serre Développement" affiche avec le logo sur toutes les pages.
-- Page leaderboard par entreprise (ecoutes + quiz + sprint audio).
-- Menu bas fixe affiche sur toutes les pages.
-- Page profil personnalisee avec statistiques et infos membre.
-- Page admin (logs, stats) avec roles SUPER_ADMIN/ADMIN.
-- Tableau admin enrichi (cartes entreprises + utilisateurs, vue 7j).
-- Plan d'execution V2 agent-ready avec checklist (`Documentation/plan-technique-v2-agent.md`).
-- Fondations V2 Prisma ajoutees (Company, Release, Module, QuizQuestion, Job, Enrollment, AudioAsset, AdminActionLog).
-- Migration SQL V2 ajoutee (`prisma/migrations/20260223190000_v2_content_engine_foundations`).
-- Script de backfill utilisateurs -> societes ajoute (`scripts/backfill-company-relations.mjs`).
-- Admin refactor: `/admin` devient hub, ancien tableau de suivi deplace vers `/admin/suivi`, nouvelle section `/admin/gestion` + creation de societe.
-- Helpers V2 ajoutes: feature flag, env strict, authz, base-structure pedagogique, clients OpenAI/ElevenLabs, pipeline draft.
-- Ingestion interviews: APIs upload/extract PDF par societe + extraction texte + logs d'audit.
-- Versioning releases: API creation draft release, publication controlee, assignation manuelle des enrollments.
-- Orchestration async: runner jobs interne (`/api/internal/jobs/runner`) avec claim, retry et securisation par `CRON_SECRET`.
+## Livrables en place
+- Admin hub conserve: `/admin` avec entrees `Suivi apprenants` et `Gestion`.
+- Wizard societe: `/admin/gestion/companies/[companyId]` (upload PDF, extraction auto, voix, releases, jobs).
+- Reviews: `/admin/gestion/releases/[releaseId]/review` (edition scripts + quiz + statut review).
+- Enrollments: `/admin/gestion/releases/[releaseId]/enrollments` (assignation manuelle, replace active).
+- APIs V2 ajoutees:
+  - `GET /api/admin/companies/[companyId]/interviews`
+  - `GET /api/admin/companies/[companyId]/wizard`
+  - `POST /api/admin/companies/[companyId]/jobs/run-next`
+  - `POST /api/admin/releases/[releaseId]/pipeline/start`
+  - `GET|PATCH /api/admin/releases/[releaseId]/review`
+  - `GET|PATCH /api/admin/companies/[companyId]/voices`
+  - `POST /api/admin/releases/[releaseId]/audio/generate`
+  - `POST /api/admin/jobs/[jobId]/retry`
+- APIs etendues:
+  - `POST /api/admin/releases/[releaseId]/publish` (garde-fous renforces)
+  - `POST /api/auth/signup` (auto-enrollment nouvelle inscription)
+  - `POST /api/listen/complete` et `POST /api/quiz/submit` (support `releaseId/moduleId`)
+- Pipeline reel:
+  - Job `FULL_PIPELINE` execute analyse OpenAI + scripts + quiz (16 modules fixes, schema strict).
+  - Job `GENERATE_AUDIO` execute generation ElevenLabs avec retry et idempotence.
+  - Release passe en `REVIEW_READY` puis publication manuelle.
+- Stockage audio V2:
+  - `audio/companies/{companySlug}/releases/v{version}/{order}-{chapter}.mp3`
+- Fallback legacy maintenu:
+  - Si `NEW_CONTENT_ENGINE=false` ou pas d'enrollment V2 actif, les pages apprenant gardent le mode legacy.
+- Infra jobs:
+  - Runner securise `CRON_SECRET` sur `/api/internal/jobs/runner`
+  - Claim TTL jobs stale + retry admin
+  - Mode execution 100% manuel via admin wizard (`Executer prochain job`)
+  - Cron Vercel retire (compatibilite plan Hobby)
+- Base de donnees:
+  - Migration fondation V2 + migration complementaire:
+    - `20260223190000_v2_content_engine_foundations`
+    - `20260223223000_v2_review_voice_enrollment_tracking`
 
-## Decisions prises
-- **Stack** : Next.js (Frontend Design) + Neon (Database) + Vercel (Déploiement).
-- **Auth** : Email + mot de passe (simple et efficace).
-- **Validation** : Déverrouillage quiz après 90% d'écoute. Seuil de réussite 70%.
-- **Stockage Audio** : Vercel Blob (V1).
-- **Git** : Les MP3 ne sont pas versionnes (stockage Blob uniquement).
-- **Strategie V2** : Migration incrementale sur base existante (pas de rewrite complet).
-- **Admin IA** : Separation claire `Suivi apprenants` vs `Gestion`.
+## Validation technique executee
+- `npm run lint`: OK
+- `npm run test`: OK (Vitest, 7 tests)
+- `npm run build`: OK
+- `npm run test:e2e`: OK (spec presente, skip par defaut)
 
-## Risques / Blocages
-- **Contenu Audio** : Besoin des fichiers audio pour le remplissage de la base.
-- **Lecture Audio Mobile** : Assurer que la lecture continue écran éteint (si possible en PWA/Web) ou gère bien les interruptions.
-- **Migration DB** : La migration V2 doit etre executee avant activation de `NEW_CONTENT_ENGINE`.
-- **Lint global** : Le repo contient des erreurs ESLint historiques hors perimetre des changements V2.
+## Decisions verrouillees appliquees
+- Structure pedagogique fixe 3 parties / 16 modules preservee.
+- Adaptation limitee a exemples, vocabulaire, objections.
+- Deux voix fixes par societe (feminine + masculine) avec alternance deterministe.
+- Publication manuelle obligatoire avec prerequis stricts.
+- Aucun reassignment auto des apprenants deja actifs.
+- Super admin voit tout, admin societe reste scope a sa societe.
 
-## Prochaine etape (proposee)
-1. Executer migration Prisma V2 + backfill des societes sur environnement de dev/staging.
-2. Construire le wizard de generation complet (upload PDF -> analyse -> scripts -> quiz -> validation -> audio).
-3. Connecter les pages apprenant a la release assignee (au lieu des quiz statiques/Blob prefixes).
-4. Ajouter orchestration jobs asynchrones + tests e2e du flux admin.
+## Risques ouverts / points a finir
+- Staging provider reel non execute encore (OpenAI + ElevenLabs sur un flux complet).
+- E2E complet encore en mode `skip` (scenario a activer sur environnement de test stable).
+- Cutover metier a planifier (`NEW_CONTENT_ENGINE=true`) apres recette finale.
 
-## Journal des evolutions
-- 2026-01-26: Initialisation du projet et de la documentation.
-- 2026-01-26: Bootstrap Next.js (App Router + TypeScript) ajoute au repo.
-- 2026-01-26: Passage des audios vers Vercel Blob (MP3 retires du repo).
-- 2026-01-26: Routes Blob (list/upload) et page `/audio` ajoutees.
-- 2026-01-26: UI initiale (Welcome + Parcours) ajoutee.
-- 2026-01-26: Auth email+password (routes + page connexion) ajoutee.
-- 2026-01-26: Pages Parcours detaillees + pages Progression/Profil ajoutees.
-- 2026-01-26: Quizz audio statiques ajoutes (par audio).
-- 2026-01-26: Tracking ecoute/quiz et affichage progression ajoute.
-- 2026-01-26: Statuts d'audio et scores de quiz affiches par carte.
-- 2026-01-26: Carte "A faire maintenant" adaptee au prochain audio.
-- 2026-01-26: Page d'accueil rendue plus pedagogique.
-- 2026-01-26: Branding unifie sur toutes les pages.
-- 2026-01-26: Leaderboard par entreprise ajoute.
-- 2026-01-26: Navigation bas de page unifiee.
-- 2026-01-26: Page profil personnalisee.
-- 2026-01-27: Roles admin + journal d'activite + page /admin.
-- 2026-01-27: Tableau admin avec cartes entreprises/utilisateurs.
-- 2026-02-23: Demarrage execution V2 (schema Prisma/migration/backfill, hub admin suivi+gestion, bases IA/pipeline, plan agent detaille).
-- 2026-02-23: Ajout APIs V2 ingestion PDF, releases/versioning, enrollments et runner jobs asynchrone.
+## Prochaines etapes recommandees
+1. Lancer un smoke test staging complet sur 1 societe test (de upload PDF a publication).
+2. Activer un test e2e non-skip avec credentials techniques dedies.
+3. Valider metier puis activer `NEW_CONTENT_ENGINE=true` en Production.
+
+## Journal recent
+- 2026-02-23: Implementation complete lots 1-7 (UI admin, APIs, pipeline IA/audio, publication, enrollment, parcours V2 fallback legacy, runner/cron).
+- 2026-02-23: Ajout tests unitaires Vitest (structure, alternance voix, schemas IA) et base Playwright.
+- 2026-02-23: Verification locale verte (`lint`, `test`, `build`, `test:e2e`).
+- 2026-02-24: Passage en execution manuelle admin des jobs (endpoint `run-next` scope societe + bouton wizard), suppression du cron Vercel.

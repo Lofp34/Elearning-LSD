@@ -105,6 +105,9 @@ export default async function AdminGestionPage() {
                   </span>
                 </div>
                 <CreateReleaseButton companyId={company.id} />
+                <Link className={styles.secondaryLink} href={`/admin/gestion/companies/${company.id}`}>
+                  Ouvrir wizard
+                </Link>
               </article>
             );
           })

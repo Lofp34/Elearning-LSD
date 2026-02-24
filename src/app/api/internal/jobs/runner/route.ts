@@ -25,12 +25,14 @@ export async function POST(request: Request) {
   }
 
   try {
+    const startedAt = Date.now();
     await processGenerationJob(job.id);
     return NextResponse.json({
       ok: true,
       processed: 1,
       jobId: job.id,
       status: "COMPLETED",
+      durationMs: Date.now() - startedAt,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Job execution failed";
@@ -47,4 +49,8 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(request: Request) {
+  return POST(request);
 }

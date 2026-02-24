@@ -1,4 +1,4 @@
-import { getAiPipelineEnv } from "@/lib/env";
+import { getOpenAiEnv } from "@/lib/env";
 import { randomUUID } from "node:crypto";
 
 type JsonSchema = Record<string, unknown>;
@@ -36,7 +36,7 @@ function extractTextPayload(payload: unknown): string | null {
 }
 
 export async function callOpenAiWithJsonSchema<T>(params: OpenAiJsonSchemaParams): Promise<T> {
-  const env = getAiPipelineEnv();
+  const env = getOpenAiEnv();
   const idempotencyKey = randomUUID();
 
   const payloadBody = {

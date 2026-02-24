@@ -22,7 +22,7 @@ if (!TOKEN) {
 let entries = [];
 try {
   entries = await readdir(AUDIO_DIR, { withFileTypes: true });
-} catch (error) {
+} catch {
   console.error(`Audio directory not found at: ${AUDIO_DIR}`);
   process.exit(1);
 }
