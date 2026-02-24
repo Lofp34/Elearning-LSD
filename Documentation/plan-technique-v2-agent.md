@@ -203,8 +203,7 @@ Fichiers cibles:
 Taches:
 
 - [x] Ajouter `OPENAI_API_KEY`.
-- [x] Ajouter `OPENAI_MODEL_ANALYSIS` (ex: `gpt-4.1` ou modele choisi).
-- [x] Ajouter `OPENAI_MODEL_GENERATION`.
+- [x] Ajouter `OPENAI_MODEL` (reference unique, ex: `gpt-5-mini`) + overrides optionnels `OPENAI_MODEL_ANALYSIS` et `OPENAI_MODEL_GENERATION`.
 - [x] Ajouter `OPENAI_WEBHOOK_SECRET` (si mode background + webhook).
 - [x] Ajouter `ELEVENLABS_API_KEY`.
 - [x] Ajouter `ELEVENLABS_MODEL_ID`.

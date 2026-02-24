@@ -26,11 +26,29 @@ export function getBooleanEnv(key: string, defaultValue = false): boolean {
   return defaultValue;
 }
 
+function resolveOpenAiModels() {
+  const sharedModel = getOptionalEnv("OPENAI_MODEL");
+  const analysisModel = getOptionalEnv("OPENAI_MODEL_ANALYSIS") ?? sharedModel;
+  const generationModel = getOptionalEnv("OPENAI_MODEL_GENERATION") ?? sharedModel;
+
+  if (!analysisModel || !generationModel) {
+    throw new Error(
+      "Missing OpenAI model env. Define OPENAI_MODEL, or both OPENAI_MODEL_ANALYSIS and OPENAI_MODEL_GENERATION."
+    );
+  }
+
+  return {
+    openAiModelAnalysis: analysisModel as NonEmptyString,
+    openAiModelGeneration: generationModel as NonEmptyString,
+  };
+}
+
 export function getAiPipelineEnv() {
+  const models = resolveOpenAiModels();
   return {
     openAiApiKey: getRequiredEnv("OPENAI_API_KEY"),
-    openAiModelAnalysis: getRequiredEnv("OPENAI_MODEL_ANALYSIS"),
-    openAiModelGeneration: getRequiredEnv("OPENAI_MODEL_GENERATION"),
+    openAiModelAnalysis: models.openAiModelAnalysis,
+    openAiModelGeneration: models.openAiModelGeneration,
     openAiWebhookSecret: getOptionalEnv("OPENAI_WEBHOOK_SECRET"),
     elevenLabsApiKey: getRequiredEnv("ELEVENLABS_API_KEY"),
     elevenLabsModelId: getRequiredEnv("ELEVENLABS_MODEL_ID"),
@@ -40,10 +58,11 @@ export function getAiPipelineEnv() {
 }
 
 export function getOpenAiEnv() {
+  const models = resolveOpenAiModels();
   return {
     openAiApiKey: getRequiredEnv("OPENAI_API_KEY"),
-    openAiModelAnalysis: getRequiredEnv("OPENAI_MODEL_ANALYSIS"),
-    openAiModelGeneration: getRequiredEnv("OPENAI_MODEL_GENERATION"),
+    openAiModelAnalysis: models.openAiModelAnalysis,
+    openAiModelGeneration: models.openAiModelGeneration,
     openAiWebhookSecret: getOptionalEnv("OPENAI_WEBHOOK_SECRET"),
   };
 }

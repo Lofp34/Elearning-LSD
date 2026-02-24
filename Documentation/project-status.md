@@ -75,3 +75,4 @@ Industrialiser la generation de parcours e-learning par societe (PDF interviews 
 - 2026-02-23: Ajout tests unitaires Vitest (structure, alternance voix, schemas IA) et base Playwright.
 - 2026-02-23: Verification locale verte (`lint`, `test`, `build`, `test:e2e`).
 - 2026-02-24: Passage en execution manuelle admin des jobs (endpoint `run-next` scope societe + bouton wizard), suppression du cron Vercel.
+- 2026-02-24: Simplification config OpenAI: variable unique `OPENAI_MODEL` (overrides `OPENAI_MODEL_ANALYSIS`/`OPENAI_MODEL_GENERATION` conserves en option).
