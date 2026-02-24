@@ -1,9 +1,9 @@
 # Plan Technique V2 - Application E-learning Multi-Entreprises
 
-Date: 2026-02-23  
+Date: 2026-02-24  
 Statut global: [ ] Non demarre / [x] En cours / [ ] Termine
 
-## 0) Mise a jour execution (2026-02-23, lot 1 -> lot 8)
+## 0) Mise a jour execution (2026-02-24, lot 1 -> lot 8)
 
 Etat synthese par lot:
 
@@ -13,7 +13,7 @@ Etat synthese par lot:
 - [x] Lot 4 - Voix ElevenLabs par societe + generation audio avec retry/idempotence.
 - [x] Lot 5 - Publication manuelle renforcee + enrollment manuel + signup auto-enrollment.
 - [x] Lot 6 - Parcours apprenant versionne avec fallback legacy.
-- [x] Lot 7 - Runner jobs + cron Vercel + retry job admin + garde-fous securite.
+- [x] Lot 7 - Runner jobs + execution manuelle admin + retry job admin + garde-fous securite.
 - [ ] Lot 8 - Validation finale complete (tests reels staging providers + e2e non-skip) a terminer.
 
 Livrables techniques integres:
@@ -24,7 +24,8 @@ Livrables techniques integres:
 - [x] UI admin: wizard societe, panel upload PDF auto-extract, panel voix, actions release, review release, enrollments release.
 - [x] UI apprenant: parcours/parties/quiz/progression/classement/profil compatibles V2 + fallback legacy.
 - [x] Jobs & pipeline: orchestration reelle OpenAI/ElevenLabs, step tracking, retries, idempotence.
-- [x] Cron: `vercel.json` (runner toutes les 2 min sur `/api/internal/jobs/runner`).
+- [x] Execution jobs manuelle: endpoint admin par societe + bouton `Executer prochain job` dans le wizard.
+- [x] Cron Vercel retire (compatibilite plan Hobby).
 
 Verification locale (branche `feature/v2-content-engine-foundations`):
 
@@ -70,7 +71,7 @@ Regles de suivi obligatoires pour l'agent:
 
 - [ ] Garder la base Next.js existante et refactorer en V2 (pas de rewrite from scratch).
 - [ ] Passer d'un contenu statique (Blob + `src/data/quizzes.ts`) a un contenu versionne en base.
-- [ ] Introduire un moteur de generation asynchrone par jobs (DB + cron + webhooks).
+- [ ] Introduire un moteur de generation asynchrone par jobs (DB + execution manuelle admin).
 - [ ] Utiliser OpenAI pour analyse + generation scripts + generation quiz.
 - [ ] Utiliser ElevenLabs pour generation audio a partir des scripts valides.
 - [ ] Conserver Vercel Blob pour stocker les MP3 produits.
@@ -379,8 +380,8 @@ Taches:
 - [x] Traiter les jobs par etapes courtes (compatibles serverless).
 - [x] Ajouter retries limites et etat `FAILED` propre.
 - [ ] Ajouter endpoint webhook OpenAI si mode background est active.
-- [ ] Ajouter cron Vercel pour appeler le runner regulierement.
-- [ ] Ajouter un bouton admin "Relancer job".
+- [x] Ajouter un endpoint admin "Executer prochain job" scope societe.
+- [x] Ajouter un bouton admin "Executer prochain job".
 
 ## Phase N - Securite, RBAC, audit
 
@@ -455,6 +456,7 @@ Entrees:
 - [x] 2026-02-23 19:05 | Codex | A/B/C/D/E/K | Schema Prisma V2 + migration SQL + backfill script + env/feature-flag + admin hub suivi/gestion + creation societe + clients IA/pipeline prompt scaffold | N/A (working tree) | Fondations V2 operationnelles | Implementer ingestion PDF + orchestration jobs
 - [x] 2026-02-23 19:35 | Codex | F/J/M/N | Ingestion interviews PDF (upload/extract) + APIs releases/publish/enrollments + runner jobs interne | N/A (working tree) | Chaine admin backend V2 initiale operationnelle | Brancher UI review/generation audio et parcours versionne
 - [x] 2026-02-23 22:12 | Laurent + Codex | B/K/P | Validation en deploiement Vercel: migration `prisma migrate deploy`, backfill societes, creation societe `Gedeas`, creation release draft `v1` via `/admin/gestion` | N/A (ops Vercel/DB) | Flux admin V2 de base valide en ligne | Construire UI upload interviews + revue scripts/quiz + generation audio
+- [x] 2026-02-24 00:00 | Codex | M/P | Suppression cron Vercel (Hobby) + endpoint admin manuel `POST /api/admin/companies/[companyId]/jobs/run-next` + bouton wizard `Executer prochain job` | 34bd0a0+ | Traitement jobs en mode 100% manuel depuis admin | Lancer smoke test reel sur societe test
 - [ ] 2026-__-__ __:__ |  |  |  |  |  | 
 - [ ] 2026-__-__ __:__ |  |  |  |  |  | 
 

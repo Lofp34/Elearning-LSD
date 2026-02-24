@@ -1,6 +1,6 @@
 # Project Status (V2 Content Engine)
 
-Date de mise a jour: 2026-02-23
+Date de mise a jour: 2026-02-24
 
 ## Objectif
 Industrialiser la generation de parcours e-learning par societe (PDF interviews -> scripts -> quiz -> audio -> publication), sans regression UX pour les apprenants existants.
@@ -18,6 +18,7 @@ Industrialiser la generation de parcours e-learning par societe (PDF interviews 
 - APIs V2 ajoutees:
   - `GET /api/admin/companies/[companyId]/interviews`
   - `GET /api/admin/companies/[companyId]/wizard`
+  - `POST /api/admin/companies/[companyId]/jobs/run-next`
   - `POST /api/admin/releases/[releaseId]/pipeline/start`
   - `GET|PATCH /api/admin/releases/[releaseId]/review`
   - `GET|PATCH /api/admin/companies/[companyId]/voices`
@@ -38,7 +39,8 @@ Industrialiser la generation de parcours e-learning par societe (PDF interviews 
 - Infra jobs:
   - Runner securise `CRON_SECRET` sur `/api/internal/jobs/runner`
   - Claim TTL jobs stale + retry admin
-  - Cron Vercel toutes les 2 minutes via `vercel.json`
+  - Mode execution 100% manuel via admin wizard (`Executer prochain job`)
+  - Cron Vercel retire (compatibilite plan Hobby)
 - Base de donnees:
   - Migration fondation V2 + migration complementaire:
     - `20260223190000_v2_content_engine_foundations`
@@ -72,3 +74,4 @@ Industrialiser la generation de parcours e-learning par societe (PDF interviews 
 - 2026-02-23: Implementation complete lots 1-7 (UI admin, APIs, pipeline IA/audio, publication, enrollment, parcours V2 fallback legacy, runner/cron).
 - 2026-02-23: Ajout tests unitaires Vitest (structure, alternance voix, schemas IA) et base Playwright.
 - 2026-02-23: Verification locale verte (`lint`, `test`, `build`, `test:e2e`).
+- 2026-02-24: Passage en execution manuelle admin des jobs (endpoint `run-next` scope societe + bouton wizard), suppression du cron Vercel.

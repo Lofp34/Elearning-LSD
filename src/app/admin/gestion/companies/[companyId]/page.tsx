@@ -7,6 +7,7 @@ import InterviewUploadPanel from "./InterviewUploadPanel";
 import VoicesPanel from "./VoicesPanel";
 import ReleaseActionButtons from "./ReleaseActionButtons";
 import JobRetryButton from "./JobRetryButton";
+import RunJobsPanel from "./RunJobsPanel";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -198,6 +199,13 @@ export default async function CompanyWizardPage({
         <div className={styles.panelHeader}>
           <h2>4. Jobs asynchrones</h2>
         </div>
+
+        <p className={styles.helpText}>
+          Mode manuel: apres avoir lance un pipeline ou une generation audio, cliquez sur
+          &quot;Executer prochain job&quot;.
+        </p>
+
+        <RunJobsPanel companyId={companyId} />
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>

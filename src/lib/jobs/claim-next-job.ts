@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export async function claimNextGenerationJob(workerId: string) {
+export async function claimNextGenerationJob(workerId: string, companyId?: string) {
   return prisma.$transaction(async (tx) => {
     const now = new Date();
     const staleRunningCutoff = new Date(now.getTime() - 15 * 60_000);
@@ -9,6 +9,7 @@ export async function claimNextGenerationJob(workerId: string) {
       where: {
         status: "RUNNING",
         lockedAt: { lt: staleRunningCutoff },
+        ...(companyId ? { companyId } : {}),
       },
       data: {
         status: "RETRYING",
@@ -20,6 +21,7 @@ export async function claimNextGenerationJob(workerId: string) {
 
     const nextJob = await tx.generationJob.findFirst({
       where: {
+        ...(companyId ? { companyId } : {}),
         status: { in: ["PENDING", "RETRYING"] },
         OR: [{ nextRunAt: null }, { nextRunAt: { lte: now } }],
       },

@@ -14,10 +14,12 @@ export default function ReleaseActionButtons({ companyId, releaseId }: Props) {
   const router = useRouter();
   const [loadingAction, setLoadingAction] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   async function callAction(action: "create" | "pipeline" | "audio" | "publish") {
     setLoadingAction(action);
     setError("");
+    setMessage("");
 
     try {
       let response: Response;
@@ -49,6 +51,16 @@ export default function ReleaseActionButtons({ companyId, releaseId }: Props) {
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
         throw new Error(payload.error ?? `Action ${action} impossible.`);
+      }
+
+      if (action === "pipeline") {
+        setMessage("Job pipeline cree. Lance ensuite 'Executer prochain job'.");
+      } else if (action === "audio") {
+        setMessage("Job audio cree. Lance ensuite 'Executer prochain job'.");
+      } else if (action === "create") {
+        setMessage("Release draft creee.");
+      } else if (action === "publish") {
+        setMessage("Release publiee.");
       }
 
       router.refresh();
@@ -112,6 +124,7 @@ export default function ReleaseActionButtons({ companyId, releaseId }: Props) {
       ) : null}
 
       {error ? <small className={styles.error}>{error}</small> : null}
+      {message ? <small className={styles.success}>{message}</small> : null}
     </div>
   );
 }
