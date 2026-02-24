@@ -39,7 +39,7 @@ export default function Home() {
       }
 
       router.push("/parcours");
-    } catch (err) {
+    } catch {
       setError("Probleme reseau. Reessaie dans quelques instants.");
     } finally {
       setPending(false);
@@ -69,12 +69,12 @@ export default function Home() {
           <p className={styles.stepsTitle}>Comment ca se passe</p>
           <div className={styles.highlights}>
             <div>
-              <span>1. Ecouter l'audio</span>
+              <span>1. Ecouter l&apos;audio</span>
               <p>Un format court (7-10 min) pour rester concentre.</p>
             </div>
             <div>
               <span>2. Repondre au quiz</span>
-              <p>5 questions pour fixer l'essentiel, note immediate.</p>
+              <p>5 questions pour fixer l&apos;essentiel, note immediate.</p>
             </div>
             <div>
               <span>3. Suivre ta progression</span>
@@ -83,7 +83,7 @@ export default function Home() {
           </div>
           <p className={styles.pillars}>
             3 piliers : Mental, Pyramide de la vente, Techniques. Tu avances
-            dans l'ordre, sans pression.
+            dans l&apos;ordre, sans pression.
           </p>
 
           <div className={styles.actions}>

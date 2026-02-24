@@ -1,4 +1,4 @@
-import { getAiPipelineEnv } from "@/lib/env";
+import { getElevenLabsEnv } from "@/lib/env";
 
 type ElevenLabsVoice = {
   voice_id: string;
@@ -6,7 +6,7 @@ type ElevenLabsVoice = {
 };
 
 export async function listElevenLabsVoices(): Promise<ElevenLabsVoice[]> {
-  const env = getAiPipelineEnv();
+  const env = getElevenLabsEnv();
   const response = await fetch("https://api.elevenlabs.io/v1/voices", {
     headers: { "xi-api-key": env.elevenLabsApiKey },
   });
@@ -27,7 +27,7 @@ type SynthesizeParams = {
 };
 
 export async function synthesizeWithElevenLabs(params: SynthesizeParams): Promise<ArrayBuffer> {
-  const env = getAiPipelineEnv();
+  const env = getElevenLabsEnv();
   const response = await fetch(
     `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(params.voiceId)}`,
     {

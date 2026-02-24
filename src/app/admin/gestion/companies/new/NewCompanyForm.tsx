@@ -31,8 +31,9 @@ export default function NewCompanyForm() {
         setError(payload.error ?? "Creation impossible pour le moment.");
         return;
       }
-
-      router.push("/admin/gestion");
+      const payload = await response.json().catch(() => ({}));
+      const companyId = payload?.company?.id as string | undefined;
+      router.push(companyId ? `/admin/gestion/companies/${companyId}` : "/admin/gestion");
       router.refresh();
     } catch {
       setError("Erreur reseau. Merci de reessayer.");

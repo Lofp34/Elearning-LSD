@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { BASE_MODULES } from "@/lib/learning/base-structure";
+import { BASE_MODULES, getModuleContentKey } from "@/lib/learning/base-structure";
 import { resolveVoiceSlot } from "@/lib/pipeline/voice-assignment";
 
 export async function createDraftRelease(companyId: string, createdById: string | null) {
@@ -26,10 +26,12 @@ export async function seedDraftModules(releaseId: string) {
     releaseId,
     partKey: module.partKey,
     chapterKey: module.chapterKey,
+    contentKey: getModuleContentKey(module.partKey, module.chapterKey),
     title: module.title,
     orderIndex: module.orderIndex,
     scriptText: "",
     voiceSlot: resolveVoiceSlot(module.orderIndex),
+    reviewStatus: "DRAFT" as const,
   }));
 
   if (payload.length === 0) return;

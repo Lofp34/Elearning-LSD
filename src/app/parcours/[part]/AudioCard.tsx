@@ -9,6 +9,9 @@ type AudioItem = {
   title: string;
   index: number;
   slug: string;
+  releaseId?: string;
+  moduleId?: string;
+  trackingSlug?: string;
 };
 
 type QuizResult = { score: number; total: number; passed: boolean };
@@ -33,7 +36,11 @@ export default function AudioCard({
       await fetch("/api/listen/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: item.slug }),
+        body: JSON.stringify({
+          slug: item.trackingSlug ?? item.slug,
+          releaseId: item.releaseId,
+          moduleId: item.moduleId,
+        }),
       });
     } catch {
       // ignore network errors
@@ -86,7 +93,7 @@ export default function AudioCard({
         )}
       </div>
       <div className={styles.cardActions}>
-        <Link className={styles.primary} href={`/quiz/${item.slug}`}>
+        <Link className={styles.primary} href={`/quiz/${encodeURIComponent(item.slug)}`}>
           Lancer le quiz
         </Link>
       </div>

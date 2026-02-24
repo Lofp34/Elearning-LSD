@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { executeFullPipelineJob } from "@/lib/pipeline/full-pipeline";
+import { generateAudioForRelease } from "@/lib/pipeline/generate-audio";
 
 export async function processGenerationJob(jobId: string) {
   const job = await prisma.generationJob.findUnique({
@@ -21,38 +23,43 @@ export async function processGenerationJob(jobId: string) {
     throw new Error("Job non claim.");
   }
 
-  // V1 du runner: skeleton operationnel.
-  // Les etapes de generation detaillees seront ajoutees par type de job.
-  switch (job.jobType) {
-    case "FULL_PIPELINE":
-      await prisma.generationJob.update({
-        where: { id: job.id },
-        data: {
-          status: "COMPLETED",
-          step: "REVIEW_READY",
-          lockedAt: null,
-          lockedBy: null,
-          lastError: null,
-        },
-      });
-      break;
-    case "ANALYZE_INTERVIEWS":
-    case "GENERATE_SCRIPTS":
-    case "GENERATE_QUIZZES":
-    case "GENERATE_AUDIO":
-      await prisma.generationJob.update({
-        where: { id: job.id },
-        data: {
-          status: "COMPLETED",
-          step: "DONE",
-          lockedAt: null,
-          lockedBy: null,
-          lastError: null,
-        },
-      });
-      break;
-    default:
-      throw new Error(`Type de job non supporte: ${job.jobType}`);
+  try {
+    switch (job.jobType) {
+      case "FULL_PIPELINE":
+        await executeFullPipelineJob(job.id);
+        break;
+      case "GENERATE_AUDIO":
+        if (!job.releaseId) throw new Error("GENERATE_AUDIO job requires releaseId.");
+        await prisma.generationJob.update({
+          where: { id: job.id },
+          data: { step: "AUDIO_GENERATING" },
+        });
+        await generateAudioForRelease(job.releaseId);
+        await prisma.generationJob.update({
+          where: { id: job.id },
+          data: { step: "AUDIO_READY" },
+        });
+        break;
+      case "ANALYZE_INTERVIEWS":
+      case "GENERATE_SCRIPTS":
+      case "GENERATE_QUIZZES":
+        throw new Error(`Job type ${job.jobType} is deprecated. Use FULL_PIPELINE.`);
+      default:
+        throw new Error(`Type de job non supporte: ${job.jobType}`);
+    }
+
+    await prisma.generationJob.update({
+      where: { id: job.id },
+      data: {
+        status: "COMPLETED",
+        lockedAt: null,
+        lockedBy: null,
+        lastError: null,
+        nextRunAt: null,
+      },
+    });
+  } catch (error) {
+    throw error;
   }
 }
 

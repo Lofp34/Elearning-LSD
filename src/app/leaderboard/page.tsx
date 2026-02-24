@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { list } from "@vercel/blob";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { verifySessionToken } from "@/lib/auth";
 import BrandMark from "@/components/BrandMark";
+import { getSessionUserId } from "@/lib/session-user";
+import { getActiveLearnerRelease } from "@/lib/learning/user-release";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -30,9 +30,7 @@ function resolveCompany(user: { email: string; company: string | null }) {
 }
 
 function formatDuration(hours: number) {
-  if (!Number.isFinite(hours) || hours <= 0) {
-    return "0h";
-  }
+  if (!Number.isFinite(hours) || hours <= 0) return "0h";
   const days = Math.floor(hours / 24);
   if (days >= 1) {
     const rest = Math.round((hours - days * 24) * 10) / 10;
@@ -42,17 +40,7 @@ function formatDuration(hours: number) {
 }
 
 export default async function LeaderboardPage() {
-  const token = (await cookies()).get("ag_session")?.value;
-  let userId: string | null = null;
-
-  if (token) {
-    try {
-      const payload = await verifySessionToken(token);
-      userId = payload.sub ?? null;
-    } catch {
-      userId = null;
-    }
-  }
+  const userId = await getSessionUserId();
 
   if (!userId) {
     return (
@@ -99,8 +87,16 @@ export default async function LeaderboardPage() {
   }
 
   const company = resolveCompany(currentUser);
-  const { blobs } = await list({ prefix: "audio/", limit: 200 });
-  const totalAudios = blobs.length;
+  const activeRelease = await getActiveLearnerRelease(userId);
+
+  const totalAudios = activeRelease
+    ? await prisma.learningModule.count({
+        where: {
+          releaseId: activeRelease.releaseId,
+          audioAsset: { is: { status: "GENERATED" } },
+        },
+      })
+    : (await list({ prefix: "audio/", limit: 200 })).blobs.length;
 
   const users = await prisma.user.findMany({
     select: { id: true, firstName: true, lastName: true, email: true, company: true },
@@ -130,22 +126,31 @@ export default async function LeaderboardPage() {
   const [listenStats, quizAttempts] = await Promise.all([
     prisma.listenEvent.groupBy({
       by: ["userId"],
-      where: { userId: { in: userIds } },
+      where: {
+        userId: { in: userIds },
+        ...(activeRelease ? { releaseId: activeRelease.releaseId } : {}),
+      },
       _count: { _all: true },
       _min: { completedAt: true },
       _max: { completedAt: true },
     }),
     prisma.quizAttempt.findMany({
-      where: { userId: { in: userIds } },
+      where: {
+        userId: { in: userIds },
+        ...(activeRelease ? { releaseId: activeRelease.releaseId } : {}),
+      },
       orderBy: { createdAt: "desc" },
-      select: { userId: true, audioSlug: true, score: true, total: true },
+      select: {
+        userId: true,
+        audioSlug: true,
+        moduleId: true,
+        score: true,
+        total: true,
+      },
     }),
   ]);
 
-  const listenMap = new Map<
-    string,
-    { count: number; min: Date | null; max: Date | null }
-  >();
+  const listenMap = new Map<string, { count: number; min: Date | null; max: Date | null }>();
   for (const stat of listenStats) {
     listenMap.set(stat.userId, {
       count: stat._count._all,
@@ -156,13 +161,17 @@ export default async function LeaderboardPage() {
 
   const latestQuizMap = new Map<string, Map<string, { score: number; total: number }>>();
   for (const attempt of quizAttempts) {
+    const key = activeRelease ? attempt.moduleId ?? "" : attempt.audioSlug;
+    if (!key) continue;
+
     let userMap = latestQuizMap.get(attempt.userId);
     if (!userMap) {
       userMap = new Map();
       latestQuizMap.set(attempt.userId, userMap);
     }
-    if (!userMap.has(attempt.audioSlug)) {
-      userMap.set(attempt.audioSlug, { score: attempt.score, total: attempt.total });
+
+    if (!userMap.has(key)) {
+      userMap.set(key, { score: attempt.score, total: attempt.total });
     }
   }
 
@@ -170,9 +179,7 @@ export default async function LeaderboardPage() {
     const listen = listenMap.get(user.id);
     const listenedCount = listen?.count ?? 0;
     const durationHours =
-      listen?.min && listen?.max
-        ? Math.max(0, (listen.max.getTime() - listen.min.getTime()) / 36e5)
-        : 0;
+      listen?.min && listen?.max ? Math.max(0, (listen.max.getTime() - listen.min.getTime()) / 36e5) : 0;
     const proportion = totalAudios > 0 ? listenedCount / totalAudios : 0;
 
     const quizMap = latestQuizMap.get(user.id);
@@ -186,6 +193,7 @@ export default async function LeaderboardPage() {
         }
       }
     }
+
     const avgScore = quizCount > 0 ? Math.round((quizSum / quizCount) * 100) : 0;
 
     return {
@@ -223,8 +231,8 @@ export default async function LeaderboardPage() {
       <section className={styles.intro}>
         <h1>Leaderboard {company}</h1>
         <p>
-          Classement interne par entreprise. Score moyen des quiz et rythme
-          d'ecoute pour stimuler le collectif.
+          Classement interne par entreprise. Score moyen des quiz et rythme d&apos;ecoute pour stimuler le
+          collectif.
         </p>
       </section>
 
@@ -239,10 +247,7 @@ export default async function LeaderboardPage() {
               <p className={styles.empty}>Aucune ecoute enregistree.</p>
             ) : (
               topListens.map((entry, index) => (
-                <div
-                  key={entry.id}
-                  className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}
-                >
+                <div key={entry.id} className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}>
                   <div className={styles.identity}>
                     <span className={styles.name}>{entry.name}</span>
                     <span className={styles.meta}>{entry.listenedCount} ecoutes</span>
@@ -264,10 +269,7 @@ export default async function LeaderboardPage() {
               <p className={styles.empty}>Aucun quiz valide.</p>
             ) : (
               topScores.map((entry, index) => (
-                <div
-                  key={entry.id}
-                  className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}
-                >
+                <div key={entry.id} className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}>
                   <div className={styles.identity}>
                     <span className={styles.name}>{entry.name}</span>
                     <span className={styles.meta}>
@@ -291,10 +293,7 @@ export default async function LeaderboardPage() {
               <p className={styles.empty}>Aucune progression mesuree.</p>
             ) : (
               topSprint.map((entry, index) => (
-                <div
-                  key={entry.id}
-                  className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}
-                >
+                <div key={entry.id} className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}>
                   <div className={styles.identity}>
                     <span className={styles.name}>{entry.name}</span>
                     <span className={styles.meta}>
@@ -308,7 +307,6 @@ export default async function LeaderboardPage() {
           </div>
         </article>
       </section>
-
     </main>
   );
 }

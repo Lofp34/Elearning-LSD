@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSessionToken, hashPassword, sessionCookieOptions } from "@/lib/auth";
+import { ensureUserEnrollmentOnRelease, getLatestPublishedReleaseForCompany } from "@/lib/learning/user-release";
 
 export const runtime = "nodejs";
 
@@ -115,6 +116,13 @@ export async function POST(request: Request) {
         role: resolveRole(email),
       },
     });
+
+    if (companyId) {
+      const latestPublishedRelease = await getLatestPublishedReleaseForCompany(companyId);
+      if (latestPublishedRelease) {
+        await ensureUserEnrollmentOnRelease(user.id, latestPublishedRelease.id, false);
+      }
+    }
 
     const token = await createSessionToken({ userId: user.id, email: user.email });
     const response = NextResponse.json({ ok: true });

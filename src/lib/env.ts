@@ -31,10 +31,26 @@ export function getAiPipelineEnv() {
     openAiApiKey: getRequiredEnv("OPENAI_API_KEY"),
     openAiModelAnalysis: getRequiredEnv("OPENAI_MODEL_ANALYSIS"),
     openAiModelGeneration: getRequiredEnv("OPENAI_MODEL_GENERATION"),
-    openAiWebhookSecret: getRequiredEnv("OPENAI_WEBHOOK_SECRET"),
+    openAiWebhookSecret: getOptionalEnv("OPENAI_WEBHOOK_SECRET"),
     elevenLabsApiKey: getRequiredEnv("ELEVENLABS_API_KEY"),
     elevenLabsModelId: getRequiredEnv("ELEVENLABS_MODEL_ID"),
     appBaseUrl: getRequiredEnv("APP_BASE_URL"),
     cronSecret: getRequiredEnv("CRON_SECRET"),
+  };
+}
+
+export function getOpenAiEnv() {
+  return {
+    openAiApiKey: getRequiredEnv("OPENAI_API_KEY"),
+    openAiModelAnalysis: getRequiredEnv("OPENAI_MODEL_ANALYSIS"),
+    openAiModelGeneration: getRequiredEnv("OPENAI_MODEL_GENERATION"),
+    openAiWebhookSecret: getOptionalEnv("OPENAI_WEBHOOK_SECRET"),
+  };
+}
+
+export function getElevenLabsEnv() {
+  return {
+    elevenLabsApiKey: getRequiredEnv("ELEVENLABS_API_KEY"),
+    elevenLabsModelId: getRequiredEnv("ELEVENLABS_MODEL_ID"),
   };
 }

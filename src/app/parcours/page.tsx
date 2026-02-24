@@ -1,9 +1,10 @@
 import { list } from "@vercel/blob";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { verifySessionToken } from "@/lib/auth";
 import BrandMark from "@/components/BrandMark";
+import { getSessionUserId } from "@/lib/session-user";
+import { getActiveLearnerRelease } from "@/lib/learning/user-release";
+import { buildReleaseModuleSlug } from "@/lib/learning/slug";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -27,10 +28,20 @@ const parts = [
     prefix: "audio/elearning3-",
     tone: "#f1a95f",
   },
-];
+] as const;
+
+type PartSlug = (typeof parts)[number]["slug"];
+
+type AudioEntry = {
+  url: string;
+  title: string;
+  index: number;
+  slug: string;
+  moduleId?: string;
+};
 
 function formatTitle(filename: string) {
-  const base = filename.replace(/\.mp3$/i, "").replace(/^elearning\\d+-\\d+-/, "");
+  const base = filename.replace(/\.mp3$/i, "").replace(/^elearning\d+-\d+-/, "");
   return base
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -38,79 +49,165 @@ function formatTitle(filename: string) {
 }
 
 function getIndex(filename: string) {
-  const match = filename.match(/elearning\\d+-(\\d+)-/i);
+  const match = filename.match(/elearning\d+-(\d+)-/i);
   return match ? Number.parseInt(match[1], 10) : 0;
 }
 
 export default async function ParcoursPage() {
-  const { blobs } = await list({ prefix: "audio/", limit: 200 });
-  const token = (await cookies()).get("ag_session")?.value;
-  let userId: string | null = null;
+  const userId = await getSessionUserId();
+  const activeRelease = userId ? await getActiveLearnerRelease(userId) : null;
 
-  if (token) {
-    try {
-      const payload = await verifySessionToken(token);
-      userId = payload.sub ?? null;
-    } catch {
-      userId = null;
+  let entriesByPart: Array<{
+    part: (typeof parts)[number];
+    items: AudioEntry[];
+  }>;
+
+  if (activeRelease) {
+    const modules = await prisma.learningModule.findMany({
+      where: {
+        releaseId: activeRelease.releaseId,
+      },
+      orderBy: { orderIndex: "asc" },
+      include: {
+        audioAsset: {
+          select: {
+            blobPath: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    const grouped = new Map<PartSlug, AudioEntry[]>([
+      ["mental", []],
+      ["pyramide", []],
+      ["techniques", []],
+    ]);
+
+    for (const learningModule of modules) {
+      if (!learningModule.audioAsset || learningModule.audioAsset.status !== "GENERATED") continue;
+      if (!grouped.has(learningModule.partKey as PartSlug)) continue;
+
+      grouped.get(learningModule.partKey as PartSlug)?.push({
+        url: learningModule.audioAsset.blobPath,
+        title: learningModule.title,
+        index: learningModule.orderIndex,
+        slug: buildReleaseModuleSlug(activeRelease.releaseId, learningModule.contentKey),
+        moduleId: learningModule.id,
+      });
     }
+
+    entriesByPart = parts.map((part) => ({
+      part,
+      items: (grouped.get(part.slug as PartSlug) ?? []).sort((a, b) => a.index - b.index),
+    }));
+  } else {
+    const { blobs } = await list({ prefix: "audio/", limit: 200 });
+
+    entriesByPart = parts.map((part) => {
+      const items = blobs
+        .filter((blob) => blob.pathname.startsWith(part.prefix))
+        .map((blob) => {
+          const filename = blob.pathname.split("/").pop() ?? "";
+          return {
+            url: blob.url,
+            title: formatTitle(filename),
+            index: getIndex(filename),
+            slug: filename.replace(/\.mp3$/i, ""),
+          };
+        })
+        .sort((a, b) => a.index - b.index);
+
+      return { part, items };
+    });
   }
 
-  const entriesByPart = parts.map((part) => {
-    const items = blobs
-      .filter((blob) => blob.pathname.startsWith(part.prefix))
-      .map((blob) => {
-        const filename = blob.pathname.split("/").pop() ?? "";
-        return {
-          url: blob.url,
-          title: formatTitle(filename),
-          index: getIndex(filename),
-          slug: filename.replace(/\.mp3$/i, ""),
-        };
-      })
-      .sort((a, b) => a.index - b.index);
-
-    return { part, items };
-  });
-
   const totalAudios = entriesByPart.reduce((acc, entry) => acc + entry.items.length, 0);
-  const allSlugs = entriesByPart.flatMap((entry) => entry.items.map((item) => item.slug));
+
   let listenedSlugs = new Set<string>();
   let listensCount = 0;
   let quizValidatedCount = 0;
   let partsUnlocked = 0;
   let progressPct = 0;
 
-  if (userId && allSlugs.length > 0) {
-    const [listenEvents, passedQuizzes] = await Promise.all([
-      prisma.listenEvent.findMany({
-        where: { userId, audioSlug: { in: allSlugs } },
-        select: { audioSlug: true },
-      }),
-      prisma.quizAttempt.findMany({
-        where: { userId, passed: true, audioSlug: { in: allSlugs } },
-        distinct: ["audioSlug"],
-        select: { audioSlug: true },
-      }),
-    ]);
+  if (userId && totalAudios > 0) {
+    if (activeRelease) {
+      const moduleIds = entriesByPart.flatMap((entry) => entry.items.map((item) => item.moduleId)).filter(Boolean);
 
-    listensCount = listenEvents.length;
-    listenedSlugs = new Set(listenEvents.map((event) => event.audioSlug));
-    quizValidatedCount = passedQuizzes.length;
-    const passedSlugs = new Set(passedQuizzes.map((item) => item.audioSlug));
+      const [listenEvents, passedQuizzes] = await Promise.all([
+        prisma.listenEvent.findMany({
+          where: {
+            userId,
+            releaseId: activeRelease.releaseId,
+            moduleId: { in: moduleIds as string[] },
+          },
+          select: { moduleId: true },
+        }),
+        prisma.quizAttempt.findMany({
+          where: {
+            userId,
+            releaseId: activeRelease.releaseId,
+            passed: true,
+            moduleId: { in: moduleIds as string[] },
+          },
+          distinct: ["moduleId"],
+          select: { moduleId: true },
+        }),
+      ]);
 
-    partsUnlocked = entriesByPart.filter((entry) =>
-      entry.items.length > 0 &&
-      entry.items.every((item) => passedSlugs.has(item.slug))
-    ).length;
+      listensCount = listenEvents.length;
+      listenedSlugs = new Set(listenEvents.map((event) => event.moduleId ?? "").filter(Boolean));
+      quizValidatedCount = passedQuizzes.length;
+      const passedModuleIds = new Set(
+        passedQuizzes.map((item) => item.moduleId ?? "").filter(Boolean)
+      );
 
-    progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
+      partsUnlocked = entriesByPart.filter((entry) =>
+        entry.items.length > 0 && entry.items.every((item) => (item.moduleId ? passedModuleIds.has(item.moduleId) : false))
+      ).length;
+
+      progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
+    } else {
+      const allSlugs = entriesByPart.flatMap((entry) => entry.items.map((item) => item.slug));
+      const [listenEvents, passedQuizzes] = await Promise.all([
+        prisma.listenEvent.findMany({
+          where: { userId, audioSlug: { in: allSlugs } },
+          select: { audioSlug: true },
+        }),
+        prisma.quizAttempt.findMany({
+          where: { userId, passed: true, audioSlug: { in: allSlugs } },
+          distinct: ["audioSlug"],
+          select: { audioSlug: true },
+        }),
+      ]);
+
+      listensCount = listenEvents.length;
+      listenedSlugs = new Set(listenEvents.map((event) => event.audioSlug));
+      quizValidatedCount = passedQuizzes.length;
+      const passedSlugs = new Set(passedQuizzes.map((item) => item.audioSlug));
+
+      partsUnlocked = entriesByPart.filter((entry) =>
+        entry.items.length > 0 && entry.items.every((item) => passedSlugs.has(item.slug))
+      ).length;
+
+      progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
+    }
   }
 
   const entriesWithProgress = entriesByPart.map((entry) => {
-    const listenedCount = entry.items.filter((item) => listenedSlugs.has(item.slug)).length;
+    const listenedCount = entry.items.filter((item) => {
+      if (activeRelease) {
+        return item.moduleId ? listenedSlugs.has(item.moduleId) : false;
+      }
+      return listenedSlugs.has(item.slug);
+    }).length;
+
     const progress = entry.items.length > 0 ? Math.round((listenedCount / entry.items.length) * 100) : 0;
-    const nextItem = entry.items.find((item) => !listenedSlugs.has(item.slug));
+    const nextItem = entry.items.find((item) => {
+      if (activeRelease) return item.moduleId ? !listenedSlugs.has(item.moduleId) : true;
+      return !listenedSlugs.has(item.slug);
+    });
+
     return { ...entry, listenedCount, progress, nextItem };
   });
 
@@ -129,10 +226,7 @@ export default async function ParcoursPage() {
         <div className={styles.progressCard}>
           <p className={styles.cardLabel}>Progression globale</p>
           <div className={styles.progressRow}>
-            <div
-              className={styles.progressRing}
-              style={{ ["--progress" as string]: `${progressPct}%` }}
-            >
+            <div className={styles.progressRing} style={{ ["--progress" as string]: `${progressPct}%` }}>
               <span>{progressPct}%</span>
             </div>
             <div>
@@ -164,7 +258,7 @@ export default async function ParcoursPage() {
           <p className={styles.cardLabel}>A faire maintenant</p>
           <h3>
             {nextAudio
-              ? `${nextEntry.part.title} - ${nextAudio.title}`
+              ? `${nextEntry?.part.title} - ${nextAudio.title}`
               : hasAudios
                 ? "Parcours termine"
                 : "Aucun audio"}
@@ -178,8 +272,8 @@ export default async function ParcoursPage() {
           </p>
           <div className={styles.nextActions}>
             {nextAudio ? (
-              <Link className={styles.primary} href={`/parcours/${nextEntry.part.slug}`}>
-                Ecouter l'audio
+              <Link className={styles.primary} href={`/parcours/${nextEntry?.part.slug}`}>
+                Ecouter l&apos;audio
               </Link>
             ) : (
               <Link className={styles.primary} href="/audio">
@@ -216,7 +310,6 @@ export default async function ParcoursPage() {
           ))}
         </div>
       </section>
-
     </main>
   );
 }
