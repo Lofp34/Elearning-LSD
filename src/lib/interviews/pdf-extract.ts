@@ -8,6 +8,16 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
+// PostgreSQL text fields reject NUL bytes (0x00).
+// We also strip non-printable control chars to avoid malformed payloads.
+function sanitizeExtractedText(value: string): string {
+  return value
+    .replace(/\u0000/g, " ")
+    .replace(/[\u0001-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function tryPdftotext(buffer: Buffer): Promise<string | null> {
   const baseDir = path.join(tmpdir(), "elearning-pdf");
   const workDir = path.join(baseDir, randomUUID());
@@ -44,13 +54,16 @@ function fallbackPdfHeuristic(buffer: Buffer): string {
 
 export async function extractTextFromPdfBuffer(buffer: Buffer): Promise<string> {
   const pdftotextContent = await tryPdftotext(buffer);
-  if (pdftotextContent && pdftotextContent.length > 20) {
-    return pdftotextContent;
+  const sanitizedPdftotext = pdftotextContent ? sanitizeExtractedText(pdftotextContent) : "";
+  if (sanitizedPdftotext.length > 20) {
+    return sanitizedPdftotext;
   }
 
-  const fallback = fallbackPdfHeuristic(buffer);
-  if (!fallback) {
+  const fallback = sanitizeExtractedText(fallbackPdfHeuristic(buffer));
+  if (!fallback || fallback.length < 5) {
     throw new Error("Extraction PDF impossible. Installez `pdftotext` ou verifiez le fichier source.");
   }
   return fallback;
 }
+
+export { sanitizeExtractedText };

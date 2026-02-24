@@ -44,12 +44,14 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        error:
+        company,
+        voices: [],
+        warning:
           error instanceof Error
             ? `Impossible de recuperer les voix ElevenLabs: ${error.message}`
             : "Impossible de recuperer les voix ElevenLabs.",
       },
-      { status: 502 }
+      { status: 200 }
     );
   }
 }

@@ -49,6 +49,10 @@ export default function VoicesPanel({ companyId }: { companyId: string }) {
       setSelection(current);
       setFemaleVoiceId(current.femaleVoiceId ?? "");
       setMaleVoiceId(current.maleVoiceId ?? "");
+
+      if (typeof payload.warning === "string" && payload.warning.trim().length > 0) {
+        setError(payload.warning);
+      }
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Erreur de chargement.");
     } finally {
