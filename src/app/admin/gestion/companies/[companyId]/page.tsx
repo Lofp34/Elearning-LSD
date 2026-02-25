@@ -8,6 +8,7 @@ import VoicesPanel from "./VoicesPanel";
 import ReleaseActionButtons from "./ReleaseActionButtons";
 import JobRetryButton from "./JobRetryButton";
 import RunJobsPanel from "./RunJobsPanel";
+import ReleaseRowActions from "./ReleaseRowActions";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -152,12 +153,13 @@ export default async function CompanyWizardPage({
                 <th>Quiz OK</th>
                 <th>Audio OK</th>
                 <th>Publiee</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {releases.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>Aucune release.</td>
+                  <td colSpan={8}>Aucune release.</td>
                 </tr>
               ) : (
                 releases.map((release) => {
@@ -186,6 +188,9 @@ export default async function CompanyWizardPage({
                         {audioReady}/{total}
                       </td>
                       <td>{formatDate(release.publishedAt)}</td>
+                      <td>
+                        <ReleaseRowActions releaseId={release.id} />
+                      </td>
                     </tr>
                   );
                 })
