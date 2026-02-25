@@ -13,6 +13,8 @@ import { BASE_MODULES, getModuleContentKey } from "@/lib/learning/base-structure
 import { resolveVoiceSlot } from "@/lib/pipeline/voice-assignment";
 
 const MAX_INTERVIEW_CORPUS_CHARS = 120_000;
+const QUIZ_BATCH_SIZE = 4;
+const MAX_SCRIPT_CHARS_PER_QUIZ_PROMPT = 1_400;
 
 function buildInterviewCorpus(documents: Array<{ filename: string; extractedText: string | null }>) {
   const source = documents
@@ -42,6 +44,15 @@ function assertScriptLengths(modules: Array<{ contentKey: string; scriptText: st
       );
     }
   }
+}
+
+function chunkArray<T>(items: T[], chunkSize: number) {
+  if (chunkSize <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let index = 0; index < items.length; index += chunkSize) {
+    chunks.push(items.slice(index, index + chunkSize));
+  }
+  return chunks;
 }
 
 async function updateJobStep(jobId: string, step: string) {
@@ -215,40 +226,70 @@ export async function executeFullPipelineJob(jobId: string) {
   });
 
   await updateJobStep(jobId, "QUIZZING");
+  const quizByKey = new Map<
+    string,
+    {
+      partKey: string;
+      chapterKey: string;
+      questions: {
+        question: string;
+        options: string[];
+        answerIndex: number;
+      }[];
+    }
+  >();
 
-  const quizzesRaw = await callOpenAiWithJsonSchema<unknown>({
-    model: openAiEnv.openAiModelGeneration,
-    schemaName: "module_quizzes",
-    schema: moduleQuizSchema,
-    systemPrompt: [
-      "Role: You generate validation quizzes for audio learning modules.",
-      "Create exactly 5 MCQs per module.",
-      "Each question must have exactly 4 options and one correct answer index [0..3].",
-      "Return strict JSON only.",
-    ].join("\n"),
-    userPrompt: [
-      `Company: ${job.company.name}`,
-      "Modules and scripts:",
-      JSON.stringify(
-        expectedModules.map((module) => ({
-          partKey: module.partKey,
-          chapterKey: module.chapterKey,
-          title: scriptsByKey.get(module.contentKey)?.title ?? module.title,
-          scriptText: scriptsByKey.get(module.contentKey)?.scriptText ?? "",
-        })),
-        null,
-        2
-      ),
-    ].join("\n\n"),
-  });
+  const quizBatches = chunkArray(expectedModules, QUIZ_BATCH_SIZE);
 
-  const quizzesPayload = validateModuleQuizPayload(quizzesRaw, expectedModuleKeys);
-  const quizByKey = new Map(
-    quizzesPayload.modules.map((module) => [
-      getModuleContentKey(module.partKey, module.chapterKey),
-      module,
-    ])
-  );
+  for (const [batchIndex, modulesBatch] of quizBatches.entries()) {
+    await updateJobStep(jobId, `QUIZZING_${batchIndex + 1}/${quizBatches.length}`);
+
+    const quizzesRaw = await callOpenAiWithJsonSchema<unknown>({
+      model: openAiEnv.openAiModelGeneration,
+      schemaName: `module_quizzes_batch_${batchIndex + 1}`,
+      schema: moduleQuizSchema,
+      systemPrompt: [
+        "Role: You generate validation quizzes for audio learning modules.",
+        "Create exactly 5 MCQs per module.",
+        "Each question must have exactly 4 options and one correct answer index [0..3].",
+        "Return strict JSON only.",
+      ].join("\n"),
+      userPrompt: [
+        `Company: ${job.company.name}`,
+        `Batch: ${batchIndex + 1}/${quizBatches.length}`,
+        "Modules and scripts:",
+        JSON.stringify(
+          modulesBatch.map((module) => ({
+            partKey: module.partKey,
+            chapterKey: module.chapterKey,
+            title: scriptsByKey.get(module.contentKey)?.title ?? module.title,
+            scriptText: (scriptsByKey.get(module.contentKey)?.scriptText ?? "").slice(
+              0,
+              MAX_SCRIPT_CHARS_PER_QUIZ_PROMPT
+            ),
+          })),
+          null,
+          2
+        ),
+      ].join("\n\n"),
+    });
+
+    const batchKeys = modulesBatch.map((module) => module.contentKey);
+    const quizzesPayload = validateModuleQuizPayload(quizzesRaw, batchKeys);
+
+    for (const moduleItem of quizzesPayload.modules) {
+      const contentKey = getModuleContentKey(moduleItem.partKey, moduleItem.chapterKey);
+      if (quizByKey.has(contentKey)) {
+        throw new Error(`Duplicate quiz payload detected for ${contentKey}.`);
+      }
+      quizByKey.set(contentKey, moduleItem);
+    }
+  }
+
+  if (quizByKey.size !== expectedModuleKeys.length) {
+    const missing = expectedModuleKeys.filter((key) => !quizByKey.has(key));
+    throw new Error(`Missing quiz payload for modules: ${missing.join(", ")}`);
+  }
 
   await prisma.$transaction(async (tx) => {
     const releaseModules = await tx.learningModule.findMany({
