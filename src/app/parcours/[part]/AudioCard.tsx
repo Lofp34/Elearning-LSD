@@ -20,18 +20,19 @@ export default function AudioCard({
   item,
   accent,
   listened,
+  listenPercent,
   quizResult,
 }: {
   item: AudioItem;
   accent: string;
   listened: boolean;
+  listenPercent: number;
   quizResult?: QuizResult;
 }) {
-  const sentRef = useRef(false);
+  const sentMilestonesRef = useRef<Set<number>>(new Set());
 
-  async function markComplete() {
-    if (sentRef.current) return;
-    sentRef.current = true;
+  async function sendProgress(progress: number) {
+    if (!item.releaseId || !item.moduleId) return;
     try {
       await fetch("/api/listen/complete", {
         method: "POST",
@@ -40,6 +41,7 @@ export default function AudioCard({
           slug: item.trackingSlug ?? item.slug,
           releaseId: item.releaseId,
           moduleId: item.moduleId,
+          listenPercent: progress,
         }),
       });
     } catch {
@@ -50,9 +52,13 @@ export default function AudioCard({
   function handleTimeUpdate(event: React.SyntheticEvent<HTMLAudioElement>) {
     const audio = event.currentTarget;
     if (!audio.duration || Number.isNaN(audio.duration)) return;
-    const progress = audio.currentTime / audio.duration;
-    if (progress >= 0.9) {
-      markComplete();
+    const percent = Math.round((audio.currentTime / audio.duration) * 100);
+    const milestones = [25, 50, 75, 90];
+    for (const milestone of milestones) {
+      if (percent >= milestone && !sentMilestonesRef.current.has(milestone)) {
+        sentMilestonesRef.current.add(milestone);
+        void sendProgress(milestone);
+      }
     }
   }
 
@@ -72,13 +78,13 @@ export default function AudioCard({
         preload="none"
         src={item.url}
         onTimeUpdate={handleTimeUpdate}
-        onEnded={markComplete}
+        onEnded={() => void sendProgress(100)}
       />
       <div className={styles.statusRow}>
         {listened ? (
           <span className={`${styles.badge} ${styles.badgeSuccess}`}>Ecoutee</span>
         ) : (
-          <span className={`${styles.badge} ${styles.badgeDanger}`}>A ecouter</span>
+          <span className={`${styles.badge} ${styles.badgeDanger}`}>{listenPercent}% ecoute</span>
         )}
         {quizResult ? (
           <span

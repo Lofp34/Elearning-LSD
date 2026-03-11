@@ -147,7 +147,3 @@ export function findBaseModule(partKey: BasePartKey, chapterKey: string) {
 export function getModuleContentKey(partKey: string, chapterKey: string) {
   return `${partKey}.${chapterKey}`;
 }
-
-export function getVoiceSlotForOrder(orderIndex: number): "FEMALE" | "MALE" {
-  return orderIndex % 2 === 1 ? "FEMALE" : "MALE";
-}

@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
 import { parseReleaseModuleSlug, buildTrackingAudioSlug } from "@/lib/learning/slug";
-import { isNewContentEngineEnabled } from "@/lib/feature-flags";
 
 export const runtime = "nodejs";
 
@@ -66,19 +65,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Release non publiee." }, { status: 400 });
   }
 
-  if (isNewContentEngineEnabled()) {
-    const enrollment = await prisma.learnerEnrollment.findFirst({
-      where: {
-        userId,
-        releaseId: learningModule.release.id,
-        isActive: true,
-      },
-      select: { id: true },
-    });
+  const enrollment = await prisma.learnerEnrollment.findFirst({
+    where: {
+      userId,
+      releaseId: learningModule.release.id,
+      isActive: true,
+    },
+    select: { id: true },
+  });
 
-    if (!enrollment) {
-      return NextResponse.json({ error: "Aucune assignation active pour ce module." }, { status: 403 });
-    }
+  if (!enrollment) {
+    return NextResponse.json({ error: "Aucune assignation active pour ce module." }, { status: 403 });
   }
 
   if (learningModule.quizQuestions.length !== 5) {

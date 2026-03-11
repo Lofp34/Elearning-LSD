@@ -1,260 +1,161 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import BrandMark from "@/components/BrandMark";
-import { prisma } from "@/lib/prisma";
-import { verifySessionToken } from "@/lib/auth";
+import { getAuthUserScope, isAdminRole, isSuperAdmin } from "@/lib/authz";
+import { getProgressReportRows } from "@/lib/reporting/progress-report";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-type ActivityRow = {
-  id: string;
-  type: string;
-  audioSlug: string | null;
-  score: number | null;
-  total: number | null;
-  passed: boolean | null;
-  createdAt: Date;
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    company: string | null;
-  };
-};
-
 const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN: "Super admin",
   ADMIN: "Admin",
-  USER: "Utilisateur",
 };
 
-const EVENT_LABELS: Record<string, string> = {
-  LOGIN: "Connexion",
-  LOGOUT: "Deconnexion",
-  LISTEN_COMPLETE: "Ecoute complete",
-  QUIZ_SUBMIT: "Quiz soumis",
+type LearnerSummary = {
+  key: string;
+  companyName: string;
+  releaseVersion: number;
+  learnerName: string;
+  learnerEmail: string;
+  totalModules: number;
+  completedModules: number;
+  quizPassedModules: number;
+  listenTotal: number;
+  quizScoreTotal: number;
+  quizTotalTotal: number;
+  lastActivityAt: Date | null;
 };
 
-const WINDOW_DAYS = 7;
-
-type CompanyAggregate = {
-  company: string;
-  users: number;
-  activeUsers: number;
-  listens: number;
-  quizAttempts: number;
-  sumScore: number;
-  sumTotal: number;
-};
-
-function formatName(firstName: string, lastName: string) {
-  const initial = lastName?.slice(0, 1) ?? "";
-  return `${firstName} ${initial}.`;
-}
-
-function formatDate(value: Date) {
+function formatDate(value: Date | null) {
+  if (!value) return "Aucune activite";
   return new Intl.DateTimeFormat("fr-FR", {
     dateStyle: "short",
     timeStyle: "short",
   }).format(value);
 }
 
-function formatAudioTitle(slug: string | null) {
-  if (!slug) return "—";
-  const base = slug.replace(/\.mp3$/i, "").replace(/^elearning\\d+-\\d+-/, "");
-  return base
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+function formatPercent(value: number) {
+  return `${Math.round(value)}%`;
 }
 
-function formatCompany(value: string | null) {
-  const trimmed = value?.trim();
-  return trimmed && trimmed.length > 0 ? trimmed : "Entreprise non renseignee";
-}
-
-export default async function AdminPage() {
-  const token = (await cookies()).get("ag_session")?.value;
-  if (!token) {
+export default async function AdminFollowUpPage() {
+  const authUser = await getAuthUserScope();
+  if (!authUser) {
     redirect("/connexion");
   }
-
-  let userId: string | null = null;
-  try {
-    const payload = await verifySessionToken(token);
-    userId = payload.sub ?? null;
-  } catch {
-    userId = null;
-  }
-
-  if (!userId) {
-    redirect("/connexion");
-  }
-
-  const adminUser = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { role: true, company: true, companyId: true, firstName: true, lastName: true },
-  });
-
-  if (!adminUser || adminUser.role === "USER") {
+  if (!isAdminRole(authUser.role)) {
     redirect("/parcours");
   }
 
-  const isCompanyAdmin = adminUser.role === "ADMIN";
-  const companyScope = isCompanyAdmin ? adminUser.company : null;
-  const companyScopeId = isCompanyAdmin ? adminUser.companyId : null;
-  const scopeLabel = companyScope
-    ? `Entreprise: ${companyScope}`
-    : isCompanyAdmin
-      ? "Entreprise non renseignee"
-      : "Toutes entreprises";
+  const rows = await getProgressReportRows(authUser);
+  const scopeLabel = isSuperAdmin(authUser.role)
+    ? "Toutes entreprises"
+    : authUser.company ?? "Entreprise non renseignee";
 
-  const userFilter = isCompanyAdmin
-    ? companyScopeId
-      ? { companyId: companyScopeId }
-      : { company: companyScope ?? "__missing__" }
-    : undefined;
-  const activityFilter = isCompanyAdmin
-    ? companyScopeId
-      ? { user: { companyId: companyScopeId } }
-      : { user: { company: companyScope ?? "__missing__" } }
-    : undefined;
+  const learnerSummaries = Array.from(
+    rows.reduce((acc, row) => {
+      const key = `${row.userId}:${row.releaseId}`;
+      const current = acc.get(key) ?? {
+        key,
+        companyName: row.companyName,
+        releaseVersion: row.releaseVersion,
+        learnerName: row.learnerName,
+        learnerEmail: row.learnerEmail,
+        totalModules: 0,
+        completedModules: 0,
+        quizPassedModules: 0,
+        listenTotal: 0,
+        quizScoreTotal: 0,
+        quizTotalTotal: 0,
+        lastActivityAt: null,
+      };
 
-  const windowStart = new Date();
-  windowStart.setDate(windowStart.getDate() - WINDOW_DAYS);
+      current.totalModules += 1;
+      current.completedModules += row.completed ? 1 : 0;
+      current.quizPassedModules += row.quizPassed ? 1 : 0;
+      current.listenTotal += row.listenPercentMax;
+      current.quizScoreTotal += row.quizBestScore ?? 0;
+      current.quizTotalTotal += row.quizBestTotal ?? 0;
 
-  const [users, listenStats7d, quizStats7d, activeUsers7d, lastActivity, logs] =
-    await Promise.all([
-      prisma.user.findMany({
-        where: userFilter,
-        select: { id: true, firstName: true, lastName: true, email: true, company: true },
-      }),
-      prisma.listenEvent.groupBy({
-        by: ["userId"],
-        where: {
-          ...(activityFilter ?? {}),
-          completedAt: { gte: windowStart },
-        },
-        _count: { _all: true },
-      }),
-      prisma.quizAttempt.groupBy({
-        by: ["userId"],
-        where: {
-          ...(activityFilter ?? {}),
-          createdAt: { gte: windowStart },
-        },
-        _count: { _all: true },
-        _sum: { score: true, total: true },
-      }),
-      prisma.activityLog.groupBy({
-        by: ["userId"],
-        where: {
-          ...(activityFilter ?? {}),
-          createdAt: { gte: windowStart },
-        },
-        _count: { _all: true },
-      }),
-      prisma.activityLog.groupBy({
-        by: ["userId"],
-        where: activityFilter ? activityFilter : {},
-        _max: { createdAt: true },
-      }),
-      prisma.activityLog.findMany({
-        where: activityFilter ? activityFilter : {},
-        orderBy: { createdAt: "desc" },
-        take: 120,
-        include: {
-          user: {
-            select: { firstName: true, lastName: true, email: true, company: true },
-          },
-        },
-      }),
-    ]);
+      if (!current.lastActivityAt || (row.lastActivityAt && row.lastActivityAt > current.lastActivityAt)) {
+        current.lastActivityAt = row.lastActivityAt;
+      }
 
-  const rows = logs as ActivityRow[];
-  const userCount = users.length;
-  const activeUserIds = new Set(activeUsers7d.map((row) => row.userId));
-
-  const listenMap = new Map<string, number>();
-  for (const row of listenStats7d) {
-    listenMap.set(row.userId, row._count._all);
-  }
-
-  const quizMap = new Map<string, { count: number; sumScore: number; sumTotal: number }>();
-  for (const row of quizStats7d) {
-    quizMap.set(row.userId, {
-      count: row._count._all,
-      sumScore: row._sum.score ?? 0,
-      sumTotal: row._sum.total ?? 0,
+      acc.set(key, current);
+      return acc;
+    }, new Map<string, LearnerSummary>()).values()
+  )
+    .map((entry) => ({
+      ...entry,
+      completionRate:
+        entry.totalModules > 0 ? Math.round((entry.completedModules / entry.totalModules) * 100) : 0,
+      quizPassRate:
+        entry.totalModules > 0 ? Math.round((entry.quizPassedModules / entry.totalModules) * 100) : 0,
+      avgListen:
+        entry.totalModules > 0 ? Math.round(entry.listenTotal / entry.totalModules) : 0,
+      avgQuizScore:
+        entry.quizTotalTotal > 0 ? Math.round((entry.quizScoreTotal / entry.quizTotalTotal) * 100) : 0,
+    }))
+    .sort((a, b) => {
+      const activityDelta = (b.lastActivityAt?.getTime() ?? 0) - (a.lastActivityAt?.getTime() ?? 0);
+      if (activityDelta !== 0) return activityDelta;
+      return a.learnerName.localeCompare(b.learnerName, "fr");
     });
-  }
 
-  const lastActivityMap = new Map<string, Date | null>();
-  for (const row of lastActivity) {
-    lastActivityMap.set(row.userId, row._max.createdAt ?? null);
-  }
+  const companySummaries = Array.from(
+    learnerSummaries.reduce((acc, learner) => {
+      const current = acc.get(learner.companyName) ?? {
+        companyName: learner.companyName,
+        learnerCount: 0,
+        completionRateTotal: 0,
+        quizRateTotal: 0,
+        avgListenTotal: 0,
+      };
 
-  const listenCount7d = listenStats7d.reduce((acc, row) => acc + row._count._all, 0);
-  const quizCount7d = quizStats7d.reduce((acc, row) => acc + row._count._all, 0);
+      current.learnerCount += 1;
+      current.completionRateTotal += learner.completionRate;
+      current.quizRateTotal += learner.quizPassRate;
+      current.avgListenTotal += learner.avgListen;
+      acc.set(learner.companyName, current);
+      return acc;
+    }, new Map<
+      string,
+      {
+        companyName: string;
+        learnerCount: number;
+        completionRateTotal: number;
+        quizRateTotal: number;
+        avgListenTotal: number;
+      }
+    >()).values()
+  )
+    .map((entry) => ({
+      companyName: entry.companyName,
+      learnerCount: entry.learnerCount,
+      completionRate:
+        entry.learnerCount > 0 ? Math.round(entry.completionRateTotal / entry.learnerCount) : 0,
+      quizRate:
+        entry.learnerCount > 0 ? Math.round(entry.quizRateTotal / entry.learnerCount) : 0,
+      avgListen:
+        entry.learnerCount > 0 ? Math.round(entry.avgListenTotal / entry.learnerCount) : 0,
+    }))
+    .sort((a, b) => a.companyName.localeCompare(b.companyName, "fr"));
 
-  const userCards = users.map((user) => {
-    const listens = listenMap.get(user.id) ?? 0;
-    const quizStat = quizMap.get(user.id);
-    const quizAttempts = quizStat?.count ?? 0;
-    const avgScore =
-      quizStat && quizStat.sumTotal > 0
-        ? Math.round((quizStat.sumScore / quizStat.sumTotal) * 100)
-        : 0;
-    const lastActive = lastActivityMap.get(user.id);
-    return {
-      id: user.id,
-      name: formatName(user.firstName, user.lastName),
-      email: user.email,
-      company: formatCompany(user.company),
-      listens,
-      quizAttempts,
-      avgScore,
-      active: activeUserIds.has(user.id),
-      lastActive,
-    };
-  });
+  const recentRows = [...rows]
+    .sort((a, b) => {
+      const activityDelta = (b.lastActivityAt?.getTime() ?? 0) - (a.lastActivityAt?.getTime() ?? 0);
+      if (activityDelta !== 0) return activityDelta;
+      return a.learnerName.localeCompare(b.learnerName, "fr");
+    })
+    .slice(0, 24);
 
-  const companyCards = isCompanyAdmin
-    ? []
-    : Array.from(
-        userCards.reduce((acc, card) => {
-          const existing = acc.get(card.company) ?? {
-            company: card.company,
-            users: 0,
-            activeUsers: 0,
-            listens: 0,
-            quizAttempts: 0,
-            sumScore: 0,
-            sumTotal: 0,
-          };
-          existing.users += 1;
-          existing.activeUsers += card.active ? 1 : 0;
-          existing.listens += card.listens;
-          existing.quizAttempts += card.quizAttempts;
-          if (card.quizAttempts > 0) {
-            const quizStat = quizMap.get(card.id);
-            existing.sumScore += quizStat?.sumScore ?? 0;
-            existing.sumTotal += quizStat?.sumTotal ?? 0;
-          }
-          acc.set(card.company, existing);
-          return acc;
-        }, new Map<string, CompanyAggregate>()).values()
-      ).map((entry) => ({
-        company: entry.company,
-        users: entry.users,
-        activeUsers: entry.activeUsers,
-        listens: entry.listens,
-        quizAttempts: entry.quizAttempts,
-        avgScore:
-          entry.sumTotal > 0 ? Math.round((entry.sumScore / entry.sumTotal) * 100) : 0,
-      }));
+  const uniqueLearners = new Set(rows.map((row) => row.userId)).size;
+  const uniqueReleases = new Set(rows.map((row) => row.releaseId)).size;
+  const completionRate =
+    rows.length > 0 ? Math.round((rows.filter((row) => row.completed).length / rows.length) * 100) : 0;
+  const quizPassRate =
+    rows.length > 0 ? Math.round((rows.filter((row) => row.quizPassed).length / rows.length) * 100) : 0;
 
   return (
     <main className={styles.page}>
@@ -266,169 +167,179 @@ export default async function AdminPage() {
       </header>
 
       <section className={styles.intro}>
-        <span className={styles.pill}>{ROLE_LABELS[adminUser.role]}</span>
-        <h1>Suivi des apprenants</h1>
-        <p>Vue 7 derniers jours pour {scopeLabel}.</p>
+        <span className={styles.pill}>{ROLE_LABELS[authUser.role] ?? "Admin"}</span>
+        <h1>Suivi apprenants</h1>
+        <p>
+          Scope: <strong>{scopeLabel}</strong>
+        </p>
+        <p>
+          Tableau Qualiopi des ecoutes, quiz, completions et derniere activite par apprenant et par
+          release.
+        </p>
+        <a className={styles.back} href="/api/admin/reports/progress">
+          Export CSV
+        </a>
       </section>
 
       <section className={styles.stats}>
-        <div className={styles.statCard}>
-          <strong>{userCount}</strong>
-          <span>utilisateurs</span>
-        </div>
-        <div className={styles.statCard}>
-          <strong>{activeUserIds.size}</strong>
-          <span>actifs 7j</span>
-        </div>
-        <div className={styles.statCard}>
-          <strong>{listenCount7d}</strong>
-          <span>ecoutes 7j</span>
-        </div>
-        <div className={styles.statCard}>
-          <strong>{quizCount7d}</strong>
-          <span>quiz 7j</span>
-        </div>
+        <article className={styles.statCard}>
+          <strong>{uniqueLearners}</strong>
+          <span>Apprenants suivis</span>
+        </article>
+        <article className={styles.statCard}>
+          <strong>{uniqueReleases}</strong>
+          <span>Releases actives</span>
+        </article>
+        <article className={styles.statCard}>
+          <strong>{formatPercent(completionRate)}</strong>
+          <span>Modules completes</span>
+        </article>
+        <article className={styles.statCard}>
+          <strong>{formatPercent(quizPassRate)}</strong>
+          <span>Quiz valides</span>
+        </article>
       </section>
 
-      {!isCompanyAdmin ? (
+      {isSuperAdmin(authUser.role) ? (
         <section className={styles.card}>
           <div className={styles.cardHeader}>
             <h2>Vue entreprises</h2>
-            <span className={styles.tag}>7 derniers jours</span>
+            <span className={styles.tag}>Consolide</span>
           </div>
-          <div className={styles.companyGrid}>
-            {companyCards.length === 0 ? (
-              <p className={styles.empty}>Aucune entreprise disponible.</p>
-            ) : (
-              companyCards.map((company) => (
-                <div key={company.company} className={styles.miniCard}>
+
+          {companySummaries.length === 0 ? (
+            <p className={styles.empty}>Aucune donnee de progression disponible.</p>
+          ) : (
+            <div className={styles.companyGrid}>
+              {companySummaries.map((company) => (
+                <article key={company.companyName} className={styles.miniCard}>
                   <div className={styles.miniHeader}>
-                    <strong>{company.company}</strong>
-                    <span className={styles.badge}>
-                      {company.activeUsers}/{company.users} actifs
-                    </span>
+                    <strong>{company.companyName}</strong>
+                    <small>{company.learnerCount} apprenants</small>
                   </div>
                   <div className={styles.metrics}>
                     <div className={styles.metric}>
-                      <strong>{company.listens}</strong>
-                      <span>ecoutes 7j</span>
+                      <strong>{formatPercent(company.completionRate)}</strong>
+                      <span>Completion</span>
                     </div>
                     <div className={styles.metric}>
-                      <strong>{company.quizAttempts}</strong>
-                      <span>quiz 7j</span>
+                      <strong>{formatPercent(company.quizRate)}</strong>
+                      <span>Quiz valides</span>
                     </div>
                     <div className={styles.metric}>
-                      <strong>{company.avgScore}%</strong>
-                      <span>moyenne quiz</span>
+                      <strong>{formatPercent(company.avgListen)}</strong>
+                      <span>Ecoute moyenne</span>
                     </div>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
       ) : null}
 
       <section className={styles.card}>
         <div className={styles.cardHeader}>
-          <h2>Vue utilisateurs</h2>
-          <span className={styles.tag}>7 derniers jours</span>
+          <h2>Vue apprenants</h2>
+          <span className={styles.tag}>Release active</span>
         </div>
-        <div className={styles.userGrid}>
-          {userCards.length === 0 ? (
-            <p className={styles.empty}>Aucun utilisateur disponible.</p>
-          ) : (
-            userCards.map((user) => (
-              <div key={user.id} className={styles.miniCard}>
+
+        {learnerSummaries.length === 0 ? (
+          <p className={styles.empty}>Aucun apprenant assigne ou aucune progression disponible.</p>
+        ) : (
+          <div className={styles.userGrid}>
+            {learnerSummaries.map((learner) => (
+              <article key={learner.key} className={styles.miniCard}>
                 <div className={styles.miniHeader}>
                   <div>
-                    <strong>{user.name}</strong>
-                    <small>{user.email}</small>
-                    {!isCompanyAdmin ? <small>{user.company}</small> : null}
+                    <strong>{learner.learnerName}</strong>
+                    <small>{learner.learnerEmail}</small>
                   </div>
-                  <span
-                    className={`${styles.badge} ${
-                      user.active ? styles.badgeSuccess : styles.badgeWarn
-                    }`}
-                  >
-                    {user.active ? "Actif" : "Inactif"}
-                  </span>
+                  <small>
+                    {learner.companyName} · v{learner.releaseVersion}
+                  </small>
                 </div>
+
                 <div className={styles.metrics}>
                   <div className={styles.metric}>
-                    <strong>{user.listens}</strong>
-                    <span>ecoutes 7j</span>
+                    <strong>{formatPercent(learner.completionRate)}</strong>
+                    <span>Completion</span>
                   </div>
                   <div className={styles.metric}>
-                    <strong>{user.quizAttempts}</strong>
-                    <span>quiz 7j</span>
+                    <strong>{formatPercent(learner.avgListen)}</strong>
+                    <span>Ecoute moyenne</span>
                   </div>
                   <div className={styles.metric}>
-                    <strong>{user.avgScore}%</strong>
-                    <span>moyenne quiz</span>
+                    <strong>{formatPercent(learner.avgQuizScore)}</strong>
+                    <span>Score quiz</span>
                   </div>
                 </div>
+
                 <div className={styles.metaRow}>
-                  <span>Derniere activite</span>
                   <span>
-                    {user.lastActive ? formatDate(user.lastActive) : "Aucune"}
+                    Quiz valides: {learner.quizPassedModules}/{learner.totalModules}
                   </span>
+                  <span>Derniere activite: {formatDate(learner.lastActivityAt)}</span>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className={styles.card}>
         <div className={styles.cardHeader}>
-          <h2>Journal d&apos;activite</h2>
-          <span className={styles.tag}>Derniers evenements</span>
+          <h2>Details modules</h2>
+          <span className={styles.tag}>Preuves Qualiopi</span>
         </div>
-        <div className={styles.table}>
-          <div className={`${styles.row} ${styles.rowHeader}`}>
-            <div>Utilisateur</div>
-            <div>Action</div>
-            <div>Details</div>
-          </div>
-          {rows.length === 0 ? (
-            <p className={styles.empty}>Aucune activite recente.</p>
-          ) : (
-            rows.map((log) => {
-              const quizLabel =
-                log.type === "QUIZ_SUBMIT" && log.total
-                  ? `${log.score ?? 0}/${log.total}`
-                  : null;
-              return (
-                <div key={log.id} className={styles.row}>
-                  <div className={styles.cell}>
-                    <span>{formatName(log.user.firstName, log.user.lastName)}</span>
-                    <small>{log.user.email}</small>
-                    <small>{log.user.company ?? "Entreprise non renseignee"}</small>
-                  </div>
-                  <div className={styles.cell}>
-                    <span>{EVENT_LABELS[log.type] ?? log.type}</span>
-                    <small>{formatDate(log.createdAt)}</small>
-                  </div>
-                  <div className={styles.cell}>
-                    <span>{formatAudioTitle(log.audioSlug)}</span>
-                    <div className={styles.status}>
-                      {quizLabel ? (
-                        <span
-                          className={`${styles.badge} ${
-                            log.passed ? styles.badgeSuccess : styles.badgeWarn
-                          }`}
-                        >
-                          {quizLabel}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
+
+        {recentRows.length === 0 ? (
+          <p className={styles.empty}>Aucune activite module disponible.</p>
+        ) : (
+          <div className={styles.table}>
+            <div className={`${styles.row} ${styles.rowHeader}`}>
+              <div className={styles.cell}>Apprenant / module</div>
+              <div className={styles.cell}>Ecoute / quiz</div>
+              <div className={styles.cell}>Derniere activite</div>
+            </div>
+
+            {recentRows.map((row) => (
+              <div key={`${row.userId}:${row.releaseId}:${row.moduleId}`} className={styles.row}>
+                <div className={styles.cell}>
+                  <strong>{row.learnerName}</strong>
+                  <small>{row.learnerEmail}</small>
+                  <small>
+                    {row.companyName} · v{row.releaseVersion} · Module {row.orderIndex}
+                  </small>
+                  <small>{row.moduleTitle}</small>
                 </div>
-              );
-            })
-          )}
-        </div>
+
+                <div className={styles.cell}>
+                  <span className={styles.status}>
+                    <span
+                      className={`${styles.badge} ${row.completed ? styles.badgeSuccess : styles.badgeWarn}`}
+                    >
+                      Ecoute {row.listenPercentMax}%
+                    </span>
+                  </span>
+                  <span className={styles.status}>
+                    <span
+                      className={`${styles.badge} ${row.quizPassed ? styles.badgeSuccess : styles.badgeWarn}`}
+                    >
+                      Quiz {row.quizBestScore ?? 0}/{row.quizBestTotal ?? 0}
+                    </span>
+                  </span>
+                  <small>{row.partKey}</small>
+                </div>
+
+                <div className={styles.cell}>
+                  <strong>{formatDate(row.lastActivityAt)}</strong>
+                  <small>{row.moduleType}</small>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

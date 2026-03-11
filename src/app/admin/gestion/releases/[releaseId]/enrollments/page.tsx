@@ -76,7 +76,7 @@ export default async function ReleaseEnrollmentsPage({
       <header className={styles.header}>
         <BrandMark subtitle="Admin - Assignations" />
         <Link className={styles.back} href={`/admin/gestion/releases/${release.id}/review`}>
-          Retour review
+          Retour edition
         </Link>
       </header>
 

@@ -1,219 +1,55 @@
-import { list } from "@vercel/blob";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import BrandMark from "@/components/BrandMark";
 import { getSessionUserId } from "@/lib/session-user";
 import { getActiveLearnerRelease } from "@/lib/learning/user-release";
-import { buildReleaseModuleSlug } from "@/lib/learning/slug";
+import { getLearnerReleaseSnapshot } from "@/lib/learning/release-snapshot";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-const parts = [
-  {
-    slug: "mental",
-    title: "Mental",
-    prefix: "audio/elearning1-",
-    tone: "#ff6b4a",
-  },
-  {
-    slug: "pyramide",
-    title: "Pyramide de la vente",
-    prefix: "audio/elearning2-",
-    tone: "#2f5f59",
-  },
-  {
-    slug: "techniques",
-    title: "Techniques",
-    prefix: "audio/elearning3-",
-    tone: "#f1a95f",
-  },
+const PARTS = [
+  { slug: "mental", title: "Mental", tone: "#ff6b4a" },
+  { slug: "pyramide", title: "Pyramide de la vente", tone: "#2f5f59" },
+  { slug: "techniques", title: "Techniques", tone: "#f1a95f" },
 ] as const;
-
-type PartSlug = (typeof parts)[number]["slug"];
-
-type AudioEntry = {
-  url: string;
-  title: string;
-  index: number;
-  slug: string;
-  moduleId?: string;
-};
-
-function formatTitle(filename: string) {
-  const base = filename.replace(/\.mp3$/i, "").replace(/^elearning\d+-\d+-/, "");
-  return base
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function getIndex(filename: string) {
-  const match = filename.match(/elearning\d+-(\d+)-/i);
-  return match ? Number.parseInt(match[1], 10) : 0;
-}
 
 export default async function ParcoursPage() {
   const userId = await getSessionUserId();
   const activeRelease = userId ? await getActiveLearnerRelease(userId) : null;
+  const modules =
+    userId && activeRelease
+      ? await getLearnerReleaseSnapshot(userId, activeRelease.releaseId)
+      : [];
 
-  let entriesByPart: Array<{
-    part: (typeof parts)[number];
-    items: AudioEntry[];
-  }>;
+  const totalAudios = modules.length;
+  const completedAudioCount = modules.filter((module) => module.completed).length;
+  const quizValidatedCount = modules.filter((module) => module.quizPassed).length;
+  const progressPct =
+    totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
 
-  if (activeRelease) {
-    const modules = await prisma.learningModule.findMany({
-      where: {
-        releaseId: activeRelease.releaseId,
-      },
-      orderBy: { orderIndex: "asc" },
-      include: {
-        audioAsset: {
-          select: {
-            blobPath: true,
-            status: true,
-          },
-        },
-      },
-    });
+  const entriesWithProgress = PARTS.map((part) => {
+    const items = modules.filter((module) => module.partKey === part.slug);
+    const listenedCount = items.filter((item) => item.completed).length;
+    const progress =
+      items.length > 0 ? Math.round((listenedCount / items.length) * 100) : 0;
+    const nextItem = items.find((item) => !item.completed);
 
-    const grouped = new Map<PartSlug, AudioEntry[]>([
-      ["mental", []],
-      ["pyramide", []],
-      ["techniques", []],
-    ]);
-
-    for (const learningModule of modules) {
-      if (!learningModule.audioAsset || learningModule.audioAsset.status !== "GENERATED") continue;
-      if (!grouped.has(learningModule.partKey as PartSlug)) continue;
-
-      grouped.get(learningModule.partKey as PartSlug)?.push({
-        url: learningModule.audioAsset.blobPath,
-        title: learningModule.title,
-        index: learningModule.orderIndex,
-        slug: buildReleaseModuleSlug(activeRelease.releaseId, learningModule.contentKey),
-        moduleId: learningModule.id,
-      });
-    }
-
-    entriesByPart = parts.map((part) => ({
+    return {
       part,
-      items: (grouped.get(part.slug as PartSlug) ?? []).sort((a, b) => a.index - b.index),
-    }));
-  } else {
-    const { blobs } = await list({ prefix: "audio/", limit: 200 });
-
-    entriesByPart = parts.map((part) => {
-      const items = blobs
-        .filter((blob) => blob.pathname.startsWith(part.prefix))
-        .map((blob) => {
-          const filename = blob.pathname.split("/").pop() ?? "";
-          return {
-            url: blob.url,
-            title: formatTitle(filename),
-            index: getIndex(filename),
-            slug: filename.replace(/\.mp3$/i, ""),
-          };
-        })
-        .sort((a, b) => a.index - b.index);
-
-      return { part, items };
-    });
-  }
-
-  const totalAudios = entriesByPart.reduce((acc, entry) => acc + entry.items.length, 0);
-
-  let listenedSlugs = new Set<string>();
-  let listensCount = 0;
-  let quizValidatedCount = 0;
-  let partsUnlocked = 0;
-  let progressPct = 0;
-
-  if (userId && totalAudios > 0) {
-    if (activeRelease) {
-      const moduleIds = entriesByPart.flatMap((entry) => entry.items.map((item) => item.moduleId)).filter(Boolean);
-
-      const [listenEvents, passedQuizzes] = await Promise.all([
-        prisma.listenEvent.findMany({
-          where: {
-            userId,
-            releaseId: activeRelease.releaseId,
-            moduleId: { in: moduleIds as string[] },
-          },
-          select: { moduleId: true },
-        }),
-        prisma.quizAttempt.findMany({
-          where: {
-            userId,
-            releaseId: activeRelease.releaseId,
-            passed: true,
-            moduleId: { in: moduleIds as string[] },
-          },
-          distinct: ["moduleId"],
-          select: { moduleId: true },
-        }),
-      ]);
-
-      listensCount = listenEvents.length;
-      listenedSlugs = new Set(listenEvents.map((event) => event.moduleId ?? "").filter(Boolean));
-      quizValidatedCount = passedQuizzes.length;
-      const passedModuleIds = new Set(
-        passedQuizzes.map((item) => item.moduleId ?? "").filter(Boolean)
-      );
-
-      partsUnlocked = entriesByPart.filter((entry) =>
-        entry.items.length > 0 && entry.items.every((item) => (item.moduleId ? passedModuleIds.has(item.moduleId) : false))
-      ).length;
-
-      progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
-    } else {
-      const allSlugs = entriesByPart.flatMap((entry) => entry.items.map((item) => item.slug));
-      const [listenEvents, passedQuizzes] = await Promise.all([
-        prisma.listenEvent.findMany({
-          where: { userId, audioSlug: { in: allSlugs } },
-          select: { audioSlug: true },
-        }),
-        prisma.quizAttempt.findMany({
-          where: { userId, passed: true, audioSlug: { in: allSlugs } },
-          distinct: ["audioSlug"],
-          select: { audioSlug: true },
-        }),
-      ]);
-
-      listensCount = listenEvents.length;
-      listenedSlugs = new Set(listenEvents.map((event) => event.audioSlug));
-      quizValidatedCount = passedQuizzes.length;
-      const passedSlugs = new Set(passedQuizzes.map((item) => item.audioSlug));
-
-      partsUnlocked = entriesByPart.filter((entry) =>
-        entry.items.length > 0 && entry.items.every((item) => passedSlugs.has(item.slug))
-      ).length;
-
-      progressPct = totalAudios > 0 ? Math.round((quizValidatedCount / totalAudios) * 100) : 0;
-    }
-  }
-
-  const entriesWithProgress = entriesByPart.map((entry) => {
-    const listenedCount = entry.items.filter((item) => {
-      if (activeRelease) {
-        return item.moduleId ? listenedSlugs.has(item.moduleId) : false;
-      }
-      return listenedSlugs.has(item.slug);
-    }).length;
-
-    const progress = entry.items.length > 0 ? Math.round((listenedCount / entry.items.length) * 100) : 0;
-    const nextItem = entry.items.find((item) => {
-      if (activeRelease) return item.moduleId ? !listenedSlugs.has(item.moduleId) : true;
-      return !listenedSlugs.has(item.slug);
-    });
-
-    return { ...entry, listenedCount, progress, nextItem };
+      items,
+      listenedCount,
+      progress,
+      nextItem,
+      quizPassedCount: items.filter((item) => item.quizPassed).length,
+    };
   });
+
+  const partsUnlocked = entriesWithProgress.filter(
+    (entry) => entry.items.length > 0 && entry.items.every((item) => item.quizPassed)
+  ).length;
 
   const nextEntry = entriesWithProgress.find((entry) => entry.nextItem);
   const nextAudio = nextEntry?.nextItem;
-  const hasAudios = totalAudios > 0;
 
   return (
     <main className={styles.page}>
@@ -230,18 +66,18 @@ export default async function ParcoursPage() {
               <span>{progressPct}%</span>
             </div>
             <div>
-              <h2>Commence ton parcours</h2>
+              <h2>Parcours commercial B2B</h2>
               <p>
-                {totalAudios > 0
-                  ? `Tu as ${totalAudios} audios a parcourir.`
-                  : "Les audios arrivent. Importe-les dans Vercel Blob."}
+                {activeRelease
+                  ? `Tu as ${totalAudios} audios a parcourir sur la release v${activeRelease.version}.`
+                  : "Aucune release active ne t'est assignee pour le moment."}
               </p>
             </div>
           </div>
           <div className={styles.milestones}>
             <div>
-              <strong>{listensCount}</strong>
-              <span>ecoutes</span>
+              <strong>{completedAudioCount}</strong>
+              <span>audios completes</span>
             </div>
             <div>
               <strong>{quizValidatedCount}</strong>
@@ -249,7 +85,7 @@ export default async function ParcoursPage() {
             </div>
             <div>
               <strong>{partsUnlocked}</strong>
-              <span>partie debloquee</span>
+              <span>parties validees</span>
             </div>
           </div>
         </div>
@@ -259,25 +95,25 @@ export default async function ParcoursPage() {
           <h3>
             {nextAudio
               ? `${nextEntry?.part.title} - ${nextAudio.title}`
-              : hasAudios
+              : activeRelease
                 ? "Parcours termine"
-                : "Aucun audio"}
+                : "Aucune release"}
           </h3>
           <p>
             {nextAudio
               ? "Prochain audio a ecouter"
-              : hasAudios
-                ? "Bravo, tout est ecoute."
-                : "Importe tes audios"}
+              : activeRelease
+                ? "Bravo, tout le socle commun est complete."
+                : "Attends l'assignation de ton parcours par l'administration."}
           </p>
           <div className={styles.nextActions}>
             {nextAudio ? (
               <Link className={styles.primary} href={`/parcours/${nextEntry?.part.slug}`}>
-                Ecouter l&apos;audio
+                Continuer
               </Link>
             ) : (
-              <Link className={styles.primary} href="/audio">
-                Voir les fichiers
+              <Link className={styles.primary} href="/profil">
+                Voir mon profil
               </Link>
             )}
           </div>
@@ -287,7 +123,7 @@ export default async function ParcoursPage() {
       <section className={styles.tracks}>
         <h2>Mes parties</h2>
         <div className={styles.trackGrid}>
-          {entriesWithProgress.map(({ part, items, nextItem, progress }) => (
+          {entriesWithProgress.map(({ part, items, nextItem, progress, quizPassedCount }) => (
             <article key={part.title} className={styles.trackCard}>
               <div className={styles.trackHeader}>
                 <div className={styles.trackTitle}>
@@ -302,7 +138,9 @@ export default async function ParcoursPage() {
               <div className={styles.progressBar}>
                 <span style={{ width: `${progress}%` }} />
               </div>
-              <p className={styles.trackProgress}>{progress}% termine</p>
+              <p className={styles.trackProgress}>
+                {progress}% ecoute | {quizPassedCount}/{items.length} quiz valides
+              </p>
               <Link className={styles.secondary} href={`/parcours/${part.slug}`}>
                 Ouvrir la partie
               </Link>
