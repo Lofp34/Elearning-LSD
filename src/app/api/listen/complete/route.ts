@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
-import { isNewContentEngineEnabled } from "@/lib/feature-flags";
 import { buildTrackingAudioSlug } from "@/lib/learning/slug";
+import { recordListenProgress } from "@/lib/learning/progress";
 
 export const runtime = "nodejs";
 
@@ -25,6 +25,7 @@ export async function POST(request: Request) {
     const rawSlug = String(body.slug ?? "").trim();
     const releaseId = typeof body.releaseId === "string" ? body.releaseId.trim() : "";
     const moduleId = typeof body.moduleId === "string" ? body.moduleId.trim() : "";
+    const listenPercent = Number(body.listenPercent ?? 0);
     if (!rawSlug && !(releaseId && moduleId)) {
       return NextResponse.json({ error: "Slug manquant." }, { status: 400 });
     }
@@ -54,22 +55,20 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Module/release invalide." }, { status: 400 });
       }
 
-      if (isNewContentEngineEnabled()) {
-        const enrollment = await prisma.learnerEnrollment.findFirst({
-          where: {
-            userId,
-            releaseId,
-            isActive: true,
-            release: { status: "PUBLISHED" },
-          },
-          select: { id: true },
-        });
-        if (!enrollment) {
-          return NextResponse.json(
-            { error: "Aucune assignation active sur cette release." },
-            { status: 403 }
-          );
-        }
+      const enrollment = await prisma.learnerEnrollment.findFirst({
+        where: {
+          userId,
+          releaseId,
+          isActive: true,
+          release: { status: "PUBLISHED" },
+        },
+        select: { id: true },
+      });
+      if (!enrollment) {
+        return NextResponse.json(
+          { error: "Aucune assignation active sur cette release." },
+          { status: 403 }
+        );
       }
 
       slug =
@@ -78,27 +77,20 @@ export async function POST(request: Request) {
       trackedModuleId = moduleId;
     }
 
-    const existing = await prisma.listenEvent.findUnique({
-      where: { userId_audioSlug: { userId, audioSlug: slug } },
-    });
-
-    if (!existing) {
-      await prisma.listenEvent.create({
-        data: {
-          userId,
-          audioSlug: slug,
-          releaseId: trackedReleaseId,
-          moduleId: trackedModuleId,
-        },
-      });
-      await prisma.activityLog.create({
-        data: {
-          userId,
-          type: "LISTEN_COMPLETE",
-          audioSlug: slug,
-        },
-      });
+    if (!trackedReleaseId || !trackedModuleId) {
+      return NextResponse.json(
+        { error: "Le suivi d'ecoute requiert releaseId et moduleId." },
+        { status: 400 }
+      );
     }
+
+    await recordListenProgress({
+      userId,
+      releaseId: trackedReleaseId,
+      moduleId: trackedModuleId,
+      audioSlug: slug,
+      listenPercent,
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {

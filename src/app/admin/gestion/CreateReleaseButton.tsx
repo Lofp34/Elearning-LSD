@@ -15,8 +15,6 @@ export default function CreateReleaseButton({ companyId }: { companyId: string }
     try {
       const response = await fetch(`/api/admin/companies/${companyId}/releases`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ startPipeline: false }),
       });
 
       if (!response.ok) {
@@ -24,6 +22,16 @@ export default function CreateReleaseButton({ companyId }: { companyId: string }
         setError(payload.error ?? "Creation impossible.");
         return;
       }
+
+      const payload = await response.json().catch(() => ({}));
+      const releaseId = payload?.release?.id as string | undefined;
+      if (!releaseId) {
+        setError("Release creee mais redirection impossible.");
+        router.refresh();
+        return;
+      }
+
+      router.push(`/admin/gestion/releases/${releaseId}/review`);
       router.refresh();
     } catch {
       setError("Erreur reseau.");
@@ -35,7 +43,7 @@ export default function CreateReleaseButton({ companyId }: { companyId: string }
   return (
     <div className={styles.releaseActions}>
       <button className={styles.secondary} type="button" onClick={handleClick} disabled={loading}>
-        {loading ? "Creation..." : "Creer release draft"}
+        {loading ? "Creation..." : "Creer une release"}
       </button>
       {error ? <small className={styles.error}>{error}</small> : null}
     </div>

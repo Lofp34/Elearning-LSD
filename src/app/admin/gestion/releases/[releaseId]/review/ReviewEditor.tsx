@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 type QuizQuestion = {
@@ -10,21 +11,26 @@ type QuizQuestion = {
   answerIndex: number;
 };
 
-type ReviewModule = {
+type ModuleType = "CORE" | "BONUS";
+
+type ReleaseModule = {
   id: string;
   contentKey: string;
   title: string;
   partKey: string;
   chapterKey: string;
   orderIndex: number;
+  moduleType: ModuleType;
   scriptText: string;
-  reviewStatus: "DRAFT" | "APPROVED" | "NEEDS_CHANGES";
-  reviewComment: string | null;
+  audioAsset: {
+    id: string;
+    blobPath: string;
+  } | null;
   quizQuestions: QuizQuestion[];
 };
 
 function normalizeQuestions(questions: QuizQuestion[]) {
-  if (questions.length === 5 && questions.every((q) => q.options.length === 4)) {
+  if (questions.length === 5 && questions.every((question) => question.options.length === 4)) {
     return questions;
   }
 
@@ -35,9 +41,7 @@ function normalizeQuestions(questions: QuizQuestion[]) {
       options:
         existing?.options?.length === 4
           ? existing.options
-          : Array.from({ length: 4 }).map((__, optionIndex) =>
-              existing?.options?.[optionIndex] ?? ""
-            ),
+          : Array.from({ length: 4 }).map((__, optionIndex) => existing?.options?.[optionIndex] ?? ""),
       answerIndex:
         typeof existing?.answerIndex === "number" && existing.answerIndex >= 0 && existing.answerIndex <= 3
           ? existing.answerIndex
@@ -48,11 +52,17 @@ function normalizeQuestions(questions: QuizQuestion[]) {
 
 export default function ReviewEditor({
   releaseId,
+  companyId,
+  initialStatus,
   initialModules,
 }: {
   releaseId: string;
-  initialModules: ReviewModule[];
+  companyId: string;
+  initialStatus: string;
+  initialModules: ReleaseModule[];
 }) {
+  const router = useRouter();
+  const [releaseStatus, setReleaseStatus] = useState(initialStatus);
   const [modules, setModules] = useState(
     initialModules.map((module) => ({
       ...module,
@@ -60,43 +70,66 @@ export default function ReviewEditor({
     }))
   );
   const [loadingModuleId, setLoadingModuleId] = useState<string | null>(null);
+  const [uploadingModuleId, setUploadingModuleId] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
   const stats = useMemo(() => {
-    const total = modules.length;
-    const approved = modules.filter((module) => module.reviewStatus === "APPROVED").length;
-    return { total, approved };
+    const coreModules = modules.filter((module) => module.moduleType === "CORE");
+    return {
+      total: coreModules.length,
+      scriptsReady: coreModules.filter((module) => module.scriptText.trim().length >= 120).length,
+      quizReady: coreModules.filter((module) => module.quizQuestions.length === 5).length,
+      audioReady: coreModules.filter((module) => Boolean(module.audioAsset)).length,
+    };
   }, [modules]);
 
-  function setModule(moduleId: string, updater: (module: ReviewModule) => ReviewModule) {
+  function setModule(moduleId: string, updater: (module: ReleaseModule) => ReleaseModule) {
     setModules((current) => current.map((module) => (module.id === moduleId ? updater(module) : module)));
   }
 
-  async function saveModule(module: ReviewModule) {
+  async function saveModule(module: ReleaseModule) {
     setLoadingModuleId(module.id);
     setError("");
     setMessage("");
 
     try {
-      const response = await fetch(`/api/admin/releases/${releaseId}/review`, {
+      const response = await fetch(`/api/admin/releases/${releaseId}/modules/${module.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          moduleId: module.id,
+          moduleType: module.moduleType,
           scriptText: module.scriptText,
-          reviewStatus: module.reviewStatus,
-          reviewComment: module.reviewComment,
           questions: module.quizQuestions,
         }),
       });
 
+      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
         throw new Error(payload.error ?? "Sauvegarde impossible.");
       }
 
       setMessage(`Module ${module.contentKey} enregistre.`);
+      if (payload.module) {
+        setModule(module.id, () => ({
+          ...module,
+          moduleType: payload.module.moduleType,
+          audioAsset: payload.module.audioAsset
+            ? {
+                id: payload.module.audioAsset.id,
+                blobPath: payload.module.audioAsset.blobPath,
+              }
+            : null,
+          quizQuestions: normalizeQuestions(
+            (payload.module.quizQuestions ?? []).map((question: QuizQuestion) => ({
+              question: question.question,
+              options: question.options,
+              answerIndex: question.answerIndex,
+            }))
+          ),
+        }));
+      }
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : "Erreur sauvegarde.");
     } finally {
@@ -104,12 +137,86 @@ export default function ReviewEditor({
     }
   }
 
+  async function uploadAudio(module: ReleaseModule, file: File) {
+    setUploadingModuleId(module.id);
+    setError("");
+    setMessage("");
+
+    try {
+      const formData = new FormData();
+      formData.set("file", file);
+
+      const response = await fetch(`/api/admin/releases/${releaseId}/modules/${module.id}/audio`, {
+        method: "POST",
+        body: formData,
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Upload audio impossible.");
+      }
+
+      setModule(module.id, (prev) => ({
+        ...prev,
+        audioAsset: payload.audioAsset
+          ? {
+              id: payload.audioAsset.id,
+              blobPath: payload.audioAsset.blobPath,
+            }
+          : prev.audioAsset,
+      }));
+      setMessage(`Audio importe pour ${module.contentKey}.`);
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : "Erreur upload audio.");
+    } finally {
+      setUploadingModuleId(null);
+    }
+  }
+
+  async function publishRelease() {
+    setPublishing(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch(`/api/admin/releases/${releaseId}/publish`, {
+        method: "POST",
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const details = payload.details ? ` ${JSON.stringify(payload.details)}` : "";
+        throw new Error((payload.error ?? "Publication impossible.") + details);
+      }
+
+      setReleaseStatus(payload.release?.status ?? "PUBLISHED");
+      setMessage("Release publiee.");
+      router.refresh();
+    } catch (publishError) {
+      setError(publishError instanceof Error ? publishError.message : "Erreur publication.");
+    } finally {
+      setPublishing(false);
+    }
+  }
+
   return (
     <section className={styles.reviewPanel}>
       <div className={styles.summary}>
         <strong>
-          Progression review: {stats.approved}/{stats.total} modules APPROVED
+          Socle CORE: {stats.scriptsReady}/{stats.total} scripts, {stats.quizReady}/{stats.total} quiz,
+          {` `}{stats.audioReady}/{stats.total} audios
         </strong>
+        <p>Statut release: {releaseStatus}</p>
+      </div>
+
+      <div className={styles.actions}>
+        <button className={styles.primary} type="button" onClick={publishRelease} disabled={publishing}>
+          {publishing ? "Publication..." : "Publier la release"}
+        </button>
+        <button className={styles.primary} type="button" onClick={() => router.push(`/admin/gestion/releases/${releaseId}/enrollments`)}>
+          Gérer les assignations
+        </button>
+        <button className={styles.primary} type="button" onClick={() => router.push(`/admin/gestion/companies/${companyId}`)}>
+          Retour société
+        </button>
       </div>
 
       {error ? <p className={styles.error}>{error}</p> : null}
@@ -125,20 +232,19 @@ export default function ReviewEditor({
                 </h3>
                 <p>{module.contentKey}</p>
               </div>
-              <label>
-                Statut
+              <label className={styles.fieldInline}>
+                Type
                 <select
-                  value={module.reviewStatus}
+                  value={module.moduleType}
                   onChange={(event) =>
                     setModule(module.id, (prev) => ({
                       ...prev,
-                      reviewStatus: event.target.value as ReviewModule["reviewStatus"],
+                      moduleType: event.target.value as ModuleType,
                     }))
                   }
                 >
-                  <option value="DRAFT">DRAFT</option>
-                  <option value="APPROVED">APPROVED</option>
-                  <option value="NEEDS_CHANGES">NEEDS_CHANGES</option>
+                  <option value="CORE">CORE</option>
+                  <option value="BONUS">BONUS</option>
                 </select>
               </label>
             </div>
@@ -157,20 +263,30 @@ export default function ReviewEditor({
               />
             </label>
 
-            <label className={styles.field}>
-              Commentaire review
-              <input
-                type="text"
-                value={module.reviewComment ?? ""}
-                onChange={(event) =>
-                  setModule(module.id, (prev) => ({
-                    ...prev,
-                    reviewComment: event.target.value,
-                  }))
-                }
-                placeholder="Optionnel"
-              />
-            </label>
+            <div className={styles.field}>
+              <span>Audio MP3</span>
+              <div className={styles.actions}>
+                <input
+                  type="file"
+                  accept="audio/mpeg,audio/mp3,audio/*"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                      void uploadAudio(module, file);
+                      event.target.value = "";
+                    }
+                  }}
+                  disabled={uploadingModuleId === module.id}
+                />
+                {module.audioAsset ? (
+                  <a className={styles.primary} href={module.audioAsset.blobPath} target="_blank" rel="noreferrer">
+                    Ecouter
+                  </a>
+                ) : (
+                  <span>Aucun audio importe</span>
+                )}
+              </div>
+            </div>
 
             <div className={styles.quizBlock}>
               <h4>Quiz (5 questions)</h4>

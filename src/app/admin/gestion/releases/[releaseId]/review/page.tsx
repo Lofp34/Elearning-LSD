@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function ReviewReleasePage({
+export default async function EditReleasePage({
   params,
 }: {
   params: Promise<{ releaseId: string }>;
@@ -38,7 +38,6 @@ export default async function ReviewReleasePage({
           audioAsset: {
             select: {
               id: true,
-              status: true,
               blobPath: true,
             },
           },
@@ -59,10 +58,10 @@ export default async function ReviewReleasePage({
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <BrandMark subtitle="Admin - Review release" />
+        <BrandMark subtitle="Admin - Edition release" />
         <div className={styles.headerActions}>
           <Link className={styles.back} href={`/admin/gestion/companies/${release.companyId}`}>
-            Retour wizard
+            Retour societe
           </Link>
         </div>
       </header>
@@ -74,11 +73,14 @@ export default async function ReviewReleasePage({
         <p>
           Statut release: <strong>{release.status}</strong>
         </p>
-        <p>Modules: {release.modules.length}</p>
+        <p>Edition manuelle des scripts, quiz et audios MP3 du socle e-learning B2B.</p>
+        <p>Modules charges: {release.modules.length}</p>
       </section>
 
       <ReviewEditor
         releaseId={release.id}
+        companyId={release.companyId}
+        initialStatus={release.status}
         initialModules={release.modules.map((module) => ({
           id: module.id,
           contentKey: module.contentKey,
@@ -86,9 +88,14 @@ export default async function ReviewReleasePage({
           partKey: module.partKey,
           chapterKey: module.chapterKey,
           orderIndex: module.orderIndex,
+          moduleType: module.moduleType,
           scriptText: module.scriptText,
-          reviewStatus: module.reviewStatus,
-          reviewComment: module.reviewComment,
+          audioAsset: module.audioAsset
+            ? {
+                id: module.audioAsset.id,
+                blobPath: module.audioAsset.blobPath,
+              }
+            : null,
           quizQuestions: module.quizQuestions.map((question) => ({
             id: question.id,
             question: question.question,

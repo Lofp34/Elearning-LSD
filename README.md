@@ -1,71 +1,53 @@
-This is the Antigravity e-learning PWA, built with Next.js (App Router).
+# Elearning-LSD
 
-## Project docs
-- Project status: `Documentation/project-status.md`
-- Product description: `Documentation/description-projet.md`
+Application Next.js de formation commerciale B2B generaliste.
 
-## Audio storage (Vercel Blob)
-Audio files are stored in Vercel Blob (not committed to Git).
+Le produit est volontairement simple:
+- structure pedagogique fixe de 16 modules;
+- scripts et quiz edites manuellement dans l'admin;
+- audios MP3 importes manuellement;
+- assignation manuelle des apprenants;
+- suivi de progression et export CSV pour les preuves Qualiopi.
 
-Local setup:
-- Copy `.env.example` to `.env.local`
-- Set `BLOB_READ_WRITE_TOKEN`
-- Set `DATABASE_URL` (Neon Postgres)
-- Set `AUTH_SECRET` (random string)
-- Upload local MP3s with:
-  - `npm run upload:audio`
+## Documentation
+- Statut projet: `Documentation/project-status.md`
+- Description produit: `Documentation/description-projet.md`
 
-App routes:
-- List blobs: `GET /api/blob/list?prefix=audio/`
-- Upload (server): `POST /api/blob/upload` (multipart form field `file`)
-- Simple UI: `/audio`
+## Prerequis
+- `DATABASE_URL`
+- `AUTH_SECRET`
+- `BLOB_READ_WRITE_TOKEN`
 
-## Auth (email + password)
-Routes:
-- Sign up: `POST /api/auth/signup`
-- Log in: `POST /api/auth/login`
-- Log out: `POST /api/auth/logout`
-
-Pages:
-- Welcome / sign up: `/`
-- Login: `/connexion`
-
-Database setup (local):
-- Provide `DATABASE_URL` (Neon Postgres or local Postgres)
-- Run `npm run prisma:migrate`
-
-## Getting Started
-
-First, run the development server:
+Copier `.env.example` vers `.env.local`, puis lancer:
 
 ```bash
+npm install
+npm run prisma:migrate
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Parcours admin
+- `/admin`
+- `/admin/gestion`
+- `/admin/gestion/companies/[companyId]`
+- `/admin/gestion/releases/[releaseId]/review`
+- `/admin/gestion/releases/[releaseId]/enrollments`
+- `/admin/suivi`
 
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
+## Parcours apprenant
+- `/parcours`
+- `/parcours/[part]`
+- `/quiz/[slug]`
+- `/progression`
+- `/profil`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stockage audio
+Les MP3 sont stockes dans Vercel Blob. Ils sont importes module par module depuis l'admin.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# Elearning-LSD
+## Scripts utiles
+- `npm run dev`
+- `npm run lint`
+- `npm run test`
+- `npm run build`
+- `npm run prisma:generate`
+- `npm run prisma:migrate`

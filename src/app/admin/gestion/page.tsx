@@ -38,7 +38,6 @@ export default async function AdminGestionPage() {
         select: {
           users: true,
           releases: true,
-          generationJobs: true,
         },
       },
       releases: {
@@ -90,7 +89,7 @@ export default async function AdminGestionPage() {
                 <div className={styles.stats}>
                   <span>{company._count.users} utilisateurs</span>
                   <span>{company._count.releases} versions</span>
-                  <span>{company._count.generationJobs} jobs</span>
+                  <span>{latestRelease ? latestRelease.status : "Aucune release"}</span>
                 </div>
                 <div className={styles.release}>
                   <strong>
@@ -101,12 +100,12 @@ export default async function AdminGestionPage() {
                   <span>
                     {latestRelease
                       ? `${latestRelease.status} - ${formatDate(latestRelease.publishedAt)}`
-                      : "Lancez le wizard de generation pour demarrer."}
+                      : "Creer une release manuelle pour demarrer."}
                   </span>
                 </div>
                 <CreateReleaseButton companyId={company.id} />
                 <Link className={styles.secondaryLink} href={`/admin/gestion/companies/${company.id}`}>
-                  Ouvrir wizard
+                  Ouvrir la societe
                 </Link>
               </article>
             );

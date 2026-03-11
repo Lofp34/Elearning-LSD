@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { list } from "@vercel/blob";
-import { prisma } from "@/lib/prisma";
 import BrandMark from "@/components/BrandMark";
 import { getSessionUserId } from "@/lib/session-user";
+import { prisma } from "@/lib/prisma";
 import { getActiveLearnerRelease } from "@/lib/learning/user-release";
 import styles from "./page.module.css";
 
@@ -11,12 +10,9 @@ export const dynamic = "force-dynamic";
 type LeaderEntry = {
   id: string;
   name: string;
-  company: string;
-  listenedCount: number;
-  proportion: number;
-  durationHours: number;
+  completedModules: number;
   avgScore: number;
-  quizCount: number;
+  lastActivityAt: Date | null;
 };
 
 function getDomain(email: string) {
@@ -29,14 +25,12 @@ function resolveCompany(user: { email: string; company: string | null }) {
   return trimmed && trimmed.length > 0 ? trimmed : getDomain(user.email) || "Entreprise";
 }
 
-function formatDuration(hours: number) {
-  if (!Number.isFinite(hours) || hours <= 0) return "0h";
-  const days = Math.floor(hours / 24);
-  if (days >= 1) {
-    const rest = Math.round((hours - days * 24) * 10) / 10;
-    return rest > 0 ? `${days}j ${rest}h` : `${days}j`;
-  }
-  return `${Math.round(hours * 10) / 10}h`;
+function formatDate(value: Date | null) {
+  if (!value) return "Aucune activite";
+  return new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(value);
 }
 
 export default async function LeaderboardPage() {
@@ -86,25 +80,10 @@ export default async function LeaderboardPage() {
     );
   }
 
-  const company = resolveCompany(currentUser);
   const activeRelease = await getActiveLearnerRelease(userId);
+  const company = resolveCompany(currentUser);
 
-  const totalAudios = activeRelease
-    ? await prisma.learningModule.count({
-        where: {
-          releaseId: activeRelease.releaseId,
-          audioAsset: { is: { status: "GENERATED" } },
-        },
-      })
-    : (await list({ prefix: "audio/", limit: 200 })).blobs.length;
-
-  const users = await prisma.user.findMany({
-    select: { id: true, firstName: true, lastName: true, email: true, company: true },
-  });
-
-  const companyUsers = users.filter((user) => resolveCompany(user) === company);
-
-  if (companyUsers.length === 0) {
+  if (!activeRelease) {
     return (
       <main className={styles.page}>
         <header className={styles.header}>
@@ -115,109 +94,77 @@ export default async function LeaderboardPage() {
         </header>
         <section className={styles.card}>
           <h2>Classement indisponible</h2>
-          <p className={styles.empty}>Aucun membre trouve pour {company}.</p>
+          <p className={styles.empty}>Aucune release active pour afficher le classement.</p>
         </section>
       </main>
     );
   }
 
-  const userIds = companyUsers.map((user) => user.id);
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [
+        { companyId: activeRelease.companyId },
+        { company: { equals: company, mode: "insensitive" } },
+      ],
+    },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      company: true,
+    },
+  });
 
-  const [listenStats, quizAttempts] = await Promise.all([
-    prisma.listenEvent.groupBy({
-      by: ["userId"],
-      where: {
-        userId: { in: userIds },
-        ...(activeRelease ? { releaseId: activeRelease.releaseId } : {}),
-      },
-      _count: { _all: true },
-      _min: { completedAt: true },
-      _max: { completedAt: true },
-    }),
-    prisma.quizAttempt.findMany({
-      where: {
-        userId: { in: userIds },
-        ...(activeRelease ? { releaseId: activeRelease.releaseId } : {}),
-      },
-      orderBy: { createdAt: "desc" },
-      select: {
-        userId: true,
-        audioSlug: true,
-        moduleId: true,
-        score: true,
-        total: true,
-      },
-    }),
-  ]);
+  const userIds = users.map((user) => user.id);
+  const progress = await prisma.learnerModuleProgress.findMany({
+    where: {
+      userId: { in: userIds },
+      releaseId: activeRelease.releaseId,
+    },
+    select: {
+      userId: true,
+      completedAt: true,
+      quizBestScore: true,
+      quizBestTotal: true,
+      updatedAt: true,
+    },
+  });
 
-  const listenMap = new Map<string, { count: number; min: Date | null; max: Date | null }>();
-  for (const stat of listenStats) {
-    listenMap.set(stat.userId, {
-      count: stat._count._all,
-      min: stat._min.completedAt ?? null,
-      max: stat._max.completedAt ?? null,
-    });
-  }
-
-  const latestQuizMap = new Map<string, Map<string, { score: number; total: number }>>();
-  for (const attempt of quizAttempts) {
-    const key = activeRelease ? attempt.moduleId ?? "" : attempt.audioSlug;
-    if (!key) continue;
-
-    let userMap = latestQuizMap.get(attempt.userId);
-    if (!userMap) {
-      userMap = new Map();
-      latestQuizMap.set(attempt.userId, userMap);
-    }
-
-    if (!userMap.has(key)) {
-      userMap.set(key, { score: attempt.score, total: attempt.total });
-    }
-  }
-
-  const entries: LeaderEntry[] = companyUsers.map((user) => {
-    const listen = listenMap.get(user.id);
-    const listenedCount = listen?.count ?? 0;
-    const durationHours =
-      listen?.min && listen?.max ? Math.max(0, (listen.max.getTime() - listen.min.getTime()) / 36e5) : 0;
-    const proportion = totalAudios > 0 ? listenedCount / totalAudios : 0;
-
-    const quizMap = latestQuizMap.get(user.id);
-    let quizSum = 0;
-    let quizCount = 0;
-    if (quizMap) {
-      for (const attempt of quizMap.values()) {
-        if (attempt.total > 0) {
-          quizSum += attempt.score / attempt.total;
-          quizCount += 1;
-        }
-      }
-    }
-
-    const avgScore = quizCount > 0 ? Math.round((quizSum / quizCount) * 100) : 0;
+  const entries: LeaderEntry[] = users.map((user) => {
+    const rows = progress.filter((row) => row.userId === user.id);
+    const completedModules = rows.filter((row) => row.completedAt).length;
+    const scoredRows = rows.filter(
+      (row) => row.quizBestScore !== null && row.quizBestTotal !== null && row.quizBestTotal > 0
+    );
+    const avgScore =
+      scoredRows.length > 0
+        ? Math.round(
+            (scoredRows.reduce((sum, row) => {
+              return sum + (row.quizBestScore ?? 0) / (row.quizBestTotal ?? 1);
+            }, 0) /
+              scoredRows.length) *
+              100
+          )
+        : 0;
+    const lastActivityAt =
+      rows.length > 0
+        ? new Date(Math.max(...rows.map((row) => row.updatedAt.getTime())))
+        : null;
 
     return {
       id: user.id,
       name: `${user.firstName} ${user.lastName?.slice(0, 1) ?? ""}.`,
-      company: resolveCompany(user),
-      listenedCount,
-      proportion,
-      durationHours,
+      completedModules,
       avgScore,
-      quizCount,
+      lastActivityAt,
     };
   });
 
-  const topListens = [...entries].sort((a, b) => b.listenedCount - a.listenedCount).slice(0, 5);
-  const topScores = [...entries]
-    .sort((a, b) => (b.avgScore !== a.avgScore ? b.avgScore - a.avgScore : b.quizCount - a.quizCount))
-    .slice(0, 5);
-  const topSprint = [...entries]
-    .sort((a, b) => {
-      if (b.proportion !== a.proportion) return b.proportion - a.proportion;
-      return a.durationHours - b.durationHours;
-    })
-    .slice(0, 5);
+  const topList = [...entries].sort((a, b) => {
+    if (b.completedModules !== a.completedModules) return b.completedModules - a.completedModules;
+    return b.avgScore - a.avgScore;
+  });
 
   return (
     <main className={styles.page}>
@@ -229,76 +176,28 @@ export default async function LeaderboardPage() {
       </header>
 
       <section className={styles.intro}>
-        <h1>Leaderboard {company}</h1>
-        <p>
-          Classement interne par entreprise. Score moyen des quiz et rythme d&apos;ecoute pour stimuler le
-          collectif.
-        </p>
+        <h1>Classement {company}</h1>
+        <p>Classement interne base sur les modules completes et les resultats de quiz.</p>
       </section>
 
       <section className={styles.grid}>
         <article className={styles.card}>
           <div className={styles.cardHeader}>
-            <h2>Top ecoutes</h2>
-            <span className={styles.tag}>Volume</span>
+            <h2>Top progression</h2>
+            <span className={styles.tag}>Release v{activeRelease.version}</span>
           </div>
           <div className={styles.list}>
-            {topListens.length === 0 ? (
-              <p className={styles.empty}>Aucune ecoute enregistree.</p>
+            {topList.length === 0 ? (
+              <p className={styles.empty}>Aucune progression enregistree.</p>
             ) : (
-              topListens.map((entry, index) => (
-                <div key={entry.id} className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}>
-                  <div className={styles.identity}>
-                    <span className={styles.name}>{entry.name}</span>
-                    <span className={styles.meta}>{entry.listenedCount} ecoutes</span>
-                  </div>
-                  <span className={styles.score}>#{index + 1}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </article>
-
-        <article className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h2>Meilleur score quiz</h2>
-            <span className={styles.tag}>Moyenne</span>
-          </div>
-          <div className={styles.list}>
-            {topScores.length === 0 ? (
-              <p className={styles.empty}>Aucun quiz valide.</p>
-            ) : (
-              topScores.map((entry, index) => (
+              topList.map((entry, index) => (
                 <div key={entry.id} className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}>
                   <div className={styles.identity}>
                     <span className={styles.name}>{entry.name}</span>
                     <span className={styles.meta}>
-                      {entry.quizCount} quiz • {entry.avgScore}%
+                      {entry.completedModules} modules completes | {entry.avgScore}% quiz
                     </span>
-                  </div>
-                  <span className={styles.score}>#{index + 1}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </article>
-
-        <article className={styles.card}>
-          <div className={styles.cardHeader}>
-            <h2>Sprint audio</h2>
-            <span className={styles.tag}>Rythme</span>
-          </div>
-          <div className={styles.list}>
-            {topSprint.length === 0 ? (
-              <p className={styles.empty}>Aucune progression mesuree.</p>
-            ) : (
-              topSprint.map((entry, index) => (
-                <div key={entry.id} className={`${styles.row} ${index === 0 ? styles.rowTop : ""}`}>
-                  <div className={styles.identity}>
-                    <span className={styles.name}>{entry.name}</span>
-                    <span className={styles.meta}>
-                      {Math.round(entry.proportion * 100)}% en {formatDuration(entry.durationHours)}
-                    </span>
+                    <span className={styles.meta}>{formatDate(entry.lastActivityAt)}</span>
                   </div>
                   <span className={styles.score}>#{index + 1}</span>
                 </div>

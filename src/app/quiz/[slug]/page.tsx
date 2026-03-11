@@ -1,8 +1,6 @@
 import Link from "next/link";
 import BrandMark from "@/components/BrandMark";
-import { QUIZZES } from "@/data/quizzes";
 import { prisma } from "@/lib/prisma";
-import { isNewContentEngineEnabled } from "@/lib/feature-flags";
 import { getSessionUserId } from "@/lib/session-user";
 import {
   RELEASE_MODULE_SEPARATOR,
@@ -14,22 +12,6 @@ import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
-function resolveQuizKey(slug: string) {
-  const normalized = decodeURIComponent(slug)
-    .replace(/\.mp3$/i, "")
-    .replace(/_/g, "-")
-    .toLowerCase();
-
-  if (QUIZZES[normalized]) return normalized;
-
-  const keys = Object.keys(QUIZZES);
-  return (
-    keys.find((key) => key.toLowerCase() === normalized) ??
-    keys.find((key) => key.toLowerCase().endsWith(normalized)) ??
-    keys.find((key) => normalized.endsWith(key.toLowerCase()))
-  );
-}
-
 export default async function QuizPage({
   params,
 }: {
@@ -39,21 +21,10 @@ export default async function QuizPage({
   const rawSlug = resolvedParams.slug;
   const decodedSlug = rawSlug ? decodeURIComponent(rawSlug) : "";
 
-  const key = rawSlug ? resolveQuizKey(rawSlug) : undefined;
-  const legacyQuiz = key ? QUIZZES[key] : undefined;
-
   let quizData: QuizData | null = null;
   let errorMessage = "";
 
-  if (legacyQuiz) {
-    quizData = {
-      title: legacyQuiz.title,
-      questions: legacyQuiz.questions,
-      releaseId: null,
-      moduleId: null,
-      trackingSlug: key ?? decodedSlug,
-    };
-  } else if (decodedSlug.includes(RELEASE_MODULE_SEPARATOR)) {
+  if (decodedSlug.includes(RELEASE_MODULE_SEPARATOR)) {
     const parsed = parseReleaseModuleSlug(decodedSlug);
     if (!parsed) {
       errorMessage = "Slug module invalide.";
@@ -93,19 +64,17 @@ export default async function QuizPage({
         } else if (learningModule.quizQuestions.length !== 5) {
           errorMessage = "Quiz incomplet pour ce module.";
         } else {
-          if (isNewContentEngineEnabled()) {
-            const enrollment = await prisma.learnerEnrollment.findFirst({
-              where: {
-                userId,
-                releaseId: learningModule.release.id,
-                isActive: true,
-              },
-              select: { id: true },
-            });
+          const enrollment = await prisma.learnerEnrollment.findFirst({
+            where: {
+              userId,
+              releaseId: learningModule.release.id,
+              isActive: true,
+            },
+            select: { id: true },
+          });
 
-            if (!enrollment) {
-              errorMessage = "Aucune assignation active pour ce module.";
-            }
+          if (!enrollment) {
+            errorMessage = "Aucune assignation active pour ce module.";
           }
 
           if (!errorMessage) {

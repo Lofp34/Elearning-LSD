@@ -1,78 +1,81 @@
-# Project Status (V2 Content Engine)
+# Project Status (Socle E-learning B2B)
 
-Date de mise a jour: 2026-02-24
+Date de mise a jour: 2026-03-10
 
 ## Objectif
-Industrialiser la generation de parcours e-learning par societe (PDF interviews -> scripts -> quiz -> audio -> publication), sans regression UX pour les apprenants existants.
+Refondre l'application existante en produit simple et stable de formation commerciale B2B generaliste, avec contenu fixe, MP3 importes manuellement, quiz manuels, suivi apprenants et preuves Qualiopi.
 
 ## Statut global
-- Etat: En cours avance.
-- Avancement: Lots 1 a 7 implementes et verifies localement.
-- Bloc final: validation staging avec providers reels + scenario e2e non-skip.
+- Etat: refonte principale implementee en local.
+- Avancement: schema de progression, contenu generique B2B, admin manuel, parcours apprenant, reporting et nettoyage Prisma termines.
+- Reste a securiser: appliquer les migrations sur la base cible et confirmer metier la V1 GEDEAS.
 
 ## Livrables en place
-- Admin hub conserve: `/admin` avec entrees `Suivi apprenants` et `Gestion`.
-- Wizard societe: `/admin/gestion/companies/[companyId]` (upload PDF, extraction auto, voix, releases, jobs).
-- Reviews: `/admin/gestion/releases/[releaseId]/review` (edition scripts + quiz + statut review).
-- Enrollments: `/admin/gestion/releases/[releaseId]/enrollments` (assignation manuelle, replace active).
-- APIs V2 ajoutees:
-  - `GET /api/admin/companies/[companyId]/interviews`
-  - `GET /api/admin/companies/[companyId]/wizard`
-  - `POST /api/admin/companies/[companyId]/jobs/run-next`
-  - `POST /api/admin/releases/[releaseId]/pipeline/start`
-  - `GET|PATCH /api/admin/releases/[releaseId]/review`
-  - `GET|PATCH /api/admin/companies/[companyId]/voices`
-  - `POST /api/admin/releases/[releaseId]/audio/generate`
-  - `POST /api/admin/jobs/[jobId]/retry`
-- APIs etendues:
-  - `POST /api/admin/releases/[releaseId]/publish` (garde-fous renforces)
-  - `POST /api/auth/signup` (auto-enrollment nouvelle inscription)
-  - `POST /api/listen/complete` et `POST /api/quiz/submit` (support `releaseId/moduleId`)
-- Pipeline reel:
-  - Job `FULL_PIPELINE` execute analyse OpenAI + scripts + quiz (16 modules fixes, schema strict).
-  - Job `GENERATE_AUDIO` execute generation ElevenLabs avec retry et idempotence.
-  - Release passe en `REVIEW_READY` puis publication manuelle.
-- Stockage audio V2:
-  - `audio/companies/{companySlug}/releases/v{version}/{order}-{chapter}.mp3`
-- Fallback legacy maintenu:
-  - Si `NEW_CONTENT_ENGINE=false` ou pas d'enrollment V2 actif, les pages apprenant gardent le mode legacy.
-- Infra jobs:
-  - Runner securise `CRON_SECRET` sur `/api/internal/jobs/runner`
-  - Claim TTL jobs stale + retry admin
-  - Mode execution 100% manuel via admin wizard (`Executer prochain job`)
-  - Cron Vercel retire (compatibilite plan Hobby)
-- Base de donnees:
-  - Migration fondation V2 + migration complementaire:
-    - `20260223190000_v2_content_engine_foundations`
-    - `20260223223000_v2_review_voice_enrollment_tracking`
-
-## Validation technique executee
-- `npm run lint`: OK
-- `npm run test`: OK (Vitest, 7 tests)
-- `npm run build`: OK
-- `npm run test:e2e`: OK (spec presente, skip par defaut)
+- Console admin:
+  - `/admin`
+  - `/admin/gestion`
+  - `/admin/gestion/companies/[companyId]`
+  - `/admin/gestion/releases/[releaseId]/review`
+  - `/admin/gestion/releases/[releaseId]/enrollments`
+  - `/admin/suivi`
+- Parcours apprenant branches sur la release active:
+  - `/parcours`
+  - `/parcours/[part]`
+  - `/quiz/[slug]`
+  - `/progression`
+  - `/profil`
+  - `/leaderboard`
+- APIs manuelles conservees:
+  - `POST /api/admin/companies/[companyId]/releases`
+  - `GET|PATCH /api/admin/releases/[releaseId]/modules/[moduleId]`
+  - `POST /api/admin/releases/[releaseId]/modules/[moduleId]/audio`
+  - `POST /api/admin/releases/[releaseId]/publish`
+  - `GET /api/admin/reports/progress`
+  - `POST /api/listen/complete`
+  - `POST /api/quiz/submit`
 
 ## Decisions verrouillees appliquees
-- Structure pedagogique fixe 3 parties / 16 modules preservee.
-- Adaptation limitee a exemples, vocabulaire, objections.
-- Deux voix fixes par societe (feminine + masculine) avec alternance deterministe.
-- Publication manuelle obligatoire avec prerequis stricts.
-- Aucun reassignment auto des apprenants deja actifs.
-- Super admin voit tout, admin societe reste scope a sa societe.
+- Structure pedagogique fixe 3 parties / 16 modules conservee.
+- Base de scripts et quiz remplacee par un socle B2B generaliste.
+- Aucune generation automatique depuis des transcriptions.
+- Aucune selection de voix ou generation audio dans l'application.
+- Publication manuelle obligatoire avec garde-fous sur scripts, quiz et audios.
+- Progression principale calculee uniquement sur les modules `CORE`.
+- Les futurs modules `BONUS` n'alterent pas le taux de completion principal.
 
-## Risques ouverts / points a finir
-- Staging provider reel non execute encore (OpenAI + ElevenLabs sur un flux complet).
-- E2E complet encore en mode `skip` (scenario a activer sur environnement de test stable).
-- Cutover metier a planifier (`NEW_CONTENT_ENGINE=true`) apres recette finale.
+## Donnees et preuve Qualiopi
+- Nouvelle table agregee `LearnerModuleProgress`:
+  - `listenPercentMax`
+  - `lastListenedAt`
+  - `completedAt`
+  - `quizBestScore`
+  - `quizBestTotal`
+  - `quizPassed`
+  - `quizPassedAt`
+- `QuizAttempt` reste l'historique brut.
+- Le statut complet est acquis a 90% d'ecoute.
+- Export CSV admin disponible pour le suivi.
+
+## Validation a executer
+- Execute le 2026-03-10:
+  - `npm run prisma:generate`
+  - `npm run test`
+  - `npm run lint`
+  - `npm run build`
+
+## Risques ouverts
+- Les migrations de nettoyage destructif doivent encore etre appliquees sur les environnements existants.
+- Les bonus par pole ne sont pas encore implementes fonctionnellement, seul le type `BONUS` est prepare.
 
 ## Prochaines etapes recommandees
-1. Lancer un smoke test staging complet sur 1 societe test (de upload PDF a publication).
-2. Activer un test e2e non-skip avec credentials techniques dedies.
-3. Valider metier puis activer `NEW_CONTENT_ENGINE=true` en Production.
+1. Valider le flux admin manuel complet sur une societe test.
+2. Charger les MP3 GEDEAS et assigner un premier panel d'apprenants.
+3. Confirmer les regles de reporting attendues pour l'export Qualiopi.
+4. Concevoir ensuite la V2 `socle commun + bonus pole`.
 
 ## Journal recent
-- 2026-02-23: Implementation complete lots 1-7 (UI admin, APIs, pipeline IA/audio, publication, enrollment, parcours V2 fallback legacy, runner/cron).
-- 2026-02-23: Ajout tests unitaires Vitest (structure, alternance voix, schemas IA) et base Playwright.
-- 2026-02-23: Verification locale verte (`lint`, `test`, `build`, `test:e2e`).
-- 2026-02-24: Passage en execution manuelle admin des jobs (endpoint `run-next` scope societe + bouton wizard), suppression du cron Vercel.
-- 2026-02-24: Simplification config OpenAI: variable unique `OPENAI_MODEL` (overrides `OPENAI_MODEL_ANALYSIS`/`OPENAI_MODEL_GENERATION` conserves en option).
+- 2026-03-10: ajout du contenu generique B2B et du seeding automatique des 16 modules avec 5 quiz par module.
+- 2026-03-10: ajout de `LearnerModuleProgress` et des APIs de progression et reporting manuel.
+- 2026-03-10: refonte des pages admin et apprenant pour supprimer le fallback legacy actif.
+- 2026-03-10: preparation du support `CORE/BONUS` pour les futures variantes par pole.
+- 2026-03-10: suppression des routes, composants et objets Prisma lies aux interviews, jobs asynchrones, voix et review legacy.

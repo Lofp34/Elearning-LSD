@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { list } from "@vercel/blob";
 import BrandMark from "@/components/BrandMark";
 import { prisma } from "@/lib/prisma";
 import LogoutButton from "./LogoutButton";
 import { getSessionUserId } from "@/lib/session-user";
 import { getActiveLearnerRelease } from "@/lib/learning/user-release";
+import { getLearnerReleaseSnapshot } from "@/lib/learning/release-snapshot";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -41,18 +41,19 @@ export default async function ProfilPage() {
     );
   }
 
-  const activeRelease = await getActiveLearnerRelease(userId);
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      firstName: true,
-      lastName: true,
-      email: true,
-      company: true,
-      createdAt: true,
-    },
-  });
+  const [activeRelease, user] = await Promise.all([
+    getActiveLearnerRelease(userId),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        company: true,
+        createdAt: true,
+      },
+    }),
+  ]);
 
   if (!user) {
     return (
@@ -70,86 +71,28 @@ export default async function ProfilPage() {
     );
   }
 
-  let totalAudios = 0;
-  let listensCount = 0;
-  let quizCount = 0;
-  let avgScore = 0;
+  const modules =
+    activeRelease ? await getLearnerReleaseSnapshot(userId, activeRelease.releaseId) : [];
 
-  if (activeRelease) {
-    const [total, listens, quizAttempts] = await Promise.all([
-      prisma.learningModule.count({
-        where: {
-          releaseId: activeRelease.releaseId,
-          audioAsset: { is: { status: "GENERATED" } },
-        },
-      }),
-      prisma.listenEvent.count({
-        where: {
-          userId,
-          releaseId: activeRelease.releaseId,
-        },
-      }),
-      prisma.quizAttempt.findMany({
-        where: {
-          userId,
-          releaseId: activeRelease.releaseId,
-          moduleId: { not: null },
-        },
-        orderBy: { createdAt: "desc" },
-        select: { moduleId: true, score: true, total: true },
-      }),
-    ]);
-
-    totalAudios = total;
-    listensCount = listens;
-
-    const latestQuizMap = new Map<string, { score: number; total: number }>();
-    for (const attempt of quizAttempts) {
-      if (attempt.moduleId && !latestQuizMap.has(attempt.moduleId)) {
-        latestQuizMap.set(attempt.moduleId, { score: attempt.score, total: attempt.total });
-      }
-    }
-
-    let quizSum = 0;
-    for (const attempt of latestQuizMap.values()) {
-      if (attempt.total > 0) {
-        quizSum += attempt.score / attempt.total;
-      }
-    }
-    quizCount = latestQuizMap.size;
-    avgScore = quizCount > 0 ? Math.round((quizSum / quizCount) * 100) : 0;
-  } else {
-    const [{ blobs }, listens, quizAttempts] = await Promise.all([
-      list({ prefix: "audio/", limit: 200 }),
-      prisma.listenEvent.count({ where: { userId } }),
-      prisma.quizAttempt.findMany({
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-        select: { audioSlug: true, score: true, total: true },
-      }),
-    ]);
-
-    totalAudios = blobs.length;
-    listensCount = listens;
-
-    const latestQuizMap = new Map<string, { score: number; total: number }>();
-    for (const attempt of quizAttempts) {
-      if (!latestQuizMap.has(attempt.audioSlug)) {
-        latestQuizMap.set(attempt.audioSlug, { score: attempt.score, total: attempt.total });
-      }
-    }
-
-    let quizSum = 0;
-    for (const attempt of latestQuizMap.values()) {
-      if (attempt.total > 0) {
-        quizSum += attempt.score / attempt.total;
-      }
-    }
-    quizCount = latestQuizMap.size;
-    avgScore = quizCount > 0 ? Math.round((quizSum / quizCount) * 100) : 0;
-  }
-
-  const completionPct = totalAudios > 0 ? Math.round((listensCount / totalAudios) * 100) : 0;
+  const totalAudios = modules.length;
+  const completedAudios = modules.filter((module) => module.completed).length;
+  const quizCount = modules.filter((module) => module.quizBestScore !== null).length;
+  const quizPassedCount = modules.filter((module) => module.quizPassed).length;
+  const avgScore =
+    quizCount > 0
+      ? Math.round(
+          (modules.reduce((sum, module) => {
+            if (module.quizBestScore === null || module.quizBestTotal === null || module.quizBestTotal === 0) {
+              return sum;
+            }
+            return sum + module.quizBestScore / module.quizBestTotal;
+          }, 0) /
+            quizCount) *
+            100
+        )
+      : 0;
+  const completionPct =
+    totalAudios > 0 ? Math.round((quizPassedCount / totalAudios) * 100) : 0;
 
   return (
     <main className={styles.page}>
@@ -195,12 +138,12 @@ export default async function ProfilPage() {
           <p className={styles.label}>Progression</p>
           <h2>Resume d&apos;avancement</h2>
           <p className={styles.subtitle}>
-            L&apos;objectif: ecouter chaque audio et valider les quiz avec 70% minimum.
+            L&apos;objectif: ecouter chaque audio a 90% minimum et valider le quiz.
           </p>
           <div className={styles.statGrid}>
             <div className={styles.statCard}>
-              <strong>{listensCount}</strong>
-              <span>ecoutes</span>
+              <strong>{completedAudios}</strong>
+              <span>audios completes</span>
             </div>
             <div className={styles.statCard}>
               <strong>{quizCount}</strong>
@@ -212,12 +155,11 @@ export default async function ProfilPage() {
             </div>
             <div className={styles.statCard}>
               <strong>{completionPct}%</strong>
-              <span>audios ecoutes</span>
+              <span>parcours valide</span>
             </div>
           </div>
           <p className={styles.note}>
-            Continue ta serie: 10 minutes par jour suffisent pour ancrer les
-            bons reflexes.
+            Continue ton rythme: l&apos;important est la regularite et la mise en pratique.
           </p>
           <div className={styles.actions}>
             <Link className={styles.cta} href="/parcours">

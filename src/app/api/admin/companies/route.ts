@@ -52,7 +52,6 @@ export async function GET() {
         select: {
           users: true,
           releases: true,
-          generationJobs: true,
         },
       },
       releases: {
