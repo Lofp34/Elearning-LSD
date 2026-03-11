@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { verifySessionToken } from "@/lib/auth";
-import { isNewContentEngineEnabled } from "@/lib/feature-flags";
 import { buildTrackingAudioSlug } from "@/lib/learning/slug";
+import { recordQuizAttempt } from "@/lib/learning/progress";
 
 export const runtime = "nodejs";
 
@@ -58,22 +58,20 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Module/release invalide." }, { status: 400 });
       }
 
-      if (isNewContentEngineEnabled()) {
-        const enrollment = await prisma.learnerEnrollment.findFirst({
-          where: {
-            userId,
-            releaseId,
-            isActive: true,
-            release: { status: "PUBLISHED" },
-          },
-          select: { id: true },
-        });
-        if (!enrollment) {
-          return NextResponse.json(
-            { error: "Aucune assignation active sur cette release." },
-            { status: 403 }
-          );
-        }
+      const enrollment = await prisma.learnerEnrollment.findFirst({
+        where: {
+          userId,
+          releaseId,
+          isActive: true,
+          release: { status: "PUBLISHED" },
+        },
+        select: { id: true },
+      });
+      if (!enrollment) {
+        return NextResponse.json(
+          { error: "Aucune assignation active sur cette release." },
+          { status: 403 }
+        );
       }
 
       slug =
@@ -82,27 +80,20 @@ export async function POST(request: Request) {
       trackedModuleId = moduleId;
     }
 
-    await prisma.quizAttempt.create({
-      data: {
-        userId,
-        audioSlug: slug,
-        releaseId: trackedReleaseId,
-        moduleId: trackedModuleId,
-        score,
-        total,
-        passed,
-      },
-    });
+    if (!trackedReleaseId || !trackedModuleId) {
+      return NextResponse.json(
+        { error: "Le quiz requiert releaseId et moduleId." },
+        { status: 400 }
+      );
+    }
 
-    await prisma.activityLog.create({
-      data: {
-        userId,
-        type: "QUIZ_SUBMIT",
-        audioSlug: slug,
-        score,
-        total,
-        passed,
-      },
+    await recordQuizAttempt({
+      userId,
+      releaseId: trackedReleaseId,
+      moduleId: trackedModuleId,
+      audioSlug: slug,
+      score,
+      total,
     });
 
     return NextResponse.json({ ok: true, passed });

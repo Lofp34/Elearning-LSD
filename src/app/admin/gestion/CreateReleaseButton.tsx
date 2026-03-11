@@ -15,8 +15,6 @@ export default function CreateReleaseButton({ companyId }: { companyId: string }
     try {
       const response = await fetch(`/api/admin/companies/${companyId}/releases`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ startPipeline: false }),
       });
 
       if (!response.ok) {
@@ -35,7 +33,7 @@ export default function CreateReleaseButton({ companyId }: { companyId: string }
   return (
     <div className={styles.releaseActions}>
       <button className={styles.secondary} type="button" onClick={handleClick} disabled={loading}>
-        {loading ? "Creation..." : "Creer release draft"}
+        {loading ? "Creation..." : "Creer une release"}
       </button>
       {error ? <small className={styles.error}>{error}</small> : null}
     </div>

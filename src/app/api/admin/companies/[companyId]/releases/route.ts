@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { canAccessCompany, getAuthUserScope, isAdminRole } from "@/lib/authz";
-import { createDraftRelease, seedDraftModules } from "@/lib/pipeline/generate-company-release";
+import { createDraftRelease, seedDraftModules } from "@/lib/learning/create-release";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -27,7 +27,6 @@ export async function GET(
       _count: {
         select: {
           modules: true,
-          generationJobs: true,
           learnerEnrollments: true,
         },
       },
@@ -38,7 +37,7 @@ export async function GET(
 }
 
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ companyId: string }> }
 ) {
   const authUser = await getAuthUserScope();
@@ -52,24 +51,8 @@ export async function POST(
     return NextResponse.json({ error: "Scope entreprise invalide." }, { status: 403 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const startPipeline = Boolean(body.startPipeline);
-
   const release = await createDraftRelease(companyId, authUser.id);
   await seedDraftModules(release.id);
-
-  if (startPipeline) {
-    await prisma.generationJob.create({
-      data: {
-        companyId,
-        releaseId: release.id,
-        jobType: "FULL_PIPELINE",
-        status: "PENDING",
-        step: "UPLOADED",
-        payload: {},
-      },
-    });
-  }
 
   await prisma.adminActionLog.create({
     data: {
@@ -79,7 +62,6 @@ export async function POST(
       metadata: {
         releaseId: release.id,
         version: release.version,
-        startPipeline,
       },
     },
   });

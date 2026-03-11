@@ -11,6 +11,8 @@ type OpenAiJsonSchemaParams = {
   userPrompt: string;
 };
 
+const OPENAI_REQUEST_TIMEOUT_MS = 120_000;
+
 function extractTextPayload(payload: unknown): string | null {
   if (!payload || typeof payload !== "object") return null;
 
@@ -66,7 +68,7 @@ export async function callOpenAiWithJsonSchema<T>(params: OpenAiJsonSchemaParams
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 45_000);
+    const timeout = setTimeout(() => controller.abort(), OPENAI_REQUEST_TIMEOUT_MS);
 
     try {
       response = await fetch("https://api.openai.com/v1/responses", {

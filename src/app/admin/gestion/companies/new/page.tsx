@@ -25,7 +25,7 @@ export default async function NewCompanyPage() {
       <section className={styles.card}>
         <h1>Nouvelle societe</h1>
         <p>
-          Creez l&apos;entreprise avant l&apos;upload des interviews PDF et la generation des modules.
+          Creez l&apos;entreprise pour preparer ses releases, ses audios MP3 et ses assignations apprenants.
         </p>
         <NewCompanyForm />
       </section>

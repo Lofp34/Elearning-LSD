@@ -19,6 +19,9 @@ export async function POST(
     where: { id: releaseId },
     include: {
       modules: {
+        where: {
+          moduleType: "CORE",
+        },
         include: {
           quizQuestions: true,
           audioAsset: true,
@@ -36,10 +39,9 @@ export async function POST(
     return NextResponse.json({ error: "Scope entreprise invalide." }, { status: 403 });
   }
 
-  const missingScript = release.modules.filter((module) => module.scriptText.trim().length === 0).length;
+  const missingScript = release.modules.filter((module) => module.scriptText.trim().length < 120).length;
   const missingAudio = release.modules.filter((module) => module.audioAsset?.status !== "GENERATED").length;
   const invalidQuiz = release.modules.filter((module) => module.quizQuestions.length !== 5).length;
-  const notApproved = release.modules.filter((module) => module.reviewStatus !== "APPROVED").length;
 
   if (release.modules.length === 0) {
     return NextResponse.json({ error: "Release vide." }, { status: 400 });
@@ -58,11 +60,6 @@ export async function POST(
     );
   }
 
-  const invalidScriptLength = release.modules.filter((module) => {
-    const length = module.scriptText.trim().length;
-    return length < 450 || length > 2200;
-  }).length;
-
   const invalidQuizShape = release.modules.filter((module) =>
     module.quizQuestions.some((question) => {
       const options = Array.isArray(question.options) ? question.options : [];
@@ -78,9 +75,7 @@ export async function POST(
     missingScript > 0 ||
     missingAudio > 0 ||
     invalidQuiz > 0 ||
-    invalidScriptLength > 0 ||
-    invalidQuizShape > 0 ||
-    notApproved > 0
+    invalidQuizShape > 0
   ) {
     return NextResponse.json(
       {
@@ -89,9 +84,7 @@ export async function POST(
           missingScript,
           missingAudio,
           invalidQuiz,
-          invalidScriptLength,
           invalidQuizShape,
-          notApproved,
         },
       },
       { status: 400 }

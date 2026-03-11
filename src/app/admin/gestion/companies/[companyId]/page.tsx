@@ -3,11 +3,7 @@ import { redirect } from "next/navigation";
 import BrandMark from "@/components/BrandMark";
 import { canAccessCompany, getAuthUserScope, isAdminRole } from "@/lib/authz";
 import { prisma } from "@/lib/prisma";
-import InterviewUploadPanel from "./InterviewUploadPanel";
-import VoicesPanel from "./VoicesPanel";
-import ReleaseActionButtons from "./ReleaseActionButtons";
-import JobRetryButton from "./JobRetryButton";
-import RunJobsPanel from "./RunJobsPanel";
+import CreateReleaseButton from "../../CreateReleaseButton";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +16,7 @@ function formatDate(value: Date | null | undefined) {
   }).format(value);
 }
 
-export default async function CompanyWizardPage({
+export default async function CompanyPage({
   params,
 }: {
   params: Promise<{ companyId: string }>;
@@ -33,71 +29,44 @@ export default async function CompanyWizardPage({
   const allowed = await canAccessCompany(authUser, companyId);
   if (!allowed) redirect("/admin/gestion");
 
-  const [company, interviews, releases, jobs] = await Promise.all([
-    prisma.company.findUnique({
-      where: { id: companyId },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        femaleVoiceName: true,
-        maleVoiceName: true,
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    include: {
+      _count: {
+        select: {
+          users: true,
+          releases: true,
+        },
       },
-    }),
-    prisma.interviewDocument.findMany({
-      where: { companyId },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        filename: true,
-        status: true,
-        errorMessage: true,
-        createdAt: true,
-        updatedAt: true,
-        extractedText: true,
-      },
-      take: 30,
-    }),
-    prisma.learningRelease.findMany({
-      where: { companyId },
-      orderBy: { version: "desc" },
-      take: 8,
-      include: {
-        modules: {
-          select: {
-            id: true,
-            scriptText: true,
-            reviewStatus: true,
-            quizQuestions: { select: { id: true } },
-            audioAsset: { select: { status: true } },
+      releases: {
+        orderBy: { version: "desc" },
+        include: {
+          _count: {
+            select: {
+              modules: true,
+              learnerEnrollments: true,
+            },
+          },
+          modules: {
+            where: {
+              moduleType: "CORE",
+            },
+            include: {
+              quizQuestions: true,
+              audioAsset: true,
+            },
           },
         },
       },
-    }),
-    prisma.generationJob.findMany({
-      where: { companyId },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      include: {
-        release: {
-          select: {
-            version: true,
-          },
-        },
-      },
-    }),
-  ]);
+    },
+  });
 
-  if (!company) {
-    redirect("/admin/gestion");
-  }
-
-  const latestRelease = releases[0];
+  if (!company) redirect("/admin/gestion");
 
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <BrandMark subtitle="Admin - Wizard societe" />
+        <BrandMark subtitle="Admin - Societe" />
         <div className={styles.headerActions}>
           <Link className={styles.back} href="/admin/gestion">
             Retour gestion
@@ -110,36 +79,18 @@ export default async function CompanyWizardPage({
         <p>
           Slug: <strong>{company.slug}</strong>
         </p>
-        <p>
-          Derniere release: <strong>{latestRelease ? `v${latestRelease.version}` : "Aucune"}</strong>
-        </p>
         <div className={styles.inlineMeta}>
-          <span>Voix F: {company.femaleVoiceName ?? "non definie"}</span>
-          <span>Voix M: {company.maleVoiceName ?? "non definie"}</span>
+          <span>{company._count.users} utilisateurs</span>
+          <span>{company._count.releases} releases</span>
+          <span>{company.isActive ? "Active" : "Inactive"}</span>
         </div>
+        <CreateReleaseButton companyId={company.id} />
       </section>
-
-      <InterviewUploadPanel
-        companyId={companyId}
-        initialInterviews={interviews.map((item) => ({
-          id: item.id,
-          filename: item.filename,
-          status: item.status,
-          errorMessage: item.errorMessage,
-          createdAt: item.createdAt.toISOString(),
-          updatedAt: item.updatedAt.toISOString(),
-          extractedTextLength: item.extractedText?.length ?? 0,
-        }))}
-      />
-
-      <VoicesPanel companyId={companyId} />
 
       <section className={styles.panel}>
         <div className={styles.panelHeader}>
-          <h2>3. Releases et execution pipeline</h2>
+          <h2>Releases manuelles</h2>
         </div>
-
-        <ReleaseActionButtons companyId={companyId} releaseId={latestRelease?.id} />
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>
@@ -147,25 +98,25 @@ export default async function CompanyWizardPage({
               <tr>
                 <th>Version</th>
                 <th>Statut</th>
-                <th>Scripts</th>
-                <th>Review</th>
+                <th>Scripts OK</th>
                 <th>Quiz OK</th>
                 <th>Audio OK</th>
+                <th>Assignes</th>
                 <th>Publiee</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {releases.length === 0 ? (
+              {company.releases.length === 0 ? (
                 <tr>
-                  <td colSpan={7}>Aucune release.</td>
+                  <td colSpan={8}>Aucune release pour le moment.</td>
                 </tr>
               ) : (
-                releases.map((release) => {
+                company.releases.map((release) => {
                   const total = release.modules.length;
-                  const scripts = release.modules.filter((module) => module.scriptText.trim().length > 0).length;
-                  const approved = release.modules.filter((module) => module.reviewStatus === "APPROVED").length;
-                  const quizReady = release.modules.filter((module) => module.quizQuestions.length === 5).length;
-                  const audioReady = release.modules.filter((module) => module.audioAsset?.status === "GENERATED").length;
+                  const scripts = release.modules.filter((module) => module.scriptText.trim().length >= 120).length;
+                  const quizzes = release.modules.filter((module) => module.quizQuestions.length === 5).length;
+                  const audio = release.modules.filter((module) => module.audioAsset?.status === "GENERATED").length;
 
                   return (
                     <tr key={release.id}>
@@ -177,69 +128,26 @@ export default async function CompanyWizardPage({
                         {scripts}/{total}
                       </td>
                       <td>
-                        {approved}/{total}
+                        {quizzes}/{total}
                       </td>
                       <td>
-                        {quizReady}/{total}
+                        {audio}/{total}
                       </td>
-                      <td>
-                        {audioReady}/{total}
-                      </td>
+                      <td>{release._count.learnerEnrollments}</td>
                       <td>{formatDate(release.publishedAt)}</td>
+                      <td>
+                        <div className={styles.rowActionsLinks}>
+                          <Link className={styles.inlineTextLink} href={`/admin/gestion/releases/${release.id}/review`}>
+                            Editer
+                          </Link>
+                          <Link className={styles.inlineTextLink} href={`/admin/gestion/releases/${release.id}/enrollments`}>
+                            Assigner
+                          </Link>
+                        </div>
+                      </td>
                     </tr>
                   );
                 })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className={styles.panel}>
-        <div className={styles.panelHeader}>
-          <h2>4. Jobs asynchrones</h2>
-        </div>
-
-        <p className={styles.helpText}>
-          Mode manuel: apres avoir lance un pipeline ou une generation audio, cliquez sur
-          &quot;Executer prochain job&quot;.
-        </p>
-
-        <RunJobsPanel companyId={companyId} />
-
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Job</th>
-                <th>Release</th>
-                <th>Statut</th>
-                <th>Step</th>
-                <th>Tentatives</th>
-                <th>Maj</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.length === 0 ? (
-                <tr>
-                  <td colSpan={7}>Aucun job pour le moment.</td>
-                </tr>
-              ) : (
-                jobs.map((job) => (
-                  <tr key={job.id}>
-                    <td>
-                      <strong>{job.jobType}</strong>
-                      {job.lastError ? <div className={styles.errorSmall}>{job.lastError}</div> : null}
-                    </td>
-                    <td>{job.release ? `v${job.release.version}` : "-"}</td>
-                    <td>{job.status}</td>
-                    <td>{job.step ?? "-"}</td>
-                    <td>{job.attempts}</td>
-                    <td>{formatDate(job.updatedAt)}</td>
-                    <td>{job.status === "FAILED" ? <JobRetryButton jobId={job.id} /> : "-"}</td>
-                  </tr>
-                ))
               )}
             </tbody>
           </table>

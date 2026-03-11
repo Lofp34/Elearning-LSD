@@ -184,6 +184,30 @@
   color: #9a3412;
 }
 
+.rowActionsWrap {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 220px;
+}
+
+.rowActionsButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.rowActionsLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inlineTextLink {
+  color: #0f172a;
+  text-decoration: underline;
+  font-size: 0.82rem;
+}
+
 .error {
   color: #b91c1c;
   margin: 0;

@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { isNewContentEngineEnabled } from "@/lib/feature-flags";
 
 export type ActiveLearnerRelease = {
   enrollmentId: string;
@@ -9,8 +8,6 @@ export type ActiveLearnerRelease = {
 };
 
 export async function getActiveLearnerRelease(userId: string): Promise<ActiveLearnerRelease | null> {
-  if (!isNewContentEngineEnabled()) return null;
-
   const enrollment = await prisma.learnerEnrollment.findFirst({
     where: {
       userId,
