@@ -22,6 +22,16 @@ export default function CreateReleaseButton({ companyId }: { companyId: string }
         setError(payload.error ?? "Creation impossible.");
         return;
       }
+
+      const payload = await response.json().catch(() => ({}));
+      const releaseId = payload?.release?.id as string | undefined;
+      if (!releaseId) {
+        setError("Release creee mais redirection impossible.");
+        router.refresh();
+        return;
+      }
+
+      router.push(`/admin/gestion/releases/${releaseId}/review`);
       router.refresh();
     } catch {
       setError("Erreur reseau.");
